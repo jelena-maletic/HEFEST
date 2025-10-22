@@ -1,10 +1,12 @@
 package org.etfbl.administrator.service;
 
-import com.example.demo.model.Administrator;
-import com.example.demo.repository.AdministratorRepo;
+import org.etfbl.administrator.model.Administrator;
+import org.etfbl.administrator.repository.AdministratorRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class LoginService {
@@ -17,7 +19,7 @@ public class LoginService {
 
     public boolean login(String korisnickoIme, String lozinka) {
         Optional<Administrator> optionalAdministrator = administratorRepo.findById(korisnickoIme);
-        if(optionalAdministrator.isEmpty) {
+        if(optionalAdministrator.isEmpty()) {
             return false;
         }
         Administrator administrator = optionalAdministrator.get();
