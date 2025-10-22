@@ -24,5 +24,5 @@ public class LoginService {
         return passwordEncoder.matches(lozinka, administrator.getLozinka());
     }
 
-    public boolean
+
 }
