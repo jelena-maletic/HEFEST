@@ -39,19 +39,37 @@ public class KorisnikService {
 
     @Transactional
     public void deleteKorisnik(String jmb){
+        if(!korisnikRepo.existsById(jmb))
+            throw new EntityNotFoundException("Traženi korisnik ne postoji");
+
         korisnikRepo.deleteById(jmb);
     }
 
     @Transactional
-    public Korisnik updateKorisnik(Korisnik k, String rawPassword){
+    public Korisnik updateKorisnik(Korisnik updatedKorisnik, String rawPassword){
+        Korisnik existingKorisnik = korisnikRepo.findById(updatedKorisnik.getJmb()).orElseThrow(() -> new EntityNotFoundException("Korisnik nije pronađen"));
+
+        existingKorisnik.setIme(updatedKorisnik.getIme());
+        existingKorisnik.setPrezime(updatedKorisnik.getPrezime());
+        existingKorisnik.setUsername(updatedKorisnik.getUsername());
+        existingKorisnik.setEmail(updatedKorisnik.getEmail());
+        existingKorisnik.setBrojTelefona(updatedKorisnik.getBrojTelefona());
+
         if(rawPassword != null && !rawPassword.isEmpty()){
-            k.setPassword(passwordEncoder.encode(rawPassword));
+            existingKorisnik.setPassword(passwordEncoder.encode(rawPassword));
         }
 
-        return korisnikRepo.save(k);
+        return korisnikRepo.save(existingKorisnik);
     }
 
     public List<Korisnik> getAll(){
         return korisnikRepo.findAll();
+    }
+
+    public List<Korisnik> search(String keyword) {
+        if(keyword == null || keyword.isBlank())
+            return korisnikRepo.findAll();
+
+        return korisnikRepo.findByImeOrPrezimeOrUsernameContainingIgnoreCase(keyword, keyword, keyword);
     }
 }
