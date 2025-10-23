@@ -18,6 +18,7 @@ public class AdminDashboardFrame extends JFrame {
     private JPanel leftPanel;
     private JPanel bottomPanel;
     private JPanel mainPanel;
+    private ImageIcon logoIcon;
 
     public AdminDashboardFrame() {
         setTitle("Hefest - Admin");
@@ -26,6 +27,9 @@ public class AdminDashboardFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
+
+        logoIcon = new ImageIcon(getClass().getResource("/images/hefest-logo.png"));
+        setIconImage(logoIcon.getImage());
 
         initLeftPanel();
         initMainPanel();
@@ -52,7 +56,6 @@ public class AdminDashboardFrame extends JFrame {
         logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
         logoLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
-        ImageIcon logoIcon = new ImageIcon(getClass().getResource("/images/hefest-logo.png"));
         Image scaledImage = logoIcon.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
         logoLabel.setIcon(new ImageIcon(scaledImage));
 
@@ -101,17 +104,9 @@ public class AdminDashboardFrame extends JFrame {
         backgroundLabel.setHorizontalAlignment(SwingConstants.CENTER);
         backgroundLabel.setVerticalAlignment(SwingConstants.CENTER);
 
-        try {
-            URL url = getClass().getResource("/images/hefest-logo.png");
-            if(url != null) {
-                ImageIcon logo = new ImageIcon(url);
-                Image scaledImage = logo.getImage().getScaledInstance(600, 600, Image.SCALE_SMOOTH);
-                ImageIcon transparentIcon = createTransparentIcon(new ImageIcon(scaledImage), 0.3f);
-                backgroundLabel.setIcon(transparentIcon);
-            }
-        } catch (Exception e) {
-
-        }
+        Image scaledImage = logoIcon.getImage().getScaledInstance(600, 600, Image.SCALE_SMOOTH);
+        ImageIcon transparentIcon = createTransparentIcon(new ImageIcon(scaledImage), 0.3f);
+        backgroundLabel.setIcon(transparentIcon);
 
         mainPanel.add(backgroundLabel, BorderLayout.CENTER);
     }
