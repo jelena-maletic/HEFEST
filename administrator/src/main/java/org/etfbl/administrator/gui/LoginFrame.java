@@ -157,7 +157,7 @@ public class LoginFrame extends JFrame {
 
         if (success) {
             dispose();
-            // new AdminDashboardFrame().setVisible(true);
+            new AdminDashboardFrame().setVisible(true);
         }
         else {
             JOptionPane.showMessageDialog(this, "Pogrešno korisničko ime ili lozinka.", "Greška", JOptionPane.ERROR_MESSAGE);
