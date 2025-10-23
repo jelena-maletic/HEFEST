@@ -10,10 +10,12 @@ import javax.swing.*;
 @SpringBootApplication
 public class AdministratorApplication {
 
+    public static ConfigurableApplicationContext context;
+
 	public static void main(String[] args) {
         System.setProperty("java.awt.headless", "false");
 
-        ConfigurableApplicationContext context = SpringApplication.run(AdministratorApplication.class, args);
+        context = SpringApplication.run(AdministratorApplication.class, args);
 
         SwingUtilities.invokeLater(() -> {
             LoginFrame loginFrame = context.getBean(LoginFrame.class);

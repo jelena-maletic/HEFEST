@@ -1,5 +1,6 @@
 package org.etfbl.administrator.gui;
 
+import org.etfbl.administrator.AdministratorApplication;
 import org.etfbl.administrator.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -144,6 +145,11 @@ public class LoginFrame extends JFrame {
         add(mainPanel);
     }
 
+    public void resetFields() {
+        usernameField.setText("");
+        passwordField.setText("");
+    }
+
     private void handleLogin() {
         String username = usernameField.getText().trim();
         String password = new String(passwordField.getPassword());
@@ -157,7 +163,11 @@ public class LoginFrame extends JFrame {
 
         if (success) {
             dispose();
-            new AdminDashboardFrame().setVisible(true);
+            dispose();
+            SwingUtilities.invokeLater(() -> {
+                AdminDashboardFrame dashboard = AdministratorApplication.context.getBean(AdminDashboardFrame.class);
+                dashboard.setVisible(true);
+            });
         }
         else {
             JOptionPane.showMessageDialog(this, "Pogrešno korisničko ime ili lozinka.", "Greška", JOptionPane.ERROR_MESSAGE);

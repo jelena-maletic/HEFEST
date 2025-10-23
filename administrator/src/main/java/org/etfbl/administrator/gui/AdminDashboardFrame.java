@@ -138,14 +138,11 @@ public class AdminDashboardFrame extends JFrame {
     }
 
     private void odjava() {
-        int confirm = JOptionPane.showConfirmDialog(this, "Potvrdite odjavu", "Odjava", JOptionPane.YES_NO_OPTION);
-        if (confirm == JOptionPane.YES_OPTION) {
-            dispose();
-        }
-
+        JOptionPane.showMessageDialog(this, "Odjavljeni ste sa sistema", "Poruka", JOptionPane.INFORMATION_MESSAGE);
+        dispose();
         SwingUtilities.invokeLater(() -> {
-            ApplicationContext context = new AnnotationConfigApplicationContext(AdministratorApplication.class);
-            LoginFrame login = context.getBean(LoginFrame.class);
+            LoginFrame login = AdministratorApplication.context.getBean(LoginFrame.class);
+            login.resetFields();
             login.setVisible(true);
         });
     }
