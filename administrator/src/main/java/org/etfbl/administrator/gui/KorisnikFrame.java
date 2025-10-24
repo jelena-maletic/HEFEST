@@ -201,6 +201,7 @@ public class KorisnikFrame extends JFrame {
                 Korisnik odabrani = ((KorisnikTableModel) table.getModel()).getKorisnikAtRow(row);
                 KorisnikDialog dialog = AdministratorApplication.context.getBean(KorisnikDialog.class);
                 dialog.setKorisnik(odabrani);
+                dialog.setIzmjena(true);
                 dialog.setVisible(true);
                 if (dialog.isOkPressed()) {
                     osvjeziTabelu("*");

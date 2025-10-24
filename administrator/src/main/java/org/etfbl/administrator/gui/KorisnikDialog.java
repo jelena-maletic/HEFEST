@@ -4,6 +4,7 @@ import org.etfbl.administrator.model.Korisnik;
 import org.etfbl.administrator.service.KorisnikService;
 import org.etfbl.administrator.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
@@ -13,8 +14,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 
 @Component
+@Scope("prototype")
 public class KorisnikDialog extends JDialog {
     private KorisnikDialog ovaj;
+
     private boolean izmjena;
 
     private Korisnik korisnik;
@@ -61,6 +64,18 @@ public class KorisnikDialog extends JDialog {
 
     public void setKorisnik(Korisnik korisnik) {
         this.korisnik = korisnik;
+        if (korisnik != null) {
+            tfJMB.setText(korisnik.getJmb());
+            tfIme.setText(korisnik.getIme());
+            tfPrezime.setText(korisnik.getPrezime());
+            tfEmail.setText(korisnik.getEmail());
+            tfBrojTelefona.setText(korisnik.getBrojTelefona());
+            tfUsername.setText(korisnik.getUsername());
+        }
+    }
+
+    public void setIzmjena(boolean izmjena) {
+        this.izmjena = izmjena;
     }
 
     public boolean isOkPressed() {
