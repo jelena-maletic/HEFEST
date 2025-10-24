@@ -33,6 +33,8 @@ public class KorisnikFrame extends JFrame {
     private JButton btnPretrazi;
     private JButton btnPrikaziSve;
 
+    private JComboBox<String> cbFilterTip;
+
     @Autowired
     public KorisnikFrame(KorisnikService korisnikService) {
         this.korisnikService = korisnikService;
@@ -53,6 +55,13 @@ public class KorisnikFrame extends JFrame {
             korisnici = korisnikService.getAll();
         } else {
             korisnici = korisnikService.search(filter);
+        }
+
+        String tipKorisnika = (String) cbFilterTip.getSelectedItem();
+        if (tipKorisnika != null && !tipKorisnika.equalsIgnoreCase("Svi")) {
+            korisnici = korisnici.stream()
+                    .filter(k -> k.getClass().getSimpleName().equalsIgnoreCase(tipKorisnika))
+                    .toList();
         }
 
         KorisnikTableModel model = (KorisnikTableModel) table.getModel();
@@ -126,9 +135,20 @@ public class KorisnikFrame extends JFrame {
         btnPrikaziSve.setForeground(Color.WHITE);
         btnPrikaziSve.addActionListener(e -> {
             tfPretraga.setText("*");
+            cbFilterTip.setSelectedItem("Svi");
             osvjeziTabelu("*");
         });
         panelPretraga.add(btnPrikaziSve);
+
+        cbFilterTip = new JComboBox<>(new String[]{
+                "Svi", "Tehnicar", "Magacioner", "Poslovodja", "Knjigovodja", "Direktor"
+        });
+        cbFilterTip.setBounds(600, 37, 150, 23);
+        cbFilterTip.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        cbFilterTip.setBackground(Color.decode("#2E2F2E"));
+        cbFilterTip.setForeground(Color.WHITE);
+        panelPretraga.add(cbFilterTip);
+        cbFilterTip.addActionListener(e -> osvjeziTabelu(tfPretraga.getText()));
 
         return panelPretraga;
     }
@@ -152,6 +172,7 @@ public class KorisnikFrame extends JFrame {
             table.getColumnModel().getColumn(3).setPreferredWidth(180);
             table.getColumnModel().getColumn(4).setPreferredWidth(350);
             table.getColumnModel().getColumn(5).setPreferredWidth(100);
+            table.getColumnModel().getColumn(6).setPreferredWidth(100);
 
             JTableHeader header = table.getTableHeader();
             header.setBackground(Color.decode("#2E2F2E"));
