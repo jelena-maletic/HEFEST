@@ -1,9 +1,8 @@
 package org.etfbl.administrator.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.etfbl.administrator.model.Korisnik;
-import org.etfbl.administrator.model.Administrator;
-import org.etfbl.administrator.repository.KorisnikRepo;
+import org.etfbl.administrator.model.*;
+import org.etfbl.administrator.repository.*;
 import org.etfbl.administrator.repository.AdministratorRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,23 +17,53 @@ public class KorisnikService {
     private KorisnikRepo korisnikRepo;
 
     @Autowired
+    private DirektorRepo direktorRepo;
+    @Autowired
+    private KnjigovodjaRepo knjigovodjaRepo;
+    @Autowired
+    private MagacionerRepo magacionerRepo;
+    @Autowired
+    private PoslovodjaRepo poslovodjaRepo;
+    @Autowired
+    private TehnicarRepo tehnicarRepo;
+    @Autowired
+    private ZaposleniRepo zaposleniRepo;
+
+    @Autowired
     private AdministratorRepo administratorRepo;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
     @Transactional
-    public Korisnik addKorisnik(String jmb, String username, String rawPassword, String email, String ime, String prezime, String brojTelefona, String adminUsername){
+    public Korisnik addKorisnik(String jmb, String username, String rawPassword, String email, String ime, String prezime, String brojTelefona, String adminUsername, String tipKorisnika){
         Administrator admin = administratorRepo.findById(adminUsername).orElseThrow(() -> new EntityNotFoundException("Administrator nije pronađen"));
 
         if(korisnikRepo.existsById(jmb))
             throw new RuntimeException("Korisnik sa ovim JMB-om već postoji");
-
         String hashedPassword = passwordEncoder.encode(rawPassword);
-        Korisnik k = new Korisnik(jmb, username, hashedPassword, email, ime, prezime, brojTelefona);
-        k.setAdministrator(admin);
-
-        return korisnikRepo.save(k);
+        Korisnik korisnik;
+        switch (tipKorisnika.toLowerCase()) {
+            case "direktor":
+                korisnik = new Direktor(jmb, username, hashedPassword, email, ime, prezime, brojTelefona);
+                break;
+            case "tehnicar":
+                korisnik = new Tehnicar(jmb, username, hashedPassword, email, ime, prezime, brojTelefona);
+                break;
+            case "magacioner":
+                korisnik = new Magacioner(jmb, username, hashedPassword, email, ime, prezime, brojTelefona);
+                break;
+            case "knjigovodja":
+                korisnik = new Knjigovodja(jmb, username, hashedPassword, email, ime, prezime, brojTelefona);
+                break;
+            case "poslovodja":
+                korisnik = new Poslovodja(jmb, username, hashedPassword, email, ime, prezime, brojTelefona);
+                break;
+            default:
+                throw new IllegalArgumentException("Nepoznat tip korisnika: " + tipKorisnika);
+        }
+        korisnik.setAdministrator(admin);
+        return korisnikRepo.save(korisnik);
     }
 
     @Transactional
@@ -72,4 +101,5 @@ public class KorisnikService {
 
         return korisnikRepo.findByImeOrPrezimeOrUsernameContainingIgnoreCase(keyword, keyword, keyword);
     }
+
 }

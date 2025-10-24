@@ -3,6 +3,7 @@ package org.etfbl.administrator.model;
 import jakarta.persistence.*;
 
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "Korisnik")
 public class Korisnik {
     @Id

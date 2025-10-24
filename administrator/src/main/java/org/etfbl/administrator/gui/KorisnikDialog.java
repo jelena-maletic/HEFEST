@@ -36,6 +36,7 @@ public class KorisnikDialog extends JDialog {
     private JTextField tfIme;
     private JTextField tfPrezime;
     private JTextField tfBrojTelefona;
+    private JComboBox<String> cbTipKorisnika;
 
     public KorisnikDialog() {
         ovaj = this;
@@ -56,6 +57,7 @@ public class KorisnikDialog extends JDialog {
         tfIme.setText(korisnik.getIme());
         tfPrezime.setText(korisnik.getPrezime());
         tfBrojTelefona.setText(korisnik.getBrojTelefona());
+        cbTipKorisnika.setSelectedItem(korisnik.getClass().getSimpleName());
     }
 
     public String getDialogResult() {
@@ -71,6 +73,7 @@ public class KorisnikDialog extends JDialog {
             tfEmail.setText(korisnik.getEmail());
             tfBrojTelefona.setText(korisnik.getBrojTelefona());
             tfUsername.setText(korisnik.getUsername());
+            cbTipKorisnika.setSelectedItem(korisnik.getClass().getSimpleName());
         }
     }
 
@@ -95,6 +98,9 @@ public class KorisnikDialog extends JDialog {
         contentPanel.setLayout(new GridLayout(0, 1, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
 
+        contentPanel.add(formRow("Tip korisnika:", cbTipKorisnika = new JComboBox<>(
+                new String[]{"Tehnicar", "Poslovodja", "Magacioner", "Knjigovodja", "Direktor"}
+        )));
         contentPanel.add(formRow("JMB:", tfJMB = new JTextField()));
         contentPanel.add(formRow("Ime:", tfIme = new JTextField()));
         contentPanel.add(formRow("Prezime:", tfPrezime = new JTextField()));
@@ -152,16 +158,28 @@ public class KorisnikDialog extends JDialog {
                 return;
             }
 
+            String tip = (String) cbTipKorisnika.getSelectedItem();
+            boolean tipPromijenjen = !tip.equals(korisnik.getClass().getSimpleName());
+
             if (izmjena) {
-                korisnik.setUsername(username);
-                korisnik.setIme(ime);
-                korisnik.setPrezime(prezime);
-                korisnik.setEmail(email);
-                korisnik.setBrojTelefona(brojTelefona);
-                korisnikService.updateKorisnik(korisnik, password.isEmpty() ? null : password);
-            } else {
+                if (tipPromijenjen) {
+                    korisnikService.deleteKorisnik(jmb);
+
+                    String adminUsername = loginService.getAdministrator().getKorisnickoIme();
+                    korisnikService.addKorisnik(jmb, username, password, email, ime, prezime, brojTelefona, adminUsername, tip);
+                }
+                else {
+                    korisnik.setUsername(username);
+                    korisnik.setIme(ime);
+                    korisnik.setPrezime(prezime);
+                    korisnik.setEmail(email);
+                    korisnik.setBrojTelefona(brojTelefona);
+                    korisnikService.updateKorisnik(korisnik, password.isEmpty() ? null : password);
+                }
+            }
+            else {
                 String adminUsername = loginService.getAdministrator().getKorisnickoIme();
-                korisnikService.addKorisnik(jmb, username, password, email, ime, prezime, brojTelefona, adminUsername);
+                korisnikService.addKorisnik(jmb, username, password, email, ime, prezime, brojTelefona, adminUsername, tip);
             }
 
             dialogResult = "OK";

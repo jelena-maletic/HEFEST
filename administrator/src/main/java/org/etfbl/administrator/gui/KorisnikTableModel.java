@@ -5,7 +5,7 @@ import javax.swing.table.AbstractTableModel;
 import java.util.List;
 
 public class KorisnikTableModel extends AbstractTableModel {
-    private final String[] kolone = {"JMB", "Ime", "Prezime", "Username", "Email", "Broj telefona"};
+    private final String[] kolone = {"JMB", "Ime", "Prezime", "Username", "Email", "Broj telefona", "Tip korisnika"};
     private List<Korisnik> korisnici;
 
     public KorisnikTableModel(List<Korisnik> korisnici) {
@@ -50,6 +50,8 @@ public class KorisnikTableModel extends AbstractTableModel {
             return k.getEmail();
         else if (columnIndex == 5)
             return k.getBrojTelefona();
+        else if (columnIndex == 6)
+            return k.getClass().getSimpleName();
         else
             return null;
     }
