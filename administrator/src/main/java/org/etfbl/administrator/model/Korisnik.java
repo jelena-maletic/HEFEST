@@ -3,6 +3,7 @@ package org.etfbl.administrator.model;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "Korisnik")
 public class Korisnik {
     @Id
     @Column(name = "JMB")
