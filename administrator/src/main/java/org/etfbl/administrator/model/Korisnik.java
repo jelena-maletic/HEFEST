@@ -1,19 +1,29 @@
 package org.etfbl.administrator.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.*;
 
 @Entity
 public class Korisnik {
     @Id
+    @Column(name = "JMB")
     private String jmb;
+
+    @Column(name = "KorisnickoIme")
     private String username;
+
+    @Column(name = "Lozinka")
     private String password;
+
+    @Column(name = "Email")
     private String email;
+
+    @Column(name = "Ime")
     private String ime;
+
+    @Column(name = "Prezime")
     private String prezime;
+
+    @Column(name = "BrojTelefona")
     private String brojTelefona;
 
     @ManyToOne(optional = false)
