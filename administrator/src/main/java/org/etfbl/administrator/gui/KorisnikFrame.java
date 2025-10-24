@@ -1,6 +1,7 @@
 package org.etfbl.administrator.gui;
 
 import jakarta.annotation.PostConstruct;
+import org.etfbl.administrator.AdministratorApplication;
 import org.etfbl.administrator.model.Korisnik;
 import org.etfbl.administrator.service.KorisnikService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,7 +173,7 @@ public class KorisnikFrame extends JFrame {
             btnDodaj.setBackground(Color.WHITE);
             btnDodaj.setToolTipText("Dodaj novog korisnika");
             btnDodaj.addActionListener(e -> {
-                KorisnikDialog dialog = new KorisnikDialog();
+                KorisnikDialog dialog = AdministratorApplication.context.getBean(KorisnikDialog.class);
                 dialog.setVisible(true);
                 if (dialog.isOkPressed()) {
                     osvjeziTabelu("*");
@@ -198,7 +199,8 @@ public class KorisnikFrame extends JFrame {
                     return;
                 }
                 Korisnik odabrani = ((KorisnikTableModel) table.getModel()).getKorisnikAtRow(row);
-                KorisnikDialog dialog = new KorisnikDialog(odabrani);
+                KorisnikDialog dialog = AdministratorApplication.context.getBean(KorisnikDialog.class);
+                dialog.setKorisnik(odabrani);
                 dialog.setVisible(true);
                 if (dialog.isOkPressed()) {
                     osvjeziTabelu("*");

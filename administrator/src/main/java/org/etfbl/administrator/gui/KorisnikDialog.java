@@ -16,6 +16,7 @@ import java.awt.event.WindowEvent;
 public class KorisnikDialog extends JDialog {
     private KorisnikDialog ovaj;
     private boolean izmjena;
+
     private Korisnik korisnik;
     private String dialogResult = "Cancel";
 
@@ -56,6 +57,10 @@ public class KorisnikDialog extends JDialog {
 
     public String getDialogResult() {
         return dialogResult;
+    }
+
+    public void setKorisnik(Korisnik korisnik) {
+        this.korisnik = korisnik;
     }
 
     public boolean isOkPressed() {
