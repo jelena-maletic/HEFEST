@@ -17,19 +17,6 @@ public class KorisnikService {
     private KorisnikRepo korisnikRepo;
 
     @Autowired
-    private DirektorRepo direktorRepo;
-    @Autowired
-    private KnjigovodjaRepo knjigovodjaRepo;
-    @Autowired
-    private MagacionerRepo magacionerRepo;
-    @Autowired
-    private PoslovodjaRepo poslovodjaRepo;
-    @Autowired
-    private TehnicarRepo tehnicarRepo;
-    @Autowired
-    private ZaposleniRepo zaposleniRepo;
-
-    @Autowired
     private AdministratorRepo administratorRepo;
 
     @Autowired
