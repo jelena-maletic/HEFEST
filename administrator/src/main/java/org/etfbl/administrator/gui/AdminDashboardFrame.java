@@ -1,16 +1,15 @@
 package org.etfbl.administrator.gui;
 
 import org.etfbl.administrator.AdministratorApplication;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.etfbl.administrator.service.LoginService;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.net.URL;
 
 @Component
 public class AdminDashboardFrame extends JFrame {
@@ -20,10 +19,14 @@ public class AdminDashboardFrame extends JFrame {
     private JPanel mainPanel;
     private ImageIcon logoIcon;
 
-    public AdminDashboardFrame() {
+    private final LoginService loginService;
+
+    public AdminDashboardFrame(LoginService loginService) {
+        this.loginService = loginService;
+
         setTitle("Hefest - Admin");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setMinimumSize(new Dimension(1000, 700));
+        setMinimumSize(new Dimension(1050, 800));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -65,9 +68,13 @@ public class AdminDashboardFrame extends JFrame {
 
         // pregled button
         JButton pregledButton = novoDugme("Pregled korisnika");
+        pregledButton.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
-        // TODO
-        // pregledButton.addActionListener();
+        // open KorisnikFrame
+        pregledButton.addActionListener(e -> {
+            KorisnikFrame korisnikFrame = AdministratorApplication.context.getBean(KorisnikFrame.class);
+            korisnikFrame.setVisible(true);
+        });
 
         leftPanel.add(pregledButton);
         leftPanel.add(Box.createVerticalStrut(10));
@@ -76,12 +83,16 @@ public class AdminDashboardFrame extends JFrame {
         bottomPanel = new JPanel();
         bottomPanel.setBackground(Color.WHITE);
         bottomPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
-        bottomPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 15));
+
+        bottomPanel.setLayout(new BorderLayout(10, 0));
+        JLabel emptyLabel = new JLabel();
+        emptyLabel.setBorder(new EmptyBorder(10, 15, 10, 0));
 
         JLabel logoutLabel = new JLabel();
         ImageIcon logoutIcon = new ImageIcon(getClass().getResource("/images/logout-icon.png"));
         Image scaled = logoutIcon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
         logoutLabel.setIcon(new ImageIcon(scaled));
+        logoutLabel.setBorder(new EmptyBorder(10, 0, 10, 15));
 
         logoutLabel.setToolTipText("Odjava");
         logoutLabel.addMouseListener(new MouseAdapter() {
@@ -90,7 +101,8 @@ public class AdminDashboardFrame extends JFrame {
                 odjava();
             }
         });
-        bottomPanel.add(logoutLabel);
+        bottomPanel.add(emptyLabel, BorderLayout.WEST);
+        bottomPanel.add(logoutLabel, BorderLayout.EAST);
 
         wrapperPanel.add(leftPanel, BorderLayout.CENTER);
         wrapperPanel.add(bottomPanel, BorderLayout.SOUTH);
@@ -138,7 +150,14 @@ public class AdminDashboardFrame extends JFrame {
     }
 
     private void odjava() {
-        JOptionPane.showMessageDialog(this, "Odjavljeni ste sa sistema", "Poruka", JOptionPane.INFORMATION_MESSAGE);
+        loginService.logout();
+        // custom dialog
+        JOptionPane optionPane = new JOptionPane("Odjavljeni ste sa sistema", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
+        JDialog dialog = optionPane.createDialog(this, "Poruka");
+        dialog.setSize(230, 120);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+
         dispose();
         SwingUtilities.invokeLater(() -> {
             LoginFrame login = AdministratorApplication.context.getBean(LoginFrame.class);
@@ -146,5 +165,4 @@ public class AdminDashboardFrame extends JFrame {
             login.setVisible(true);
         });
     }
-
 }

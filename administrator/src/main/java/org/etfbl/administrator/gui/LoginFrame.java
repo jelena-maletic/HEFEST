@@ -163,7 +163,6 @@ public class LoginFrame extends JFrame {
 
         if (success) {
             dispose();
-            dispose();
             SwingUtilities.invokeLater(() -> {
                 AdminDashboardFrame dashboard = AdministratorApplication.context.getBean(AdminDashboardFrame.class);
                 dashboard.setVisible(true);

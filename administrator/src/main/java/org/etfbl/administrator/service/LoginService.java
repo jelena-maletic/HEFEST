@@ -6,25 +6,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class LoginService {
 
     @Autowired
     private AdministratorRepo administratorRepo;
 
+    private Administrator loggedInAdmin;
+
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
     public boolean login(String korisnickoIme, String lozinka) {
-        Optional<Administrator> optionalAdministrator = administratorRepo.findById(korisnickoIme);
-        if(optionalAdministrator.isEmpty()) {
-            return false;
+        Administrator admin = administratorRepo.findById(korisnickoIme).orElse(null);
+
+        if(admin != null && passwordEncoder.matches(lozinka, admin.getLozinka())) {
+            loggedInAdmin = admin;
+            return true;
         }
-        Administrator administrator = optionalAdministrator.get();
-        return passwordEncoder.matches(lozinka, administrator.getLozinka());
+
+        return false;
     }
 
+    public Administrator getAdministrator() {
+        return loggedInAdmin;
+    }
 
+    public void logout() {
+        loggedInAdmin = null;
+    }
 }
