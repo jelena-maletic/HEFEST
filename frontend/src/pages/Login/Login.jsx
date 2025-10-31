@@ -1,11 +1,11 @@
 import { useState } from "react";
 import "./Login.css";
-import hefestLogo from "./assets/hefest-logo.png";
-import loginIcon from "./assets/login-icon.png";
-import lockIcon from "./assets/lock-icon.png";
-import usernameIcon from "./assets/user.svg";
-import eyeOpen from "./assets/eye.svg";
-import eyeClosed from "./assets/eye-off.svg";
+import hefestLogo from "../../assets/hefest-logo.png";
+import loginIcon from "../../assets/login-icon.png";
+import lockIcon from "../../assets/lock-icon.png";
+import usernameIcon from "../../assets/user.svg";
+import eyeOpen from "../../assets/eye.svg";
+import eyeClosed from "../../assets/eye-off.svg";
 
 function Login() {
     const [showPassword, setShowPassword] = useState(false);
