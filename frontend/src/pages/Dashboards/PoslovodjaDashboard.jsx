@@ -1,5 +1,5 @@
 import { useState } from "react";
-import './PoslovodjaDashboard.css';
+import './Dashboards.css';
 import hefestLogo from '../../assets/hefest-logo.png';
 import hefestLogoInverted from '../../assets/hefest-logo-inverted.png';
 import statusIcon from "../../assets/user-check.svg";
