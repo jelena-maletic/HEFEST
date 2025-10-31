@@ -1,0 +1,245 @@
+.app-container {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #f3f3f3;
+}
+
+/* Gornji horizontalni bar */
+.top-bar {
+    height: 100px;
+    width: 100%;
+    background-color: #e8e8e8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #353535;
+    padding: 0 25px;
+}
+
+.home-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    transition: transform 0.2s ease;
+    padding-left: 50px;
+}
+
+.home-button:hover .logo {
+    transform: scale(1.05);
+}
+
+.logo {
+    width: 80px;
+    height: auto;
+    transition: transform 0.2s ease;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #333;
+    padding-right: 40px;
+}
+
+.user-info span {
+    font-family: "Segoe UI", sans-serif;
+    letter-spacing: 0.3px;
+}
+
+.user-info img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    padding: 2px;
+    object-fit: cover;
+    background-color: #f7f7f7;
+}
+
+
+/* content area = sidebar + home ekran */
+.content-area {
+    display: flex;
+    flex: 1;
+    height: calc(100vh - 100px);
+}
+
+.sidebar {
+    width: 230px;
+    background-color: #e8e8e8;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.menu {
+    flex-grow: 1;
+    padding: 0;
+    margin: 0;
+}
+
+.menu button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    color: #3a3a3a;
+    width: 100%;
+    padding: 12px 10px 12px 30px;
+    border: none;
+    background-color: #e8e8e8;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: left;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.menu button:hover {
+    background-color: #353535;
+    color: white;
+}
+
+.menu button img {
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+    margin-right: 10px;
+}
+
+/* Dno sidebar-a */
+.bottom-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px;
+    background-color: #e8e8e8;
+}
+
+.status-icon {
+    width: 15px;
+    height: 15px;
+    object-fit: contain;
+    margin-right: 8px;
+    margin-left: 8px;
+    margin-bottom: 4px;
+    vertical-align: middle;
+}
+
+/* Status toggle */
+.status-toggle label {
+    color: #000;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 13px;
+}
+
+.toggle-switch {
+    position: relative;
+    width: 63px;
+    height: 24px;
+    background-color: #353535;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
+}
+
+.slider {
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: white;
+    transition: transform 0.3s ease;
+}
+
+.toggle-switch.active {
+    background-color: #b3b3b3;
+}
+
+.toggle-switch.active .slider {
+    transform: translateX(38px);
+}
+
+.status-text {
+    position: absolute;
+    font-size: 7px;
+    font-weight: 600;
+    z-index: 2;
+    user-select: none;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.toggle-switch:not(.active) .status-text {
+    right: 6px;
+    color: white;
+}
+
+.toggle-switch.active .status-text {
+    left: 6px;
+    color: black;
+}
+
+/* Ikonice ispod toggle-a */
+.bottom-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    padding-left: 10px;
+}
+
+.icon-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    color: #000;
+    transition: transform 0.2s ease;
+    padding-left: 0;
+}
+
+.icon-btn:hover {
+    transform: scale(1.05);
+}
+
+.icon-img {
+    object-fit: contain;
+    display: block;
+    width: 14px;
+    height: 14px;
+    margin-bottom: 0;
+    position: relative;
+    top: 1px;
+}
+
+/* Glavni dio ekrana */
+.home-screen {
+    flex: 1;
+    position: relative;
+    background-color: #f4f4f4;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 40%;
+    opacity: 0.35;
+}
