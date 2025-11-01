@@ -38,6 +38,13 @@
     transition: transform 0.2s ease;
 }
 
+.page-title h3 {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    margin-left: 20px;
+}
+
 .user-info {
     display: flex;
     align-items: center;
@@ -63,6 +70,11 @@
     background-color: #f7f7f7;
 }
 
+/* Ne prikazuje se border dugmeta nakon što pritisnemo na dugme */
+button:focus {
+    outline: none;
+    box-shadow: none;
+}
 
 /* content area = sidebar + home ekran */
 .content-area {
@@ -242,4 +254,9 @@
     background-position: center center;
     background-size: 40%;
     opacity: 0.35;
+}
+
+.home-screen.content-active {
+    opacity: 1;
+    background-image: none;
 }
