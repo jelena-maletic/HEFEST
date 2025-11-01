@@ -20,6 +20,9 @@ import seeRequestsIconInverted from "../../assets/pregled-zahtjeva-inverted.svg"
 function MagacionerDashboard() {
     const [logoSrc, setLogoSrc] = useState(hefestLogo);
 
+    const [activeScreen, setActiveScreen] = useState("home");
+
+
     const menuItems = [
         { label: "Radna oprema", icon: toolIcon, iconHover: toolIconInverted },
         { label: "Vozila", icon: truckIcon, iconHover: truckIconInverted },
@@ -36,6 +39,7 @@ function MagacionerDashboard() {
                     className="home-button"
                     onMouseEnter={() => setLogoSrc(hefestLogoInverted)}
                     onMouseLeave={() => setLogoSrc(hefestLogo)}
+                    onClick={() => setActiveScreen("home")}
                 >
                     <img src={logoSrc} alt="HEFEST Logo" className="logo" />
                 </button>

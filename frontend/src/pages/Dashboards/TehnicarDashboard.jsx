@@ -15,6 +15,8 @@ function TehnicarDashboard() {
     const [isActive, setIsActive] = useState(false);
     const [logoSrc, setLogoSrc] = useState(hefestLogo);
 
+    const [activeScreen, setActiveScreen] = useState("home");
+
     const toggleStatus = () => setIsActive(!isActive);
 
     const menuItems = [
@@ -30,6 +32,7 @@ function TehnicarDashboard() {
                     className="home-button"
                     onMouseEnter={() => setLogoSrc(hefestLogoInverted)}
                     onMouseLeave={() => setLogoSrc(hefestLogo)}
+                    onClick={() => setActiveScreen("home")}
                 >
                     <img src={logoSrc} alt="HEFEST Logo" className="logo" />
                 </button>

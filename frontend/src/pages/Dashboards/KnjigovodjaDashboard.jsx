@@ -13,6 +13,8 @@ import seeReportsIconInverted from "../../assets/pregled-izvjestaja-inverted.svg
 function KnjigovodjaDashboard() {
     const [logoSrc, setLogoSrc] = useState(hefestLogo);
 
+    const [activeScreen, setActiveScreen] = useState("home");
+
     const menuItems = [
         { label: "Zaposleni", icon: usersIcon, iconHover: usersIconInverted },
         { label: "Izvještaji", icon: seeReportsIcon, iconHover: seeReportsIconInverted }
@@ -26,6 +28,7 @@ function KnjigovodjaDashboard() {
                     className="home-button"
                     onMouseEnter={() => setLogoSrc(hefestLogoInverted)}
                     onMouseLeave={() => setLogoSrc(hefestLogo)}
+                    onClick={() => setActiveScreen("home")}
                 >
                     <img src={logoSrc} alt="HEFEST Logo" className="logo" />
                 </button>
