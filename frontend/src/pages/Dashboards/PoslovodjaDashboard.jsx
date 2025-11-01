@@ -1,5 +1,6 @@
 import { useState } from "react";
 import './Dashboards.css';
+import MapView from "../../components/MapView.jsx";
 import hefestLogo from '../../assets/hefest-logo.png';
 import hefestLogoInverted from '../../assets/hefest-logo-inverted.png';
 import statusIcon from "../../assets/user-check.svg";
@@ -25,6 +26,7 @@ import projectIconInverted from "../../assets/projekti-inverted.svg";
 function PoslovodjaDashboard() {
     const [isActive, setIsActive] = useState(false);
     const [logoSrc, setLogoSrc] = useState(hefestLogo);
+    const [activeScreen, setActiveScreen] = useState("home");
 
     const toggleStatus = () => setIsActive(!isActive);
 
@@ -46,9 +48,14 @@ function PoslovodjaDashboard() {
                     className="home-button"
                     onMouseEnter={() => setLogoSrc(hefestLogoInverted)}
                     onMouseLeave={() => setLogoSrc(hefestLogo)}
+                    onClick={() => setActiveScreen("home")}
                 >
                     <img src={logoSrc} alt="HEFEST Logo" className="logo" />
                 </button>
+
+                <div className="page-title">
+                    {activeScreen !== "home" && <h3>{activeScreen}</h3>}
+                </div>
 
                 <div className="user-info">
                     <span>Poslovođa</span>
@@ -63,7 +70,8 @@ function PoslovodjaDashboard() {
                         {menuItems.map((item, index) => (
                             <button
                                 key={index}
-                                className="menu-btn"
+                                className={`menu-btn ${activeScreen === item.label ? "active" : ""}`}
+                                onClick={() => setActiveScreen(item.label)}
                                 onMouseEnter={(e) => e.currentTarget.querySelector("img").src = item.iconHover}
                                 onMouseLeave={(e) => e.currentTarget.querySelector("img").src = item.icon}
                             >
@@ -103,7 +111,13 @@ function PoslovodjaDashboard() {
                     </div>
                 </aside>
 
-                <main className="home-screen" style={{ backgroundImage: `url(${hefestLogo}`}}></main>
+                <main className={`home-screen ${activeScreen !== "home" ? "content-active" : ""}`}
+                      style={{
+                          backgroundImage: activeScreen === "home" ? `url(${hefestLogo})` : "none"
+                      }}
+                >
+                    {activeScreen === "Mapa sa radilištima" && <MapView />}
+                </main>
             </div>
         </div>
     );

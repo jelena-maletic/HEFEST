@@ -1,5 +1,6 @@
 import { useState } from "react";
 import './Dashboards.css';
+import MapView from "../../components/MapView.jsx";
 import hefestLogo from '../../assets/hefest-logo.png';
 import hefestLogoInverted from '../../assets/hefest-logo-inverted.png';
 import keyIcon from "../../assets/key-icon.svg";
@@ -20,6 +21,8 @@ import seeReportsIconInverted from "../../assets/pregled-izvjestaja-inverted.svg
 function DirektorDashboard() {
     const [logoSrc, setLogoSrc] = useState(hefestLogo);
 
+    const [activeScreen, setActiveScreen] = useState("home")
+
     const menuItems = [
         { label: "Kalendar", icon: calendarIcon, iconHover: calendarIconInverted },
         { label: "Zaposleni", icon: usersIcon, iconHover: usersIconInverted },
@@ -36,9 +39,14 @@ function DirektorDashboard() {
                     className="home-button"
                     onMouseEnter={() => setLogoSrc(hefestLogoInverted)}
                     onMouseLeave={() => setLogoSrc(hefestLogo)}
+                    onClick={() => setActiveScreen("home")}
                 >
                     <img src={logoSrc} alt="HEFEST Logo" className="logo" />
                 </button>
+
+                <div className="page-title">
+                    {activeScreen !== "home" && <h3>{activeScreen}</h3>}
+                </div>
 
                 <div className="user-info">
                     <span>Direktor</span>
@@ -53,7 +61,8 @@ function DirektorDashboard() {
                         {menuItems.map((item, index) => (
                             <button
                                 key={index}
-                                className="menu-btn"
+                                className={`menu-btn ${activeScreen === item.label ? "active" : ""}`}
+                                onClick={() => setActiveScreen(item.label)}
                                 onMouseEnter={(e) => e.currentTarget.querySelector("img").src = item.iconHover}
                                 onMouseLeave={(e) => e.currentTarget.querySelector("img").src = item.icon}
                             >
@@ -77,7 +86,13 @@ function DirektorDashboard() {
                     </div>
                 </aside>
 
-                <main className="home-screen" style={{ backgroundImage: `url(${hefestLogo}`}}></main>
+                <main className={`home-screen ${activeScreen !== "home" ? "content-active" : ""}`}
+                      style={{
+                          backgroundImage: activeScreen === "home" ? `url(${hefestLogo})` : "none"
+                      }}
+                >
+                    {activeScreen === "Mapa sa radilištima" && <MapView />}
+                </main>
             </div>
         </div>
     );
