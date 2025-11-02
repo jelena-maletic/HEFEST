@@ -1,6 +1,7 @@
 import { useState } from "react";
 import './Dashboards.css';
 import MapView from "../../components/MapView.jsx";
+import Calendar from "../../components/Calendar.jsx";
 import hefestLogo from '../../assets/hefest-logo.png';
 import hefestLogoInverted from '../../assets/hefest-logo-inverted.png';
 import keyIcon from "../../assets/key-icon.svg";
@@ -92,6 +93,7 @@ function DirektorDashboard() {
                       }}
                 >
                     {activeScreen === "Mapa sa radilištima" && <MapView />}
+                    {activeScreen === "Kalendar" && <Calendar />}
                 </main>
             </div>
         </div>
