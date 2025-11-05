@@ -1,3 +1,4 @@
+import {useEffect, useState} from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -5,35 +6,17 @@ import "./MapView.css"
 import greenPinIcon from "../assets/zeleni-pin.svg";
 import grayPinIcon from "../assets/sivi-pin.svg";
 
-/* TODO: MOCKDATA (za svrhe testiranja) */
-const projekti = [
-    {
-        id: 1,
-        naziv: "MojMarket",
-        lokacija: [44.7722, 17.1910],
-        pocetakRada: "2025-09-01",
-        krajRada: null,
-        rok: "2025-12-31",
-    },
-    {
-        id: 2,
-        naziv: "Crvena Jabuka",
-        lokacija: [44.7750, 17.2050],
-        pocetakRada: "2024-05-15",
-        krajRada: "2025-02-01",
-        rok: "2025-02-01",
-    },
-    {
-        id: 3,
-        naziv: "Poslovni prostor",
-        lokacija: [44.7805, 17.1750],
-        pocetakRada: "2025-10-10",
-        krajRada: null,
-        rok: "2026-01-15",
-    },
-];
 
 export default function MapView() {
+    const [projekti, setProjekti] = useState([]);
+
+    useEffect(() => {
+        fetch("http://localhost:8080/api/projekti")
+            .then((response) => response.json())
+            .then((data) => setProjekti(data))
+            .catch((error) => console.log("Greška pri dohvatanju projekata:", error));
+    }, []);
+
     const danas = new Date();
 
     const napraviIkonu = (aktivno) =>
