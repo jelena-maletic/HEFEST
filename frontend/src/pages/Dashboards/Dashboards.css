@@ -27,6 +27,8 @@
     transition: transform 0.2s ease;
     padding-left: 0;
     margin-top: 70px;
+    margin-bottom: 70px;
+    margin-left: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
