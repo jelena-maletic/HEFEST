@@ -86,10 +86,13 @@ body, html {
     background-color: white;
     cursor: pointer;
     font-size: 14px;
+    color: gray;
 }
 
 .login-button:hover {
     background-color: #f0f0f0;
+    color: #424242;
+    border-color: #424242;
 }
 
 /*
