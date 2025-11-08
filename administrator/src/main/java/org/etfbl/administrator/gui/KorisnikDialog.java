@@ -159,7 +159,7 @@ public class KorisnikDialog extends JDialog {
             }
 
             String tip = (String) cbTipKorisnika.getSelectedItem();
-            boolean tipPromijenjen = !tip.equals(korisnik.getClass().getSimpleName());
+            boolean tipPromijenjen = izmjena && korisnik != null && !tip.equals(korisnik.getClass().getSimpleName());
 
             if (izmjena) {
                 if (tipPromijenjen) {
