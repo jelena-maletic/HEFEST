@@ -59,7 +59,7 @@ function Login() {
 
     return (
         <div className="login-container">
-            <img src={hefestLogo} alt="Hefest logo" className="logo" />
+            <img src={hefestLogo} alt="Hefest logo" className="logo-icon" />
             <h2 className="title">Sign in</h2>
 
             <img src={loginIcon} alt="User icon" className="login-icon" />
