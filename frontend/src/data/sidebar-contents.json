@@ -1,0 +1,138 @@
+{
+  "direktor": [
+    {
+      "label": "Kalendar",
+      "icon": "calendar",
+      "iconHover": "calendar-inverted",
+      "tag": "calendar"
+    },
+    {
+      "label": "Zaposleni",
+      "icon": "users",
+      "iconHover": "users-inverted",
+      "tag": "employees"
+    },
+    {
+      "label": "Projekti",
+      "icon": "projects",
+      "iconHover": "projects-inverted",
+      "tag": "projects"
+    },
+    {
+      "label": "Mapa sa radilištima",
+      "icon": "map",
+      "iconHover": "map-inverted",
+      "tag": "map"
+    },
+    {
+      "label": "Izvještaji",
+      "icon": "report-overview",
+      "iconHover": "report-overview-inverted",
+      "tag": "report-overview"
+    }
+  ],
+  "knjigovodja": [
+    {
+      "label": "Zaposleni",
+      "icon": "users",
+      "iconHover": "users-inverted",
+      "tag": "employees"
+    },
+    {
+      "label": "Izvještaji",
+      "icon": "report-overview",
+      "iconHover": "report-overview-inverted",
+      "tag": "report-overview"
+    }
+  ],
+  "magacioner": [
+    {
+      "label": "Radna oprema",
+      "icon": "tools",
+      "iconHover": "tools-inverted",
+      "tag": "tools"
+    },
+    {
+      "label": "Vozila",
+      "icon": "truck",
+      "iconHover": "truck-inverted",
+      "tag": "vehicles"
+    },
+    {
+      "label": "Materijal",
+      "icon": "material",
+      "iconHover": "material-inverted",
+      "tag": "materials"
+    },
+    {
+      "label": "Zaduženi resursi",
+      "icon": "taken-resources",
+      "iconHover": "taken-resources-inverted",
+      "tag": "taken-resources"
+    },
+    {
+      "label": "Zahtjevi za resursima",
+      "icon": "request-overview",
+      "iconHover": "request-overview-inverted",
+      "tag": "request-overview"
+    }
+  ],
+  "poslovodja": [
+    {
+      "label": "Dnevni zadaci",
+      "icon": "tasks",
+      "iconHover": "tasks-inverted",
+      "tag": "tasks"
+    },
+    {
+      "label": "Kreiranje izvještaja",
+      "icon": "add-report",
+      "iconHover": "add-report-inverted",
+      "tag": "add-report"
+    },
+    {
+      "label": "Mapa sa radilištima",
+      "icon": "map",
+      "iconHover": "map-inverted",
+      "tag": "map"
+    },
+    {
+      "label": "Kreiranje zahtjeva za resursima",
+      "icon": "new-request",
+      "iconHover": "new-request-inverted",
+      "tag": "new-request"
+    },
+    {
+      "label": "Tehničari",
+      "icon": "users",
+      "iconHover": "users-inverted",
+      "tag": "technicians"
+    },
+    {
+      "label": "Izvještaji",
+      "icon": "report-overview",
+      "iconHover": "report-overview-inverted",
+      "tag": "report-overview"
+    },
+    {
+      "label": "Dodijeljeni projekti",
+      "icon": "projects",
+      "iconHover": "projects-inverted",
+      "tag": "projects"
+    }
+  ],
+  "tehnicar": [
+    {
+      "label": "Dnevni zadaci",
+      "icon": "tasks",
+      "iconHover": "tasks-inverted",
+      "tag": "tasks"
+    },
+    {
+      "label": "Kreiranje izvještaja",
+      "icon": "add-report",
+      "iconHover": "add-report-inverted",
+      "tag": "add-report"
+    }
+  ]
+}

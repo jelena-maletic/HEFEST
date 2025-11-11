@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../auth/authService";
-import { saveAuth } from "../../auth/auth";
+// import { login } from "../../auth/authService";
+// import { saveAuth } from "../../auth/auth";
 import "./Login.css";
-import hefestLogo from "../../assets/hefest-logo.png";
+import hefestLogo from "../../assets/hefest-logo.svg";
 import loginIcon from "../../assets/login-icon.png";
 import lockIcon from "../../assets/lock-icon.png";
 import usernameIcon from "../../assets/user.svg";
@@ -21,39 +21,40 @@ function Login() {
         e.preventDefault();
         setError("");
 
-        if (!username.trim() || !password.trim()) {
-            setError("Please enter username and password");
-            return;
-        }
+        // if (!username.trim() || !password.trim()) {
+        //     setError("Please enter username and password");
+        //     return;
+        // }
 
-        try {
-            const res = await login(username, password);
-            const { token, role } = res.data;
-            saveAuth(token, username, role);
-            switch (role) {
-                case "ROLE_DIREKTOR":
-                    navigate("/direktor/dashboard");
-                    break;
-                case "ROLE_MAGACIONER":
-                    navigate("/magacioner/dashboard");
-                    break;
-                case "ROLE_TEHNICAR":
-                    navigate("/tehnicar/dashboard");
-                    break;
-                case "ROLE_POSLOVODJA":
-                    navigate("/poslovodja/dashboard");
-                    break;
-                case "ROLE_KNJIGOVODJA":
-                    navigate("/knjigovodja/dashboard");
-                    break;
-                default:
-                    setError("Unknown role — access denied");
-                    sessionStorage.clear();
-                    break;
-            }
-        } catch (err) {
-            setError(err.response?.data?.message || "Invalid username or password");
-        }
+        // try {
+        //     const res = await login(username, password);
+        //     const { token, role } = res.data;
+        //     saveAuth(token, username, role);
+        //     switch (role) {
+        //         case "ROLE_DIREKTOR":
+        //             navigate("/direktor/dashboard");
+        //             break;
+        //         case "ROLE_MAGACIONER":
+        //             navigate("/magacioner/dashboard");
+        //             break;
+        //         case "ROLE_TEHNICAR":
+        //             navigate("/tehnicar/dashboard");
+        //             break;
+        //         case "ROLE_POSLOVODJA":
+        //             navigate("/poslovodja/dashboard");
+        //             break;
+        //         case "ROLE_KNJIGOVODJA":
+        //             navigate("/knjigovodja/dashboard");
+        //             break;
+        //         default:
+        //             setError("Unknown role — access denied");
+        //             sessionStorage.clear();
+        //             break;
+        //     }
+        // } catch (err) {
+        //     setError(err.response?.data?.message || "Invalid username or password");
+        // }
+        navigate("/dashboard");
     };
 
 

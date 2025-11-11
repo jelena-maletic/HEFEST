@@ -1,0 +1,37 @@
+.app-container {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #f3f3f3;
+}
+
+/* Ne prikazuje se border dugmeta nakon što pritisnemo na dugme */
+button:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* content area = sidebar + home ekran */
+.content-area {
+    display: flex;
+    flex: 1;
+    height: calc(100vh - 100px);
+}
+
+/* Glavni dio ekrana */
+.home-screen {
+    flex: 1;
+    position: relative;
+    background-color: #f4f4f4;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 40%;
+    opacity: 0.35;
+}
+
+.home-screen.content-active {
+    opacity: 1;
+    background-image: none;
+}

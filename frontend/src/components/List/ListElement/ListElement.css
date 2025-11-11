@@ -1,0 +1,85 @@
+.list_element{
+    margin: 2em;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+    align-items: center;
+    min-width: 50em;
+    min-height: 9em;
+    padding: 0.6em 0.6em;
+    font-size: 10px;
+    font-family: inherit;
+    background-color: #DDDDDD;
+    color: #2E2F2E;
+    cursor: pointer;
+    transition: .25s;
+}
+.list_element:hover {
+    border-color: #DDDDDD;
+    background-color: #2E2F2E;
+    color: #DDDDDD;
+}
+.list_element:focus,
+.list_element:focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+}
+
+.list_element_info{
+    display: flex;
+    flex-direction: column;
+}
+.list_element_title{
+    min-width: 120px;
+    min-height: 22px;
+    margin: 3px;
+    font-size: 16px;
+    font-weight: bold;
+    flex-direction: column;
+    font-family: inherit;
+    background-color: inherit;
+    border-color: transparent;
+    border-width: 0;
+    cursor: pointer;
+    transition: inherit;
+}
+
+.list_element_detail{
+    min-width: 100px;
+    min-height: 20px;
+    margin: 4px;
+    font-size: 10px;
+    font-weight: 500;
+    font-family: inherit;
+    flex-direction: column;
+    color: #8F8F8F;
+    background-color: inherit;
+    border-color: transparent;
+    border-width: 0;
+    cursor: pointer;
+    transition: inherit;
+}
+
+.list_element_subline{
+    min-width: 100px;
+    min-height: 20px;
+    margin: 4px;
+    font-size: 10px;
+    font-weight: bold;{}
+    font-family: inherit;
+    background-color: inherit;
+    border-color: transparent;
+    border-width: 0;
+    cursor: pointer;
+    transition: inherit;
+}
+
+.list_image{
+    align-self: flex-start;
+    flex-direction: row;
+    width: 65px;
+    height: 100%;
+    transition: inherit;
+}

@@ -1,45 +1,27 @@
-/* import './App.css'*/
+import './App.css'
 import Login from "./pages/Login/Login.jsx";
+import sidebarContents from "./data/sidebar-contents.json"
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
-import ProtectedRoute from "./auth/ProtectedRoute.jsx";
-import DirektorDashboard from "./pages/Dashboards/DirektorDashboard.jsx";
-import MagacionerDashboard from "./pages/Dashboards/MagacionerDashboard.jsx";
-import TehnicarDashboard from "./pages/Dashboards/TehnicarDashboard.jsx";
-import PoslovodjaDashboard from "./pages/Dashboards/PoslovodjaDashboard.jsx";
-import KnjigovodjaDashboard from "./pages/Dashboards/KnjigovodjaDashboard.jsx";
+import {Landing} from "./pages/Landing/Landing.jsx";
+import {Dashboard} from "./pages/Dashboard/Dashboard.jsx";
+import {useState} from "react";
 
 
 function App() {
+    const [role, setRole] = useState("def");
+    const handleRole = (data) => {
+        setRole(data);
+    }
+
     return(
         <BrowserRouter>
             <Routes>
+                <Route path="/" element={<Landing roleHandle={handleRole} />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/direktor/dashboard" element={
-                    <ProtectedRoute allowedRoles={["ROLE_DIREKTOR"]}>
-                        <DirektorDashboard />
-                    </ProtectedRoute>
+                <Route path="/dashboard" element={
+                        <Dashboard sidebarContents={sidebarContents} role={role}/>
                 } />
-                <Route path="/magacioner/dashboard" element={
-                    <ProtectedRoute allowedRoles={["ROLE_MAGACIONER"]}>
-                        <MagacionerDashboard />
-                    </ProtectedRoute>
-                } />
-                <Route path="/tehnicar/dashboard" element={
-                    <ProtectedRoute allowedRoles={["ROLE_TEHNICAR"]}>
-                        <TehnicarDashboard />
-                    </ProtectedRoute>
-                } />
-                <Route path="/poslovodja/dashboard" element={
-                    <ProtectedRoute allowedRoles={["ROLE_POSLOVODJA"]}>
-                        <PoslovodjaDashboard />
-                    </ProtectedRoute>
-                } />
-                <Route path="/knjigovodja/dashboard" element={
-                    <ProtectedRoute allowedRoles={["ROLE_KNJIGOVODJA"]}>
-                        <KnjigovodjaDashboard />
-                    </ProtectedRoute>
-                } />
-                <Route path="*" element={<Navigate to="/login" replace />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </BrowserRouter>
     )

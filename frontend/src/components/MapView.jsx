@@ -3,8 +3,8 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import "./MapView.css"
-import greenPinIcon from "../assets/zeleni-pin.svg";
-import grayPinIcon from "../assets/sivi-pin.svg";
+import greenPinIcon from "../assets/green-pin.svg";
+import grayPinIcon from "../assets/gray-pin.svg";
 
 
 export default function MapView() {

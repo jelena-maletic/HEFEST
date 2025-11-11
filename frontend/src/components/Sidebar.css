@@ -1,102 +1,9 @@
-.app-container {
-    display: flex;
-    flex-direction: column;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    background-color: #f3f3f3;
-}
-
-/* Gornji horizontalni bar */
-.top-bar {
-    height: 100px;
-    width: 100%;
-    background-color: #e8e8e8;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #353535;
-    padding: 0 25px;
-}
-
-.home-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    outline: none;
-    transition: transform 0.2s ease;
-    padding-left: 0;
-    margin-top: 70px;
-    margin-bottom: 70px;
-    margin-left: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.home-button:hover .logo {
-    transform: scale(1.05);
-}
-
-.logo {
-    width: 80px;
-    height: 80px;
-    max-width: 100%;
-    object-fit: contain;
-    display: block;
-    transition: transform 0.2s ease;
-}
-
-.page-title h3 {
-    font-size: 16px;
-    font-weight: 500;
-    color: #333;
-    margin-left: 20px;
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 12px;
-    font-weight: 500;
-    color: #333;
-    padding-right: 40px;
-}
-
-.user-info span {
-    font-family: "Segoe UI", sans-serif;
-    letter-spacing: 0.3px;
-}
-
-.user-info img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 1px solid #ccc;
-    padding: 2px;
-    object-fit: cover;
-    background-color: #f7f7f7;
-}
-
-/* Ne prikazuje se border dugmeta nakon što pritisnemo na dugme */
-button:focus {
-    outline: none;
-    box-shadow: none;
-}
-
-/* content area = sidebar + home ekran */
-.content-area {
-    display: flex;
-    flex: 1;
-    height: calc(100vh - 100px);
-}
-
 .sidebar {
     width: 230px;
     background-color: #e8e8e8;
     display: flex;
     flex-direction: column;
+    font-family: inherit;
     justify-content: space-between;
 }
 
@@ -111,7 +18,7 @@ button:focus {
     align-items: center;
     justify-content: flex-start;
     gap: 10px;
-    color: #3a3a3a;
+    color: #2E2F2E;
     width: 100%;
     padding: 12px 10px 12px 30px;
     border: none;
@@ -124,7 +31,7 @@ button:focus {
 }
 
 .menu button:hover {
-    background-color: #353535;
+    background-color: #2E2F2E;
     color: white;
 }
 
@@ -156,7 +63,7 @@ button:focus {
 
 /* Status toggle */
 .status-toggle label {
-    color: #000;
+    color: #2E2F2E;
     font-weight: 500;
     display: flex;
     align-items: center;
@@ -215,7 +122,7 @@ button:focus {
 
 .toggle-switch.active .status-text {
     left: 6px;
-    color: black;
+    color: #2E2F2E;
 }
 
 /* Ikonice ispod toggle-a */
@@ -235,7 +142,7 @@ button:focus {
     border: none;
     cursor: pointer;
     font-size: 13px;
-    color: #000;
+    color: #2E2F2E;
     transition: transform 0.2s ease;
     padding-left: 0;
 }
@@ -252,20 +159,4 @@ button:focus {
     margin-bottom: 0;
     position: relative;
     top: 1px;
-}
-
-/* Glavni dio ekrana */
-.home-screen {
-    flex: 1;
-    position: relative;
-    background-color: #f4f4f4;
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: 40%;
-    opacity: 0.35;
-}
-
-.home-screen.content-active {
-    opacity: 1;
-    background-image: none;
 }

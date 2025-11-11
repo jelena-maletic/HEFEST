@@ -1,0 +1,18 @@
+.list{
+    display: contents;
+    align-items: center;
+    flex-direction: column;
+    font-family: inherit;
+    gap: 0;
+}
+
+.list-title{
+    font-size: 2em;
+    align-self: flex-start;
+}
+
+.divider{
+    border: 1px solid #2E2F2E;
+    margin: 0;
+    width: 100%;
+}
