@@ -4,73 +4,60 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import eng from "@fullcalendar/core/locales/en-gb.cjs";
 import "./Calendar.css";
 
+import {fetchProjects} from "../services/apiHelpers.js";
+
 function Calendar() {
     const [events, setEvents] = useState([]);
     const [selectedProject, setSelectedProject] = useState(null);
 
-    // TODO zamijeniti hardkodovane podatke sa citanjem podataka iz baze !!!
-    // TODO formatirati datume
-    // Ovi podaci sluze samo za testiranje, kasnije ce biti implementirano ucitavanje iz baze
+    // TODO srediti lokaciju (trenutno su koordinate)
     useEffect(() => {
-        const projects = [
-            {
-                id: "1",
-                naziv: "Fructa Trade rasvjeta",
-                lokacija: "Banja Luka",
-                pocetakRada: "2025-01-05",
-                rok: "2025-01-20",
-                zavrsetakRada: "2025-01-18",
-            },
-            {
-                id: "2",
-                naziv: "Elektro instalacije u školi",
-                lokacija: "Sarajevo",
-                pocetakRada: "2025-02-02",
-                rok: "2025-02-15",
-                zavrsetakRada: null,
-            },
-        ];
 
-        const eventList = projects.flatMap((p) => {
-            const events = [];
+        const getEvents = async () => {
+            const projects = await fetchProjects();
 
-            // Start - zeleno
-            events.push({
-                id: `start-${p.id}`,
-                title: `početak - ${p.naziv}`,
-                start: p.pocetakRada,
-                backgroundColor: "#9ef01a",
-                textColor: "#000",
-                extendedProps: { ...p },
-            });
+            const eventList = projects.flatMap((p) => {
+                const events = [];
 
-            // Rok - crveno
-            events.push({
-                id: `deadline-${p.id}`,
-                title: `rok - ${p.naziv}`,
-                start: p.rok,
-                backgroundColor: "#ff595e",
-                textColor: "#000",
-                extendedProps: { ...p },
-            });
-
-            // Zavrsetak - sivo (ako postoji)
-            if (p.zavrsetakRada) {
+                // Start - zeleno
                 events.push({
-                    id: `finished-${p.id}`,
-                    title: `završen - ${p.naziv}`,
-                    start: p.zavrsetakRada,
-                    backgroundColor: "#b0b0b0",
+                    id: `start-${p.id}`,
+                    title: `početak - ${p.naziv}`,
+                    start: p.pocetakRada,
+                    backgroundColor: "#9ef01a",
                     textColor: "#000",
                     extendedProps: { ...p },
                 });
-            }
 
-            return events;
-        });
+                // Rok - crveno
+                events.push({
+                    id: `deadline-${p.id}`,
+                    title: `rok - ${p.naziv}`,
+                    start: p.rok,
+                    backgroundColor: "#ff595e",
+                    textColor: "#000",
+                    extendedProps: { ...p },
+                });
 
-        setEvents(eventList);
-    }, []);
+                // Zavrsetak - sivo (ako postoji)
+                if (p.zavrsetakRada) {
+                    events.push({
+                        id: `finished-${p.id}`,
+                        title: `završen - ${p.naziv}`,
+                        start: p.zavrsetakRada,
+                        backgroundColor: "#b0b0b0",
+                        textColor: "#000",
+                        extendedProps: { ...p },
+                    });
+                }
+
+                return events;
+            });
+            setEvents(eventList);
+            };
+            getEvents();
+        }, []);
+
 
     const handleEventClick = (info) => {
         info.jsEvent.preventDefault();
@@ -94,9 +81,9 @@ function Calendar() {
                     <div className="modal fade-in">
                         <h3>Projekat: {selectedProject.naziv}</h3>
                         <p><strong>Lokacija:</strong> {selectedProject.lokacija}</p>
-                        <p><strong>Početak:</strong> {selectedProject.pocetakRada}</p>
-                        <p><strong>Rok:</strong> {selectedProject.rok}</p>
-                        <p><strong>Završetak:</strong> {selectedProject.zavrsetakRada ? selectedProject.zavrsetakRada : "/"}</p>
+                        <p><strong>Početak:</strong> {new Date(selectedProject.pocetakRada).toLocaleDateString("hr-HR")}</p>
+                        <p><strong>Rok:</strong> {new Date(selectedProject.rok).toLocaleDateString("hr-HR")}</p>
+                        <p><strong>Završetak:</strong> {selectedProject.zavrsetakRada ? new Date(selectedProject.zavrsetakRada).toLocaleDateString("hr-HR") : "/"}</p>
 
                         <button className="close-btn" onClick={() => setSelectedProject(null)}>
                             Zatvori
