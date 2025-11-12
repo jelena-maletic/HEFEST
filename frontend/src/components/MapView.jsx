@@ -51,14 +51,20 @@ export default function MapView() {
                 {projekti.map((p) => {
                     const aktivno = isAktivan(p);
                     const ikona = napraviIkonu(aktivno);
+
+                    const [x, y] = p.lokacija.split(",").map((str) => parseFloat(str.trim()));
+
+                    if(isNaN(x) || isNaN(y))
+                        return null;
+
                     return (
-                        <Marker key={p.id} position={p.lokacija} icon={ikona}>
+                        <Marker key={p.id} position={[x, y]} icon={ikona}>
                             <Popup>
                                 <strong>{p.naziv}</strong>
                                 <br />
-                                Početak: {p.pocetakRada}
+                                Početak: {new Date(p.pocetakRada).toLocaleDateString()}
                                 <br />
-                                Rok: {p.rok}
+                                Rok: {new Date(p.rok).toLocaleDateString()}
                                 <br />
                                 Status:{" "}
                                 <span style={{ color: aktivno ? "green" : "gray" }}>
