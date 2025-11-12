@@ -74,7 +74,7 @@
 
 .toggle-switch {
     position: relative;
-    width: 63px;
+    width: 68px;
     height: 24px;
     background-color: #353535;
     border-radius: 20px;
@@ -102,7 +102,7 @@
 }
 
 .toggle-switch.active .slider {
-    transform: translateX(38px);
+    transform: translateX(44px);
 }
 
 .status-text {
