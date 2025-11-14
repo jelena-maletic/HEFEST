@@ -6,36 +6,39 @@ import "./MapView.css"
 import greenPinIcon from "../assets/green-pin.svg";
 import grayPinIcon from "../assets/gray-pin.svg";
 
+import {fetchProjects} from "../services/apiHelpers.js";
 
 export default function MapView() {
-    const [projekti, setProjekti] = useState([]);
+    const [projects, setProjects] = useState([]);
 
     useEffect(() => {
-        fetch("http://localhost:8080/api/projekti")
-            .then((response) => response.json())
-            .then((data) => setProjekti(data))
-            .catch((error) => console.log("Greška pri dohvatanju projekata:", error));
+        const getProjects = async () => {
+            const data = await fetchProjects();
+            setProjects(data);
+        };
+
+        getProjects();
     }, []);
 
-    const danas = new Date();
+    const today = new Date();
 
-    const napraviIkonu = (aktivno) =>
+    const makeMarker = (active) =>
         new L.Icon({
-            iconUrl: aktivno ? greenPinIcon : grayPinIcon,
+            iconUrl: active ? greenPinIcon : grayPinIcon,
             iconSize: [25, 41],
             iconAnchor: [12, 41],
             popupAnchor: [1, -34],
         });
 
-    const isAktivan = (p) => {
-        const pocetak = new Date(p.pocetakRada);
-        const kraj = p.krajRada ? new Date(p.krajRada) : null;
-        const rok = new Date(p.rok);
+    const isActive = (p) => {
+        const beginning = new Date(p.pocetakRada);
+        const end = p.krajRada ? new Date(p.krajRada) : null;
+        const deadline = new Date(p.rok);
 
         return (
-            danas >= pocetak &&
-            danas <= rok &&
-            (!kraj || danas <= kraj)
+            today >= beginning &&
+            today <= deadline &&
+            (!end || today <= end)
         );
     };
 
@@ -48,21 +51,30 @@ export default function MapView() {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
 
-                {projekti.map((p) => {
-                    const aktivno = isAktivan(p);
-                    const ikona = napraviIkonu(aktivno);
+                {projects.map((p) => {
+                    const active = isActive(p);
+                    const marker = makeMarker(active);
+
+                    if(!p.lokacija)
+                        return null;
+
+                    const [x, y] = p.lokacija.split(",").map((str) => parseFloat(str.trim()));
+
+                    if(isNaN(x) || isNaN(y))
+                        return null;
+
                     return (
-                        <Marker key={p.id} position={p.lokacija} icon={ikona}>
+                        <Marker key={p.id} position={[x, y]} icon={marker}>
                             <Popup>
                                 <strong>{p.naziv}</strong>
                                 <br />
-                                Početak: {p.pocetakRada}
+                                Početak: {new Date(p.pocetakRada).toLocaleDateString()}
                                 <br />
-                                Rok: {p.rok}
+                                Rok: {new Date(p.rok).toLocaleDateString()}
                                 <br />
                                 Status:{" "}
-                                <span style={{ color: aktivno ? "green" : "gray" }}>
-                                    {aktivno ? "Aktivno" : "Neaktivno"}
+                                <span style={{ color: active ? "green" : "gray" }}>
+                                    {active ? "Aktivno" : "Neaktivno"}
                                 </span>
                             </Popup>
                         </Marker>

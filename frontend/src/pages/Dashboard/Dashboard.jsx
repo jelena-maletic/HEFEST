@@ -1,6 +1,7 @@
 import {useState} from "react";
 import './Dashboard.css';
 import MapView from "../../components/MapView.jsx";
+import Calendar from "../../components/Calendar.jsx";
 import hefestLogo from '../../assets/hefest-logo.svg';
 import {TopBar} from "../../components/TopBar.jsx"
 import {Sidebar} from "../../components/Sidebar.jsx";
@@ -35,6 +36,7 @@ export function Dashboard({sidebarContents, role}) {
                       }}
                 >
                     {activeScreen === "map" && <MapView />}
+                    {activeScreen === "calendar" && <Calendar/>}
                 </main>
             </div>
         </div>
