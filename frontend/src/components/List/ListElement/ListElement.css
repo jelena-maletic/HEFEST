@@ -1,9 +1,10 @@
-.list_element{
+.list-element{
     margin: 2em;
     border-radius: 10px;
     border: 2px solid transparent;
     text-align: left;
     display: flex;
+    position: relative;
     flex-direction: row;
     gap: 1em;
     align-items: center;
@@ -17,21 +18,27 @@
     cursor: pointer;
     transition: .25s;
 }
-.list_element:hover {
+.list-element:hover {
     border-color: #DDDDDD;
     background-color: #2E2F2E;
     color: #DDDDDD;
 }
-.list_element:focus,
-.list_element:focus-visible {
+
+
+.list-element:hover button{
+    background-color: #868686;
+}
+
+.list-element:focus,
+.list-element:focus-visible {
     outline: 4px auto -webkit-focus-ring-color;
 }
 
-.list_element_info{
+.list-element-info{
     display: flex;
     flex-direction: column;
 }
-.list_element_title{
+.list-element-title{
     min-width: 120px;
     min-height: 22px;
     margin: 3px;
@@ -46,7 +53,7 @@
     transition: inherit;
 }
 
-.list_element_detail{
+.list-element-detail{
     min-width: 100px;
     min-height: 20px;
     margin: 4px;
@@ -62,7 +69,7 @@
     transition: inherit;
 }
 
-.list_element_subline{
+.list-element-subline{
     min-width: 100px;
     min-height: 20px;
     margin: 4px;
@@ -76,10 +83,25 @@
     transition: inherit;
 }
 
-.list_image{
+.list-image{
     align-self: flex-start;
     flex-direction: row;
     width: 65px;
     height: 100%;
     transition: inherit;
+}
+
+.list-element-buttons{
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    top: 10px;
+    right: -35%;
+    /*align-items: flex-end;*/
+    gap: 1em;
+    width: 50%;
+}
+
+.list-element-buttons button{
+    padding: 12px;
 }
