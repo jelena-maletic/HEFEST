@@ -30,8 +30,8 @@ const EntityDetailCard = ({
 
     if (loading) {
         return (
-            <Card className="entity-detail-card" bordered={false}>
-                <Spin tip="Učitavanje detalja..." size="large">
+            <Card className="entity-detail-card no-border">
+            <Spin tip="Učitavanje detalja..." size="large">
 
                     <div style={{ height: 300 }} />
                 </Spin>
