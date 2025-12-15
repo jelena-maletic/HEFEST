@@ -45,7 +45,18 @@ export function Dashboard({sidebarContents, role}) {
                 >
                     {activeScreen === "map" && <MapView />}
                     {activeScreen === "calendar" && <Calendar/>}
-                    {activeScreen === "employees" && <List listTitle={screenTitle} screenState="users" listData={data} />}
+                    {activeScreen === "employees" && <List isEditable={false} listTitle={screenTitle} screenState="user" listData={data} onClick={() => { console.log("a") } }/>}
+                    {activeScreen === "report-overview" && <div className={"report-lists"}>
+                                                                <List isEditable={false} listTitle={"Dnevni " + screenTitle} screenState="report-overview" listData={data} dividerWidth={"90%"} />
+                                                                <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview" listData={data} dividerWidth={"90%"}/>
+                                                            </div>}
+                    {activeScreen === "tools" && <List isEditable={true} listTitle={screenTitle} screenState="tools" listData={data} />}
+                    {activeScreen === "vehicles" && <List isEditable={true} listTitle={screenTitle} screenState="truck" listData={data} />}
+                    {activeScreen === "materials" && <List isEditable={true} listTitle={screenTitle} screenState="material" listData={data} />}
+                    {activeScreen === "taken-resources" && <List isEditable={true} listTitle={screenTitle} screenState="taken-resources" listData={data} />}
+                    {activeScreen === "request-overview" && <List isEditable={false} listTitle={screenTitle} screenState="request-overview" listData={data} />}
+                    {activeScreen === "technicians" && <List isEditable={false} listTitle={screenTitle} screenState="user" listData={data} />}
+                    {activeScreen === "report-overview-manager" && <List isEditable={false} listTitle={screenTitle} screenState="report-overview" listData={data} />}
                 </main>
             </div>
         </div>

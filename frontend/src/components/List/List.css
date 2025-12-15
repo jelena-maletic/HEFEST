@@ -17,6 +17,7 @@
 }
 
 .list-title{
+    position: relative;
     color: #2E2F2E;
     font-size: 2em;
     align-self: flex-start;

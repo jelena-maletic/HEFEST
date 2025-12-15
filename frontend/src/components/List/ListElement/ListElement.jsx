@@ -2,7 +2,7 @@ import './ListElement.css'
 import React, {useState} from 'react';
 import {SmallButton} from "../../SmallButton.jsx";
 
-export function ListElement({screenState, listElementData, onClickFunc}) {
+export function ListElement({screenState, listElementData, onClickFunc, isEditable}) {
     const [isHovered, setIsHovered] = useState(false);
     const imagesLong = import.meta.glob('../../../assets/*.svg', {
         eager: true
@@ -13,6 +13,15 @@ export function ListElement({screenState, listElementData, onClickFunc}) {
         acc[name] = module.default;
         return acc;
     }, {});
+
+    const smallButtons = (editable) => {
+        if (editable === true) {
+            return(<>
+                        <SmallButton className="nested-button" type={"edit"}/>
+                        <SmallButton className="nested-button" type={"delete"}/>
+                   </>);
+        }
+    }
 
     return (
         <button className="list-element" onClick={() => {onClickFunc()}}
@@ -26,8 +35,7 @@ export function ListElement({screenState, listElementData, onClickFunc}) {
                 <span className="list-element-subline">{listElementData.subline}</span>
             </div>
             <div className="list-element-buttons">
-                <SmallButton className="nested-button" type={"edit"}/>
-                <SmallButton className="nested-button" type={"delete"}/>
+                {smallButtons(isEditable)}
             </div>
         </button>)
 }

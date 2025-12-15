@@ -112,7 +112,7 @@
       "label": "Izvještaji",
       "icon": "report-overview",
       "iconHover": "report-overview-inverted",
-      "tag": "report-overview"
+      "tag": "report-overview-manager"
     },
     {
       "label": "Dodijeljeni projekti",

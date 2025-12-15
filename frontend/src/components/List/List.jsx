@@ -1,15 +1,23 @@
 import {ListElement} from "./ListElement/ListElement.jsx";
 import {SmallButton} from "../SmallButton.jsx";
 import "./List.css"
-import {BUTTON_TYPES} from "../../constants/smallButtonTypes.js";
 
-export function List({listTitle, screenState, listData}){
-    // function capitalizeFirstLetter(string) {
-    //     if (!string) return ''; // Handle empty or null strings
-    //     return string.charAt(0).toUpperCase() + string.slice(1);
-    // }
+const noop = () => {};
 
-    // let listTitle = capitalizeFirstLetter(screenState);
+export function List({listTitle, screenState, listData, onClick = noop, isEditable, numElements = 4, dividerWidth = "40%"}) {
+
+    const smallButton = (editable) => {
+        if(editable === true){
+            return(<SmallButton style={'padding:20px'} type="add"/>)
+        }
+    }
+
+
+    const element = (numElements, index, data)=>{
+        if(index < numElements){
+            return (<ListElement key={index} screenState={screenState} listElementData={data} onClickFunc={() => onClick()} isEditable={isEditable}/>)
+        }
+    }
 
     return (
         <div className = "list">
@@ -18,13 +26,13 @@ export function List({listTitle, screenState, listData}){
                     {listTitle}
                 </span>
                 <div className="add-button">
-                    <SmallButton style={'padding:20px'} type="add"/>
+                    {smallButton(isEditable)}
                 </div>
             </div>
-            <hr className="divider" />
-            <div>
+            <hr className="divider" style={{width: dividerWidth}} />
+            <div className="list-content">
                 {listData.map((data, index) => (
-                    <ListElement key={index} screenState={screenState} listElementData={data}/>
+                    element(numElements, index, data)
                 ))}
             </div>
         </div>
