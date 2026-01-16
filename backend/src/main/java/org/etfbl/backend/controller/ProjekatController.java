@@ -2,10 +2,9 @@ package org.etfbl.backend.controller;
 
 import org.etfbl.backend.model.Projekat;
 import org.etfbl.backend.service.ProjekatService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,5 +21,17 @@ public class ProjekatController {
     @GetMapping
     public List<Projekat> getAllProjekti() {
         return projekatService.getAllProjekti();
+    }
+
+    @PostMapping
+    public ResponseEntity<Projekat> kreirajProjekat(@RequestBody Projekat projekat) {
+        Projekat noviProjekat = projekatService.sacuvajProjekat(projekat);
+        return new ResponseEntity<>(noviProjekat, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Projekat> getById(@PathVariable Integer id) {
+        Projekat projekat = projekatService.getProjekatById(id);
+        return ResponseEntity.ok(projekat);
     }
 }

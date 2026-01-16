@@ -1,33 +1,32 @@
 package org.etfbl.backend.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "Projekat")
 public class Projekat {
     @Id
-    @Column(name = "IdProjekta")
-    private String idProjekta;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "IdProjekta", nullable = false)
+    private Integer idProjekta;
 
     @Column(name = "Opis")
     private String opis;
 
     @Column(name = "Rok")
-    private LocalDateTime rok;
+    private LocalDate rok;
 
     @Column(name = "Lokacija")
     private String lokacija;
 
     @Column(name = "PocetakRada")
-    private LocalDateTime pocetakRada;
+    private LocalDate pocetakRada;
 
     @Column(name = "KrajRada")
-    private LocalDateTime krajRada;
+    private LocalDate krajRada;
 
     @Column(name = "Naziv")
     private String naziv;
@@ -35,9 +34,64 @@ public class Projekat {
     @Column(name = "Direktor_JMB")
     private String direktorJMB;
 
+    @Column(name = "Status", nullable = false, length = 45)
+    private String status;
+
+    @Column(name = "DatumKreiranja", nullable = false)
+    private Instant datumKreiranja;
+
+    @Column(name = "PosljednjaIzmjena")
+    private Instant posljednjaIzmjena;
+
+    @Column(name = "Prioritet", nullable = false, length = 45)
+    private String prioritet;
+
+    @Column(name = "Klijent", nullable = false, length = 45)
+    private String klijent;
+
+    public String getKlijent() {
+        return klijent;
+    }
+
+    public void setKlijent(String klijent) {
+        this.klijent = klijent;
+    }
+
+    public String getPrioritet() {
+        return prioritet;
+    }
+
+    public void setPrioritet(String prioritet) {
+        this.prioritet = prioritet;
+    }
+
+    public Instant getPosljednjaIzmjena() {
+        return posljednjaIzmjena;
+    }
+
+    public void setPosljednjaIzmjena(Instant posljednjaIzmjena) {
+        this.posljednjaIzmjena = posljednjaIzmjena;
+    }
+
+    public Instant getDatumKreiranja() {
+        return datumKreiranja;
+    }
+
+    public void setDatumKreiranja(Instant datumKreiranja) {
+        this.datumKreiranja = datumKreiranja;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public Projekat() {}
 
-    public Projekat(String idProjekta, String opis, LocalDateTime rok, String lokacija, LocalDateTime pocetakRada, LocalDateTime krajRada, String naziv, String direktorJMB) {
+    public Projekat(Integer idProjekta, String opis, LocalDate rok, String lokacija, LocalDate pocetakRada, LocalDate krajRada, String naziv, String direktorJMB) {
         this.idProjekta = idProjekta;
         this.opis = opis;
         this.rok = rok;
@@ -49,11 +103,11 @@ public class Projekat {
     }
 
 
-    public String getIdProjekta() {
+    public Integer getIdProjekta() {
         return idProjekta;
     }
 
-    public void setIdProjekta(String idProjekta) {
+    public void setIdProjekta(Integer idProjekta) {
         this.idProjekta = idProjekta;
     }
 
@@ -65,11 +119,11 @@ public class Projekat {
         this.opis = opis;
     }
 
-    public LocalDateTime getRok() {
+    public LocalDate getRok() {
         return rok;
     }
 
-    public void setRok(LocalDateTime rok) {
+    public void setRok(LocalDate rok) {
         this.rok = rok;
     }
 
@@ -81,19 +135,19 @@ public class Projekat {
         this.lokacija = lokacija;
     }
 
-    public LocalDateTime getPocetakRada() {
+    public LocalDate getPocetakRada() {
         return pocetakRada;
     }
 
-    public void setPocetakRada(LocalDateTime pocetakRada) {
+    public void setPocetakRada(LocalDate pocetakRada) {
         this.pocetakRada = pocetakRada;
     }
 
-    public LocalDateTime getKrajRada() {
+    public LocalDate getKrajRada() {
         return krajRada;
     }
 
-    public void setKrajRada(LocalDateTime krajRada) {
+    public void setKrajRada(LocalDate krajRada) {
         this.krajRada = krajRada;
     }
 
@@ -112,4 +166,6 @@ public class Projekat {
     public void setDirektorJMB(String direktorJMB) {
         this.direktorJMB = direktorJMB;
     }
+
+
 }
