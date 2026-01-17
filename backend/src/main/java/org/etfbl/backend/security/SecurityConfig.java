@@ -57,6 +57,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login/**").permitAll() // login endpoint
                         .requestMatchers("/api/projekti/**").permitAll()
+                        .requestMatchers("/api/magacioner-resurs/**").permitAll()
+                        .requestMatchers("/api/vozila/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

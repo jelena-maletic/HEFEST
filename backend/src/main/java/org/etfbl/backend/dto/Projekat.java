@@ -26,6 +26,5 @@ public class Projekat implements Serializable {
     Instant posljednjaIzmjena;
     String prioritet;
     String klijent;
-    String direktorJMB;
 
 }

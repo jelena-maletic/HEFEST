@@ -16,9 +16,9 @@ import java.util.List;
 @Service
 public class ProjekatService {
 
-    final ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
     private final ProjekatRepository projekatRepository;
-    final DirektorRepository direktorRepository;
+    private final DirektorRepository direktorRepository;
 
     public ProjekatService(ProjekatRepository projekatRepository, ModelMapper modelMapper, DirektorRepository direktorRepository) {
         this.projekatRepository = projekatRepository;
@@ -38,10 +38,10 @@ public class ProjekatService {
         entity.setPosljednjaIzmjena(sada);
         //entity.setIdProjekta(2);
 
-        DirektorEntity direktor = direktorRepository.findById(dto.getDirektorJMB())
+        DirektorEntity direktor = direktorRepository.findById("1308003106401")
                 .orElseThrow(() -> new RuntimeException("Direktor ne postoji"));
-        System.out.println(direktor.getJmb());
-        entity.setDirektorJMB(direktor.getJmb());
+
+        entity.setDirektor(direktor);
 
         ProjekatEntity sacuvan = projekatRepository.save(entity);
         return modelMapper.map(sacuvan, Projekat.class);
