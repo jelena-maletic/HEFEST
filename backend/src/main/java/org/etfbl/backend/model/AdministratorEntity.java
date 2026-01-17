@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "Administrator")
-public class Administrator {
+public class AdministratorEntity {
 
     @Id
     @Column(name = "KorisnickoIme")
@@ -13,9 +13,9 @@ public class Administrator {
     @Column(name = "Lozinka")
     private String lozinka;
 
-    public Administrator() {}
+    public AdministratorEntity() {}
 
-    public Administrator(String korisnickoIme, String lozinka) {
+    public AdministratorEntity(String korisnickoIme, String lozinka) {
         this.korisnickoIme = korisnickoIme;
         this.lozinka = lozinka;
     }

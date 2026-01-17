@@ -11,41 +11,42 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public class KorisnikDetails implements UserDetails {
 
-    private final Korisnik korisnik;
+    private final KorisnikEntity korisnikEntity;
 
-    public KorisnikDetails(Korisnik korisnik) {
-        this.korisnik = korisnik;
+    public KorisnikDetails(KorisnikEntity korisnikEntity) {
+        this.korisnikEntity = korisnikEntity;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> roles = new HashSet<>();
-        if (korisnik instanceof Direktor) {
+        if (korisnikEntity instanceof DirektorEntity) {
             roles.add(new SimpleGrantedAuthority("ROLE_DIREKTOR"));
-        } else if (korisnik instanceof Poslovodja) {
+        } else if (korisnikEntity instanceof PoslovodjaEntity) {
             roles.add(new SimpleGrantedAuthority("ROLE_POSLOVODJA"));
-        } else if (korisnik instanceof Tehnicar) {
+        } else if (korisnikEntity instanceof TehnicarEntity) {
             roles.add(new SimpleGrantedAuthority("ROLE_TEHNICAR"));
-        } else if (korisnik instanceof Magacioner) {
+        } else if (korisnikEntity instanceof MagacionerEntity) {
             roles.add(new SimpleGrantedAuthority("ROLE_MAGACIONER"));
-        } else if (korisnik instanceof Knjigovodja) {
+        } else if (korisnikEntity instanceof KnjigovodjaEntity) {
             roles.add(new SimpleGrantedAuthority("ROLE_KNJIGOVODJA"));
         }
         return roles;
     }
 
-    public Korisnik getKorisnik() {
-        return korisnik;
+    public KorisnikEntity getKorisnik() {
+        return korisnikEntity;
     }
+
 
     @Override
     public String getPassword() {
-        return korisnik.getPassword();
+        return korisnikEntity.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return korisnik.getUsername();
+        return korisnikEntity.getUsername();
     }
 
     @Override

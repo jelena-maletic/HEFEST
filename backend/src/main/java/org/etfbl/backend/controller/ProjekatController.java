@@ -1,9 +1,12 @@
 package org.etfbl.backend.controller;
 
-import org.etfbl.backend.model.Projekat;
+import org.etfbl.backend.dto.Projekat;
+import org.etfbl.backend.model.ProjekatEntity;
+import org.etfbl.backend.security.KorisnikDetails;
 import org.etfbl.backend.service.ProjekatService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,14 +27,15 @@ public class ProjekatController {
     }
 
     @PostMapping
-    public ResponseEntity<Projekat> kreirajProjekat(@RequestBody Projekat projekat) {
-        Projekat noviProjekat = projekatService.sacuvajProjekat(projekat);
-        return new ResponseEntity<>(noviProjekat, HttpStatus.CREATED);
+    public ResponseEntity<Projekat> kreirajProjekat(@RequestBody Projekat projekatEntity) {
+        Projekat noviProjekatEntity = projekatService.sacuvajProjekat(projekatEntity);
+        return new ResponseEntity<>(noviProjekatEntity, HttpStatus.CREATED);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Projekat> getById(@PathVariable Integer id) {
-        Projekat projekat = projekatService.getProjekatById(id);
-        return ResponseEntity.ok(projekat);
+        Projekat projekatEntity = projekatService.getProjekatById(id);
+        return ResponseEntity.ok(projekatEntity);
     }
 }

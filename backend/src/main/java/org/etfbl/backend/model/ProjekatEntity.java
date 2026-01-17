@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "Projekat")
-public class Projekat {
+public class ProjekatEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IdProjekta", nullable = false)
@@ -89,9 +89,9 @@ public class Projekat {
         this.status = status;
     }
 
-    public Projekat() {}
+    public ProjekatEntity() {}
 
-    public Projekat(Integer idProjekta, String opis, LocalDate rok, String lokacija, LocalDate pocetakRada, LocalDate krajRada, String naziv, String direktorJMB) {
+    public ProjekatEntity(Integer idProjekta, String opis, LocalDate rok, String lokacija, LocalDate pocetakRada, LocalDate krajRada, String naziv, String direktorJMB) {
         this.idProjekta = idProjekta;
         this.opis = opis;
         this.rok = rok;

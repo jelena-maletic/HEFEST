@@ -6,15 +6,15 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "Tehnicar")
-public class Tehnicar extends Zaposleni {
+public class TehnicarEntity extends ZaposleniEntity {
 
     @Column(name = "Aktivan")
     private boolean aktivan = false;
 
-    public Tehnicar() {
+    public TehnicarEntity() {
         super();
     }
-    public Tehnicar(String jmb, String username, String password, String email, String ime, String prezime, String brojTelefona) {
+    public TehnicarEntity(String jmb, String username, String password, String email, String ime, String prezime, String brojTelefona) {
         super(jmb, username, password, email, ime, prezime, brojTelefona);
     }
 

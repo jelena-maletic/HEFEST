@@ -1,5 +1,6 @@
 package org.etfbl.backend.service;
 
+import jakarta.transaction.Transactional;
 import org.etfbl.backend.dto.request.LoginRequest;
 import org.etfbl.backend.dto.response.LoginResponse;
 import org.etfbl.backend.security.JwtToken;
@@ -9,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+@Transactional
 @Service
 public class AuthService {
 

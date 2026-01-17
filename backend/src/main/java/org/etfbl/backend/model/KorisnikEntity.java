@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "Korisnik")
-public class Korisnik {
+public class KorisnikEntity {
     @Id
     @Column(name = "JMB")
     private String jmb;
@@ -30,10 +30,10 @@ public class Korisnik {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "Administrator_KorisnickoIme", referencedColumnName = "KorisnickoIme")
-    private Administrator administrator;
+    private AdministratorEntity administratorEntity;
 
-    public Korisnik() {}
-    public Korisnik(String jmb, String username, String password, String email, String ime, String prezime, String brojTelefona) {
+    public KorisnikEntity() {}
+    public KorisnikEntity(String jmb, String username, String password, String email, String ime, String prezime, String brojTelefona) {
         this.jmb = jmb;
         this.username = username;
         this.password = password;
@@ -99,11 +99,11 @@ public class Korisnik {
         this.brojTelefona = brojTelefona;
     }
 
-    public Administrator getAdministrator() {
-        return administrator;
+    public AdministratorEntity getAdministrator() {
+        return administratorEntity;
     }
 
-    public void setAdministrator(Administrator administrator) {
-        this.administrator = administrator;
+    public void setAdministrator(AdministratorEntity administratorEntity) {
+        this.administratorEntity = administratorEntity;
     }
 }

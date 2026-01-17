@@ -5,12 +5,12 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "Direktor")
-public class Direktor extends Korisnik {
+public class DirektorEntity extends KorisnikEntity {
 
-    public Direktor() {
+    public DirektorEntity() {
         super();
     }
-    public Direktor(String jmb, String username, String password, String email, String ime, String prezime, String brojTelefona) {
+    public DirektorEntity(String jmb, String username, String password, String email, String ime, String prezime, String brojTelefona) {
         super(jmb, username, password, email, ime, prezime, brojTelefona);
     }
 

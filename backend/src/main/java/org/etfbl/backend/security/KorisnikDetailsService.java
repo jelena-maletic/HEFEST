@@ -1,6 +1,6 @@
 package org.etfbl.backend.security;
 
-import org.etfbl.backend.model.Korisnik;
+import org.etfbl.backend.model.KorisnikEntity;
 import org.etfbl.backend.repository.KorisnikRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.*;
@@ -14,7 +14,7 @@ public class KorisnikDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Korisnik korisnik = korisnikRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Korisnik not found"));
-        return new KorisnikDetails(korisnik);
+        KorisnikEntity korisnikEntity = korisnikRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("KorisnikEntity not found"));
+        return new KorisnikDetails(korisnikEntity);
     }
 }
