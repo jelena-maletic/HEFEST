@@ -32,8 +32,3 @@ public class VoziloEntity extends ResursEntity {
 
 }
 
-enum TipVozila {
-    putnicko,
-    teretno,
-    kombi
-}

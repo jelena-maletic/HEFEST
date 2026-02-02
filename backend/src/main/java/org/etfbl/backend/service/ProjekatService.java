@@ -7,7 +7,9 @@ import org.etfbl.backend.model.ProjekatEntity;
 import org.etfbl.backend.repository.DirektorRepository;
 import org.etfbl.backend.repository.ProjekatRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.util.List;
@@ -49,9 +51,40 @@ public class ProjekatService {
 
     public Projekat getProjekatById(Integer id) {
         ProjekatEntity entity = projekatRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Projekat sa ID " + id + " nije pronađen"));
+                .orElseThrow(() -> new ResponseStatusException(
+                       HttpStatus.NOT_FOUND, "Projekat sa ID-om " + id + " nije pronađen ili je obrisan"
+                ));
 
         return modelMapper.map(entity, Projekat.class);
     }
+
+    public void obrisiProjekat(Integer id) {
+        if (!projekatRepository.existsById(id)) {
+            throw new RuntimeException("Projekat sa ID-om " + id + " ne postoji.");
+        }
+        projekatRepository.deleteById(id);
+    }
+
+    public List<Projekat> pretraziPoLokaciji(String lokacija) {
+        List<ProjekatEntity> projekti = projekatRepository.findAllByLokacijaContainingIgnoreCaseAndObrisanFalse(lokacija);
+
+        // Ako pretraga ne vrati ništa, bacamo 404
+        if (projekti.isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Nema projekata na lokaciji: " + lokacija
+            );
+        }
+
+        return projekti.stream()
+                .map(p -> modelMapper.map(p, Projekat.class))
+                .toList();
+    }
+
+
+    public List<String> getPostojeceLokacije() {
+        return projekatRepository.findUniqueActiveLocations();
+    }
+
+
 }
 

@@ -1,6 +1,7 @@
 package org.etfbl.backend.controller;
 
 
+import org.etfbl.backend.dto.Vozilo;
 import org.etfbl.backend.model.MagacionerUpravljaResursomEntity;
 import org.etfbl.backend.model.VoziloEntity;
 import org.etfbl.backend.service.VoziloService;
@@ -23,7 +24,7 @@ public class VoziloController {
         this.voziloService = voziloService;
     }
     @GetMapping
-    public List<VoziloEntity> getAll() {
+    public List<Vozilo> getAll() {
         return voziloService.getAllVozilo();
     }
 }

@@ -59,6 +59,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/projekti/**").permitAll()
                         .requestMatchers("/api/magacioner-resurs/**").permitAll()
                         .requestMatchers("/api/vozila/**").permitAll()
+                        .requestMatchers("/api/radna-oprema/**").permitAll()
+                        .requestMatchers("/api/materijal/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

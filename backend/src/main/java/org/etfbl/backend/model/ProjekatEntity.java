@@ -2,6 +2,9 @@ package org.etfbl.backend.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -9,6 +12,8 @@ import java.time.LocalDate;
 @Data
 @Entity
 @Table(name = "Projekat")
+@SQLDelete(sql = "UPDATE Projekat SET Obrisan = 1 WHERE IdProjekta = ?")
+@Where(clause = "Obrisan = 0")
 public class ProjekatEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,5 +56,9 @@ public class ProjekatEntity {
 
     @Column(name = "Klijent", nullable = false, length = 45)
     private String klijent;
+
+    @ColumnDefault("0")
+    @Column(name = "Obrisan", nullable = false)
+    private Boolean obrisan = false;
 
 }

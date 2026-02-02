@@ -38,4 +38,24 @@ public class ProjekatController {
         Projekat projekatEntity = projekatService.getProjekatById(id);
         return ResponseEntity.ok(projekatEntity);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> obrisiProjekat(@PathVariable Integer id) {
+        System.out.println("Kontroler: Primljen zahtjev za ID: " + id);
+        projekatService.obrisiProjekat(id);
+        return ResponseEntity.noContent().build();
+        // Vraćamo 204 No Content jer je operacija uspješno izvršena, ali nema tijela u odgovoru
+    }
+
+    @GetMapping("/lokacija/{lokacija}")
+    public List<Projekat> getAllByLokacija(@PathVariable String lokacija) {
+        return projekatService.pretraziPoLokaciji(lokacija);
+    }
+
+    @GetMapping("/lokacije")
+    public List<String> getLokacije() {
+        return projekatService.getPostojeceLokacije();
+    }
+
+
 }
