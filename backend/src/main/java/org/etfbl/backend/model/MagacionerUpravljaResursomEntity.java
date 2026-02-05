@@ -23,7 +23,7 @@ public class MagacionerUpravljaResursomEntity implements Serializable {
     @MapsId
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "Magacioner_JMB", referencedColumnName = "JMB",nullable = false)
-    private MagacionerEntity magacionerJmb;
+    private MagacionerEntity magacioner;
 
     @MapsId
     @ManyToOne(fetch = FetchType.EAGER, optional = false)

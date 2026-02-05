@@ -42,6 +42,7 @@ public class ProjekatService {
 
         DirektorEntity direktor = direktorRepository.findById("1308003106401")
                 .orElseThrow(() -> new RuntimeException("Direktor ne postoji"));
+        //hardkodovani jmb je zbog toga sto nismo ulogovani kao doticni direktor, tako da bi tu islo tipa this.id
 
         entity.setDirektor(direktor);
 

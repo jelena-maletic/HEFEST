@@ -1,5 +1,6 @@
 package org.etfbl.backend.service;
 
+import jakarta.transaction.Transactional;
 import org.etfbl.backend.dto.Materijal;
 import org.etfbl.backend.dto.RadnaOprema;
 import org.etfbl.backend.repository.MaterijalRepository;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Transactional
 @Service
 public class MaterijalService {
     private final ModelMapper modelMapper;

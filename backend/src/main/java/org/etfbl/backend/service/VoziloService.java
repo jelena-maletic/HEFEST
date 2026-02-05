@@ -1,6 +1,7 @@
 package org.etfbl.backend.service;
 
 
+import jakarta.transaction.Transactional;
 import org.etfbl.backend.dto.Projekat;
 import org.etfbl.backend.dto.Vozilo;
 import org.etfbl.backend.model.MagacionerUpravljaResursomEntity;
@@ -10,7 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Transactional
 @Service
 public class VoziloService {
     private final VoziloRepository voziloRepository;

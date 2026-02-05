@@ -1,0 +1,21 @@
+package org.etfbl.backend.repository;
+
+import org.etfbl.backend.model.StanjeZahtjeva;
+import org.etfbl.backend.model.ZahtjevZaResursimaEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.security.authentication.jaas.JaasPasswordCallbackHandler;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface ZahtjevZaResursimaRepository extends JpaRepository<ZahtjevZaResursimaEntity,Integer> {
+
+    @Query("SELECT z FROM ZahtjevZaResursimaEntity z LEFT JOIN FETCH z.resursUZahtjevu WHERE z.id = :id")
+    Optional<ZahtjevZaResursimaEntity> findByIdWithResources(Integer id);
+
+    // Pronalaženje svih neobrađenih zahtjeva
+    List<ZahtjevZaResursimaEntity> findAllByStanjeZahtjeva(StanjeZahtjeva stanje);
+}
