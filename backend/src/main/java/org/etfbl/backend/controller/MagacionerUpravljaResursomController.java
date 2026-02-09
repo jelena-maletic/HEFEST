@@ -1,6 +1,7 @@
 package org.etfbl.backend.controller;
 
 
+import org.etfbl.backend.dto.MagacionerUpravljaResursom;
 import org.etfbl.backend.model.MagacionerUpravljaResursomEntity;
 import org.etfbl.backend.service.MagacionerUpravljaResursomService;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,7 +25,7 @@ public class MagacionerUpravljaResursomController {
 
 
     @GetMapping
-    public List<MagacionerUpravljaResursomEntity> getAll() {
+    public List<MagacionerUpravljaResursom> getAll() {
         return service.getAllMagacionerUpravljaResursom();
     }
 }
