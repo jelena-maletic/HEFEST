@@ -2,20 +2,19 @@ package org.etfbl.backend.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.etfbl.backend.model.manytomanyid.PoslovodjaUpravljaProjektomId;
 
 @Data
 @Entity
-@Table(name="Poslovodja_Upravlja_Projektom")
-@IdClass(PoslovodjaUpravljaProjektomId.class)
-public class PoslovodjaUpravljaProjektomEntity {
+@Table(name = "Tehnicar_Na_Projektu")
+@IdClass(TehnicarNaProjektuEntity.class)
+public class TehnicarNaProjektuEntity {
     @Id
     @Column(name="IdProjekta")
     private Integer idProjekta;
 
     @Id
-    @Column(name="Poslovodja_JMB")
-    private String poslovodjaJMB;
+    @Column(name="Tehnicar_JMB")
+    private String tehnicarJMB;
 
     @MapsId
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -24,7 +23,7 @@ public class PoslovodjaUpravljaProjektomEntity {
 
     @MapsId
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "Poslovodja_JMB", nullable = false)
-    private PoslovodjaEntity poslovodja;
+    @JoinColumn(name = "Tehnicar_JMB", nullable = false)
+    private TehnicarEntity tehnicar;
 
 }
