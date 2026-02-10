@@ -67,6 +67,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/poslovodja-projekat/**").permitAll()
                         .requestMatchers("/api/sumarni_izvjestaji/**").permitAll()
                         .requestMatchers("/api/dnevni_izvjestaji/**").permitAll()
+                        .requestMatchers("/api/utroseni_materijali/**").permitAll()
+                        .requestMatchers("/api/dnevni_zadaci/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
