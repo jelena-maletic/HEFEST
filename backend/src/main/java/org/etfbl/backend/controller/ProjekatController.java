@@ -1,12 +1,14 @@
 package org.etfbl.backend.controller;
 
 import org.etfbl.backend.dto.Projekat;
+import org.etfbl.backend.exceptions.NotFoundException;
 import org.etfbl.backend.model.ProjekatEntity;
 import org.etfbl.backend.security.KorisnikDetails;
 import org.etfbl.backend.service.ProjekatService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,7 +36,8 @@ public class ProjekatController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<Projekat> getById(@PathVariable Integer id) {
+    public ResponseEntity<Projekat> getById(@PathVariable Integer id) throws NotFoundException {
+        System.out.println("Primljen ID: " + id);
         Projekat projekatEntity = projekatService.getProjekatById(id);
         return ResponseEntity.ok(projekatEntity);
     }
@@ -48,7 +51,7 @@ public class ProjekatController {
     }
 
     @GetMapping("/lokacija/{lokacija}")
-    public List<Projekat> getAllByLokacija(@PathVariable String lokacija) {
+    public List<Projekat> getAllByLokacija(@PathVariable String lokacija) throws NotFoundException {
         return projekatService.pretraziPoLokaciji(lokacija);
     }
 
@@ -56,6 +59,4 @@ public class ProjekatController {
     public List<String> getLokacije() {
         return projekatService.getPostojeceLokacije();
     }
-
-
 }

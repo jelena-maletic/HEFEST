@@ -2,6 +2,7 @@ package org.etfbl.backend.service;
 
 import jakarta.transaction.Transactional;
 import org.etfbl.backend.dto.Projekat;
+import org.etfbl.backend.exceptions.NotFoundException;
 import org.etfbl.backend.model.DirektorEntity;
 import org.etfbl.backend.model.ProjekatEntity;
 import org.etfbl.backend.repository.DirektorRepository;
@@ -9,6 +10,7 @@ import org.etfbl.backend.repository.ProjekatRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
@@ -50,11 +52,9 @@ public class ProjekatService {
         return modelMapper.map(sacuvan, Projekat.class);
     }
 
-    public Projekat getProjekatById(Integer id) {
+    public Projekat getProjekatById(Integer id) throws NotFoundException{
         ProjekatEntity entity = projekatRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                       HttpStatus.NOT_FOUND, "Projekat sa ID-om " + id + " nije pronađen ili je obrisan"
-                ));
+                .orElseThrow(() -> new NotFoundException("Projekat sa id-om " + id + " nije pronađen."));
 
         return modelMapper.map(entity, Projekat.class);
     }
@@ -66,14 +66,12 @@ public class ProjekatService {
         projekatRepository.deleteById(id);
     }
 
-    public List<Projekat> pretraziPoLokaciji(String lokacija) {
+    public List<Projekat> pretraziPoLokaciji(String lokacija) throws NotFoundException {
         List<ProjekatEntity> projekti = projekatRepository.findAllByLokacijaContainingIgnoreCaseAndObrisanFalse(lokacija);
 
         // Ako pretraga ne vrati ništa, bacamo 404
         if (projekti.isEmpty()) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Nema projekata na lokaciji: " + lokacija
-            );
+            throw new NotFoundException("Nema projekata na lokaciji: " + lokacija);
         }
 
         return projekti.stream()

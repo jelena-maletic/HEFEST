@@ -3,6 +3,7 @@ package org.etfbl.backend.controller;
 
 import org.etfbl.backend.dto.ResursUZahtjevu;
 import org.etfbl.backend.dto.Zaduzenje;
+import org.etfbl.backend.exceptions.NotFoundException;
 import org.etfbl.backend.repository.ZaduzenjeRepository;
 import org.etfbl.backend.service.ZaduzenjeService;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class ZaduzenjeController {
 
     }
     @GetMapping("/{poslovodjaJMB}")
-    public ResponseEntity<List<Zaduzenje>> getAllByPoslovodjaJMB(@PathVariable String poslovodjaJMB) {
+    public ResponseEntity<List<Zaduzenje>> getAllByPoslovodjaJMB(@PathVariable String poslovodjaJMB) throws NotFoundException {
         List<Zaduzenje> r=zaduzenjeService.getZaduzenjaByPoslovodjaId(poslovodjaJMB);
         return ResponseEntity.ok(r);
     }

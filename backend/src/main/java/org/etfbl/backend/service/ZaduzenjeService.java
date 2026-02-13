@@ -2,6 +2,8 @@ package org.etfbl.backend.service;
 
 import org.etfbl.backend.dto.Vozilo;
 import org.etfbl.backend.dto.Zaduzenje;
+import org.etfbl.backend.exceptions.NotFoundException;
+import org.etfbl.backend.model.ZaduzenjeEntity;
 import org.etfbl.backend.repository.ProjekatRepository;
 import org.etfbl.backend.repository.ZaduzenjeRepository;
 
@@ -23,7 +25,16 @@ public class ZaduzenjeService {
         this.modelMapper = modelMapper;
     }
 
-    public List<Zaduzenje> getZaduzenjaByPoslovodjaId(String poslovodjaId) {
-        return zaduzenjeRepository.findAllByPoslovodjaJMB(poslovodjaId).stream().map(z -> modelMapper.map(z, Zaduzenje.class )).toList();
+    public List<Zaduzenje> getZaduzenjaByPoslovodjaId(String poslovodjaId) throws NotFoundException {
+
+        List<ZaduzenjeEntity> entiteti = zaduzenjeRepository.findAllByPoslovodjaJMB(poslovodjaId);
+
+        if (entiteti.isEmpty()) {
+            throw new NotFoundException("Nisu pronađena zaduženja za poslovođu sa JMB: " + poslovodjaId);
+        }
+
+        return entiteti.stream()
+                .map(z -> modelMapper.map(z, Zaduzenje.class))
+                .toList();
     }
 }
