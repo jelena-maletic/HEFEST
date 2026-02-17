@@ -42,29 +42,26 @@ export default function MapView() {
         );
     };
 
-
     return (
         <div className="map-screen-container">
             <MapContainer center={[44.7722, 17.191]} zoom={13}>
                 <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
 
-                {projects.map((p) => {
+                {projects.map((p, index) => {
                     const active = isActive(p);
                     const marker = makeMarker(active);
 
-                    if(!p.lokacija)
-                        return null;
+                    if(!p.lokacija) return null;
 
                     const [x, y] = p.lokacija.split(",").map((str) => parseFloat(str.trim()));
 
-                    if(isNaN(x) || isNaN(y))
-                        return null;
+                    if(isNaN(x) || isNaN(y)) return null;
 
                     return (
-                        <Marker key={p.id} position={[x, y]} icon={marker}>
+                        <Marker key={`marker-${index}-${p.naziv}`} position={[x, y]} icon={marker}>
                             <Popup>
                                 <strong>{p.naziv}</strong>
                                 <br />
@@ -73,7 +70,7 @@ export default function MapView() {
                                 Rok: {new Date(p.rok).toLocaleDateString()}
                                 <br />
                                 Status:{" "}
-                                <span style={{ color: active ? "green" : "gray" }}>
+                                <span style={{ color: active ? "green" : "gray", fontWeight: "bold" }}>
                                     {active ? "Aktivno" : "Neaktivno"}
                                 </span>
                             </Popup>
@@ -82,16 +79,16 @@ export default function MapView() {
                 })}
             </MapContainer>
 
-            {/* Legenda */}
             <div className="map-legend">
-                <div>
-                    <img src={greenPinIcon} alt="Aktivno" /> Aktivna radilišta
+                <div className="legend-item">
+                    <img src={greenPinIcon} alt="Aktivno" />
+                    <span>Aktivna radilišta</span>
                 </div>
-                <div>
-                    <img src={grayPinIcon} alt="Neaktivno" /> Neaktivna radilišta
+                <div className="legend-item">
+                    <img src={grayPinIcon} alt="Neaktivno" />
+                    <span>Neaktivna radilišta</span>
                 </div>
             </div>
-
         </div>
     );
 }
