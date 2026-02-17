@@ -11,52 +11,64 @@ function Calendar() {
     const [selectedProject, setSelectedProject] = useState(null);
 
     // TODO srediti lokaciju (trenutno su koordinate)
+
     useEffect(() => {
-
         const getEvents = async () => {
-            const projects = await fetchProjects();
+            try {
+                const projects = await fetchProjects();
 
-            const eventList = projects.flatMap((p) => {
-                const events = [];
-
-                // Start - zeleno
-                events.push({
-                    id: `start-${p.id}`,
-                    title: `početak - ${p.naziv}`,
-                    start: p.pocetakRada,
-                    backgroundColor: "#9ef01a",
-                    textColor: "#000",
-                    extendedProps: { ...p },
-                });
-
-                // Rok - crveno
-                events.push({
-                    id: `deadline-${p.id}`,
-                    title: `rok - ${p.naziv}`,
-                    start: p.rok,
-                    backgroundColor: "#ff595e",
-                    textColor: "#000",
-                    extendedProps: { ...p },
-                });
-
-                // Zavrsetak - sivo (ako postoji)
-                if (p.zavrsetakRada) {
-                    events.push({
-                        id: `finished-${p.id}`,
-                        title: `završen - ${p.naziv}`,
-                        start: p.zavrsetakRada,
-                        backgroundColor: "#b0b0b0",
-                        textColor: "#000",
-                        extendedProps: { ...p },
-                    });
+                if (!projects || !Array.isArray(projects)) {
+                    console.error("Server nije vratio niz!");
+                    return;
                 }
 
-                return events;
-            });
-            setEvents(eventList);
-            };
-            getEvents();
-        }, []);
+                const projectsArray = Array.isArray(projects) ? projects : [projects];
+
+                const eventList = projectsArray.flatMap((p) => {
+                    const projectEvents = [];
+
+                    if (p.pocetakRada) {
+                        projectEvents.push({
+                            id: `start-${p.id}`,
+                            title: `početak - ${p.naziv}`,
+                            start: p.pocetakRada,
+                            backgroundColor: "#9ef01a",
+                            textColor: "#000",
+                            extendedProps: { ...p },
+                        });
+                    }
+
+                    if (p.rok) {
+                        projectEvents.push({
+                            id: `deadline-${p.id}`,
+                            title: `rok - ${p.naziv}`,
+                            start: p.rok,
+                            backgroundColor: "#ff595e",
+                            textColor: "#000",
+                            extendedProps: { ...p },
+                        });
+                    }
+
+                    if (p.zavrsetakRada) {
+                        projectEvents.push({
+                            id: `finished-${p.id}`,
+                            title: `završen - ${p.naziv}`,
+                            start: p.zavrsetakRada,
+                            backgroundColor: "#b0b0b0",
+                            textColor: "#000",
+                            extendedProps: { ...p },
+                        });
+                    }
+                    return projectEvents;
+                });
+
+                setEvents(eventList);
+            } catch (err) {
+                console.error("Greška pri punjenju kalendara:", err);
+            }
+        };
+        getEvents();
+    }, []);
 
 
     const handleEventClick = (info) => {
