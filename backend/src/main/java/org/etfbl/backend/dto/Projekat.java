@@ -15,6 +15,7 @@ import java.time.LocalDate;
 
 @Data
 public class Projekat implements Serializable {
+    Integer id;
     String opis;
     LocalDate rok;
     String lokacija;
