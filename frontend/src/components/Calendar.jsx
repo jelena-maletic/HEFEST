@@ -5,6 +5,7 @@ import eng from "@fullcalendar/core/locales/en-gb.cjs";
 import "./Calendar.css";
 
 import {fetchProjects} from "../services/apiHelpers.js";
+import {SmallButton} from "./SmallButton.jsx";
 
 function Calendar() {
     const [events, setEvents] = useState([]);
@@ -78,12 +79,16 @@ function Calendar() {
 
     return (
         <div className="calendar-container">
+            <div className={"button-container"}>
+                <SmallButton className={"add-button"} type={"add"}/>
+            </div>
+
             <FullCalendar
                 plugins={[dayGridPlugin]}
                 initialView="dayGridMonth"
                 locale={eng}
                 events={events}
-                height="100%"
+                height="95%"
                 eventDisplay="block"
                 eventClick={handleEventClick}
             />

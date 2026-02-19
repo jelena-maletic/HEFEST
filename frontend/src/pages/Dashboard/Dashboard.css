@@ -35,3 +35,9 @@ button:focus {
     opacity: 1;
     background-image: none;
 }
+
+.report-lists{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}

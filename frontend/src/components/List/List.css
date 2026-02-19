@@ -1,18 +1,34 @@
 .list{
-    display: contents;
+    display: flex;
+    align-self: center;
     align-items: center;
     flex-direction: column;
     font-family: inherit;
     gap: 0;
 }
 
+.list-header{
+    display: flex;
+    flex-direction: row;
+    align-self: center;
+    align-items: flex-start;
+    gap: 18em;
+    padding: 0.5em;
+}
+
 .list-title{
+    position: relative;
+    color: #2E2F2E;
     font-size: 2em;
     align-self: flex-start;
+}
+
+.add-button{
+    align-self: flex-end;
 }
 
 .divider{
     border: 1px solid #2E2F2E;
     margin: 0;
-    width: 100%;
+    width: 40%;
 }

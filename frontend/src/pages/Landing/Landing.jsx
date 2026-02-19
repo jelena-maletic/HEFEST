@@ -19,23 +19,23 @@ export function Landing({roleHandle}){
                 Dobrodosli!
             </span>
             <hr className="divider" />
-            <ListElement screenState={"users"} listElementData={landingData[0]} onClickFunc={() => {
+            <ListElement isEditable={false} screenState={"users"} listElementData={landingData[0]} onClickFunc={() => {
                 roleHandle("direktor");
                 navigate("/login")
             }}/>
-            <ListElement screenState={"users"} listElementData={landingData[1]} onClickFunc={() => {
+            <ListElement isEditable={false} screenState={"users"} listElementData={landingData[1]} onClickFunc={() => {
                 roleHandle("knjigovodja");
                 navigate("/login")
             }}/>
-            <ListElement screenState={"users"} listElementData={landingData[2]} onClickFunc={() => {
+            <ListElement isEditable={false} screenState={"users"} listElementData={landingData[2]} onClickFunc={() => {
                 roleHandle("magacioner");
                 navigate("/login")
             }}/>
-            <ListElement screenState={"users"} listElementData={landingData[3]} onClickFunc={() => {
+            <ListElement isEditable={false} screenState={"users"} listElementData={landingData[3]} onClickFunc={() => {
                 roleHandle("poslovodja");
                 navigate("/login")
             }}/>
-            <ListElement screenState={"users"} listElementData={landingData[4]} onClickFunc={() => {
+            <ListElement isEditable={false} screenState={"users"} listElementData={landingData[4]} onClickFunc={() => {
                 roleHandle("tehnicar");
                 navigate("/login")
             }}/>

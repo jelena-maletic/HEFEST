@@ -10,7 +10,7 @@ import {useState} from "react";
 function App() {
     const [role, setRole] = useState("def");
     const handleRole = (data) => {
-        setRole(data);
+        setRole(data)
     }
 
     return(
