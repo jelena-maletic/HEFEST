@@ -1,14 +1,28 @@
 import {ListElement} from "./ListElement/ListElement.jsx";
 import {SmallButton} from "../SmallButton.jsx";
 import "./List.css"
+import {useState} from "react";
 
 const noop = () => {};
 
 export function List({listTitle, screenState, listData, onClick = noop, isEditable, numElements = 4, dividerWidth = "40%"}) {
 
-    const smallButton = (editable) => {
+    const addButton = (editable) => {
         if(editable === true){
             return(<SmallButton style={'padding:20px'} type="add"/>)
+        }
+    }
+
+    const [viewState, setViewState] = useState("list");
+
+    const viewButton = (viewState) => {
+        if(viewState === "list"){
+            console.log("viewState: ", viewState);
+            return(<SmallButton style={'padding:20px'} type={viewState} onClickHandler={() => setViewState("grid")}/>)
+        }
+        else if(viewState === "grid"){
+            console.log("viewState: ", viewState);
+            return(<SmallButton style={'padding:20px'} type={viewState} onClickHandler={() => setViewState("list")}/>)
         }
     }
 
@@ -25,8 +39,9 @@ export function List({listTitle, screenState, listData, onClick = noop, isEditab
                 <span className="list-title">
                     {listTitle}
                 </span>
-                <div className="add-button">
-                    {smallButton(isEditable)}
+                <div className="small-buttons">
+                    {viewButton(viewState)}
+                    {addButton(isEditable)}
                 </div>
             </div>
             <hr className="divider" style={{width: dividerWidth}} />

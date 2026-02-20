@@ -23,8 +23,11 @@
     align-self: flex-start;
 }
 
-.add-button{
+.small-buttons{
     align-self: flex-end;
+    display: flex;
+    flex-direction: row;
+    gap: 0.7em;
 }
 
 .divider{
