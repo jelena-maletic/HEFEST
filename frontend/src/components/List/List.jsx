@@ -2,10 +2,24 @@ import {ListElement} from "./ListElement/ListElement.jsx";
 import {SmallButton} from "../SmallButton.jsx";
 import "./List.css"
 import {useState} from "react";
+import { ListElement } from "./ListElement/ListElement.jsx";
+import { SmallButton } from "../SmallButton.jsx";
+import "./List.css";
+import { useState } from "react";
 
 const noop = () => {};
 
-export function List({listTitle, screenState, listData, onClick = noop, isEditable, numElements = 4, dividerWidth = "40%"}) {
+export function List({
+                         listTitle,
+                         screenState,
+                         listData,
+                         onClick = noop,
+                         isEditable,
+                         numElements = 4,
+                         dividerWidth = "60%"
+                     }) {
+
+    const [view, setView] = useState("list");
 
     const addButton = (editable) => {
         if(editable === true){
@@ -34,8 +48,8 @@ export function List({listTitle, screenState, listData, onClick = noop, isEditab
     }
 
     return (
-        <div className = "list">
-            <div className = "list-header">
+        <div className="list">
+            <div className="list-header">
                 <span className="list-title">
                     {listTitle}
                 </span>
@@ -44,12 +58,21 @@ export function List({listTitle, screenState, listData, onClick = noop, isEditab
                     {addButton(isEditable)}
                 </div>
             </div>
-            <hr className="divider" style={{width: dividerWidth}} />
-            <div className="list-content">
-                {listData.map((data, index) => (
-                    element(numElements, index, data)
+
+            <hr className="divider" style={{ width: dividerWidth }} />
+
+            <div className={`list-content ${view}`}>
+                {listData.slice(0, numElements).map((data, index) => (
+                    <ListElement
+                        key={index}
+                        screenState={screenState}
+                        listElementData={data}
+                        onClickFunc={() => onClick()}
+                        isEditable={isEditable}
+                        className={view === "grid" ? "grid-element" : "list-element"}
+                    />
                 ))}
             </div>
         </div>
-    )
+    );
 }
