@@ -1,21 +1,20 @@
 import {ListElement} from "./ListElement/ListElement.jsx";
 import {SmallButton} from "../SmallButton.jsx";
 import "./List.css";
-import { useState } from "react";
+import {useEffect, useState} from "react";
+import {fetchData} from "../../services/apiHelpers.js";
 
 const noop = () => {};
 
 export function List({
                          listTitle,
                          screenState,
-                         listData,
                          onClick = noop,
                          isEditable,
                          numElements = 4,
-                         dividerWidth = "60%"
+                         dividerWidth = "60%",
+                         tag
                      }) {
-
-    // const [view, setView] = useState("list");
 
     const addButton = (editable) => {
         if(editable === true){
@@ -24,6 +23,17 @@ export function List({
     }
 
     const [viewState, setViewState] = useState("list");
+
+    const [listData, setListData] = useState([]);
+
+    useEffect(() => {
+        const getData = async () => {
+            const data = await fetchData(tag);
+            setListData(data || []); // Update state with the actual array
+        };
+
+        getData();
+    }, [tag]);
 
     const viewButton = (viewState) => {
         if(viewState === "list"){

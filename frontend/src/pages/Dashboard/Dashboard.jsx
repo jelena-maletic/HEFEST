@@ -50,7 +50,7 @@ export function Dashboard({sidebarContents, role}) {
                                                                 <List isEditable={false} listTitle={"Dnevni " + screenTitle} screenState="report-overview" listData={data} dividerWidth={"90%"} />
                                                                 <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview" listData={data} dividerWidth={"90%"}/>
                                                             </div>}
-                    {activeScreen === "tools" && <List isEditable={true} listTitle={screenTitle} screenState="tools" listData={data} />}
+                    {activeScreen === "tools" && <List isEditable={true} listTitle={screenTitle} screenState="tools" listData={data} tag="radna-oprema" />}
                     {activeScreen === "vehicles" && <List isEditable={true} listTitle={screenTitle} screenState="truck" listData={data} />}
                     {activeScreen === "materials" && <List isEditable={true} listTitle={screenTitle} screenState="material" listData={data} />}
                     {activeScreen === "taken-resources" && <List isEditable={true} listTitle={screenTitle} screenState="taken-resources" listData={data} />}
