@@ -20,9 +20,11 @@
     font-size: 2em;
 }
 
-.add-button {
+.small-buttons {
     display: flex;
+    flex-direction: row;
     align-items: center;
+    gap: 0.7em;
 }
 
 .divider {
@@ -36,7 +38,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.0em;
+    gap: 0;
     width: 100%;
     margin-top: 1.0em;
 }
@@ -47,7 +49,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 300px));
     justify-content: center;
-    gap: 2em;
+    gap: 1em;
     width: 100%;
     margin-top: 1.5em;
 }

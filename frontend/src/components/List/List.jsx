@@ -1,9 +1,5 @@
 import {ListElement} from "./ListElement/ListElement.jsx";
 import {SmallButton} from "../SmallButton.jsx";
-import "./List.css"
-import {useState} from "react";
-import { ListElement } from "./ListElement/ListElement.jsx";
-import { SmallButton } from "../SmallButton.jsx";
 import "./List.css";
 import { useState } from "react";
 
@@ -19,7 +15,7 @@ export function List({
                          dividerWidth = "60%"
                      }) {
 
-    const [view, setView] = useState("list");
+    // const [view, setView] = useState("list");
 
     const addButton = (editable) => {
         if(editable === true){
@@ -40,12 +36,12 @@ export function List({
         }
     }
 
-
-    const element = (numElements, index, data)=>{
-        if(index < numElements){
-            return (<ListElement key={index} screenState={screenState} listElementData={data} onClickFunc={() => onClick()} isEditable={isEditable}/>)
-        }
-    }
+    //
+    // const element = (numElements, index, data)=>{
+    //     if(index < numElements){
+    //         return (<ListElement key={index} screenState={screenState} listElementData={data} onClickFunc={() => onClick()} isEditable={isEditable}/>)
+    //     }
+    // }
 
     return (
         <div className="list">
@@ -61,7 +57,7 @@ export function List({
 
             <hr className="divider" style={{ width: dividerWidth }} />
 
-            <div className={`list-content ${view}`}>
+            <div className={`list-content ${viewState}`}>
                 {listData.slice(0, numElements).map((data, index) => (
                     <ListElement
                         key={index}
@@ -69,7 +65,7 @@ export function List({
                         listElementData={data}
                         onClickFunc={() => onClick()}
                         isEditable={isEditable}
-                        className={view === "grid" ? "grid-element" : "list-element"}
+                        className={viewState === "grid" ? "grid-element" : "list-element"}
                     />
                 ))}
             </div>
