@@ -24,7 +24,6 @@
     color: #DDDDDD;
 }
 
-
 .list-element:hover button{
     background-color: #868686;
 }
@@ -38,6 +37,7 @@
     display: flex;
     flex-direction: column;
 }
+
 .list-element-title{
     min-width: 120px;
     min-height: 22px;
@@ -104,4 +104,62 @@
 
 .list-element-buttons button{
     padding: 12px;
+}
+
+/* ================= GRID ELEMENT – potpuno odvojen ================= */
+.grid-element {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    min-width: 220px;          /* manja širina */
+    min-height: 220px;
+    padding: 16px;
+    margin: 0;             /* margin ne nasljeđuje iz list-element */
+    background: #e6e6e6;
+    border-radius: 16px;
+    box-shadow: inset 0 0 0 1px #ccc;
+    gap: 10px;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.grid-element .list-image {
+    width: 54px;
+    height: 54px;
+    object-fit: contain;
+    margin-bottom: 10px;
+    align-self: center;
+}
+
+.grid-element .list-element-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.grid-element .list-element-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #222;
+}
+
+.grid-element .list-element-detail {
+    font-size: 12px;
+    color: #777;
+}
+
+.grid-element .list-element-subline {
+    font-size: 11px;
+    color: #999;
+}
+
+.grid-element .list-element-buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
 }

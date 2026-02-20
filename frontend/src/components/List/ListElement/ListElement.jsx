@@ -2,11 +2,9 @@ import './ListElement.css'
 import React, {useState} from 'react';
 import {SmallButton} from "../../SmallButton.jsx";
 
-export function ListElement({screenState, listElementData, onClickFunc, isEditable}) {
+export function ListElement({screenState, listElementData, onClickFunc, isEditable, className}) {
     const [isHovered, setIsHovered] = useState(false);
-    const imagesLong = import.meta.glob('../../../assets/*.svg', {
-        eager: true
-    });
+    const imagesLong = import.meta.glob('../../../assets/*.svg', { eager: true });
 
     const images = Object.entries(imagesLong).reduce((acc, [path, module]) => {
         let name = path.split('/').pop().replace(/\.svg/, '');
@@ -17,16 +15,19 @@ export function ListElement({screenState, listElementData, onClickFunc, isEditab
     const smallButtons = (editable) => {
         if (editable === true) {
             return(<>
-                        <SmallButton className="nested-button" type={"edit"}/>
-                        <SmallButton className="nested-button" type={"delete"}/>
-                   </>);
+                <SmallButton className="nested-button" type={"edit"}/>
+                <SmallButton className="nested-button" type={"delete"}/>
+            </>);
         }
     }
 
     return (
-        <button className="list-element" onClick={() => {onClickFunc()}}
-                onMouseOver={() => setIsHovered(true)}
-                onMouseOut={() => setIsHovered(false)}>
+        <button
+            className={`list-element ${className || ''}`} // <-- OVDE dodaješ prop className
+            onClick={() => {onClickFunc()}}
+            onMouseOver={() => setIsHovered(true)}
+            onMouseOut={() => setIsHovered(false)}
+        >
             <img className="list-image" alt="List Image"
                  src={isHovered ?  images[`${screenState}-inverted`] : images[`${screenState}`]}/>
             <div className="list-element-info">
@@ -37,5 +38,6 @@ export function ListElement({screenState, listElementData, onClickFunc, isEditab
             <div className="list-element-buttons">
                 {smallButtons(isEditable)}
             </div>
-        </button>)
+        </button>
+    );
 }
