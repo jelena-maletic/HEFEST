@@ -33,11 +33,37 @@ export const fetchData = async (tag) => {
                 oprema.push(
                     {
                         title: t.naziv,
-                        detail: t.kategorija,
-                        subline: t.stanjeMagacina
+                        detail: t.stanjeMagacina,
+                        subline: t.kategorija
                     }
                 );
                 return oprema;
+            });
+        }
+        case "vozila":{
+            return dataArray.flatMap((t) => {
+                const vozilo = [];
+                vozilo.push(
+                    {
+                        title: t.naziv + " - " + t.registarskiBroj,
+                        detail: t.stanjeMagacina,
+                        subline: t.datumRegistracije + " do " + t.datumIstekaRegistracije
+                    }
+                );
+                return vozilo;
+            });
+        }
+        case "materijal":{
+            return dataArray.flatMap((t) => {
+                const materijal = [];
+                materijal.push(
+                    {
+                        title: t.naziv,
+                        detail: t.stanjeMagacina + " " + t.jedinicaMjere,
+                        subline: t.kategorija
+                    }
+                );
+                return materijal;
             });
         }
     }

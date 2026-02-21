@@ -51,10 +51,10 @@ export function Dashboard({sidebarContents, role}) {
                                                                 <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview" listData={data} dividerWidth={"90%"}/>
                                                             </div>}
                     {activeScreen === "tools" && <List isEditable={true} listTitle={screenTitle} screenState="tools" listData={data} tag="radna-oprema" />}
-                    {activeScreen === "vehicles" && <List isEditable={true} listTitle={screenTitle} screenState="truck" listData={data} />}
-                    {activeScreen === "materials" && <List isEditable={true} listTitle={screenTitle} screenState="material" listData={data} />}
+                    {activeScreen === "vehicles" && <List isEditable={true} listTitle={screenTitle} screenState="truck" listData={data} tag="vozila" />}
+                    {activeScreen === "materials" && <List isEditable={true} listTitle={screenTitle} screenState="material" listData={data} tag="materijal" />}
                     {activeScreen === "taken-resources" && <List isEditable={true} listTitle={screenTitle} screenState="taken-resources" listData={data} />}
-                    {activeScreen === "request-overview" && <List isEditable={false} listTitle={screenTitle} screenState="request-overview" listData={data} />}
+                    {activeScreen === "request-overview" && <List isEditable={false} listTitle={screenTitle} screenState="request-overview" listData={data} tag="resursi-u-zahtjevu" />}
                     {activeScreen === "technicians" && <List isEditable={false} listTitle={screenTitle} screenState="user" listData={data} />}
                     {activeScreen === "report-overview-manager" && <List isEditable={false} listTitle={screenTitle} screenState="report-overview" listData={data} />}
                 </main>
