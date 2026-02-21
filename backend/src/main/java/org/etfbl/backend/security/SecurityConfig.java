@@ -71,6 +71,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/dnevni_zadaci/**").permitAll()
                         .requestMatchers("/api/tehnicar_projekat/**").permitAll()
                         .requestMatchers("/api/direktor_izvjestaj/**").permitAll()
+                        .requestMatchers("/api/direktori/**").permitAll()
+                        .requestMatchers("/api/knjigovodje/**").permitAll()
+                        .requestMatchers("/api/magacioneri/**").permitAll()
+                        .requestMatchers("/api/poslovodje/**").permitAll()
+                        .requestMatchers("/api/tehnicari/**").permitAll()
+                        .requestMatchers("/api/zaposleni/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
