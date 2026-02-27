@@ -45,18 +45,18 @@ export function Dashboard({sidebarContents, role}) {
                 >
                     {activeScreen === "map" && <MapView />}
                     {activeScreen === "calendar" && <Calendar/>}
-                    {activeScreen === "employees" && <List isEditable={false} listTitle={screenTitle} screenState="user" listData={data} onClick={() => { console.log("a") } }/>}
+                    {activeScreen === "employees" && <List isEditable={false} listTitle={screenTitle} screenState="user" listData={data} tag="zaposleni" onClick={() => { console.log("a") } }/>}
                     {activeScreen === "report-overview" && <div className={"report-lists"}>
-                                                                <List isEditable={false} listTitle={"Dnevni " + screenTitle} screenState="report-overview" listData={data} dividerWidth={"90%"} />
-                                                                <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview" listData={data} dividerWidth={"90%"}/>
+                                                                <List isEditable={false} listTitle={"Dnevni " + screenTitle} screenState="report-overview" listData={data} tag="dnevni_izvjestaji" dividerWidth={"90%"} />
+                                                                <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview" listData={data} tag="sumarni_izvjestaji" dividerWidth={"90%"}/>
                                                             </div>}
                     {activeScreen === "tools" && <List isEditable={true} listTitle={screenTitle} screenState="tools" listData={data} tag="radna-oprema" />}
                     {activeScreen === "vehicles" && <List isEditable={true} listTitle={screenTitle} screenState="truck" listData={data} tag="vozila" />}
                     {activeScreen === "materials" && <List isEditable={true} listTitle={screenTitle} screenState="material" listData={data} tag="materijal" />}
-                    {activeScreen === "taken-resources" && <List isEditable={true} listTitle={screenTitle} screenState="taken-resources" listData={data} />}
-                    {activeScreen === "request-overview" && <List isEditable={false} listTitle={screenTitle} screenState="request-overview" listData={data} tag="resursi-u-zahtjevu" />}
-                    {activeScreen === "technicians" && <List isEditable={false} listTitle={screenTitle} screenState="user" listData={data} />}
-                    {activeScreen === "report-overview-manager" && <List isEditable={false} listTitle={screenTitle} screenState="report-overview" listData={data} />}
+                    {activeScreen === "taken-resources" && <List isEditable={true} listTitle={screenTitle} screenState="taken-resources" listData={data} tag="resursi-u-zahtjevu" />}
+                    {activeScreen === "request-overview" && <List isEditable={false} listTitle={screenTitle} screenState="request-overview" listData={data} tag="zahtjevi" />}
+                    {activeScreen === "technicians" && <List isEditable={false} listTitle={screenTitle} screenState="user" listData={data} tag="tehnicari" />}
+                    {activeScreen === "report-overview-manager" && <List isEditable={false} listTitle={screenTitle} screenState="report-overview" listData={data} tag="izvjestaji" />}
                 </main>
             </div>
         </div>

@@ -66,5 +66,96 @@ export const fetchData = async (tag) => {
                 return materijal;
             });
         }
+        case "zaposleni":{
+            return dataArray.flatMap((t) => {
+                const zaposleni = [];
+                zaposleni.push(
+                    {
+                        title: t.ime + " " + t.prezime,
+                        detail: t.brojTelefona,
+                        subline: t.jmb //uzeti neke druge podatke preko JMB?
+                    }
+                );
+                return zaposleni;
+            });
+        }
+        case "tehnicari":{
+            return dataArray.flatMap((t) => {
+                const tehnicari = [];
+                tehnicari.push(
+                    {
+                        title: t.ime + " " + t.prezime,
+                        detail: t.idProjekta,
+                        subline: t.detalji
+                    }
+                );
+                return tehnicari;
+            });
+        }
+        case "dnevni_izvjestaji":{
+            return dataArray.flatMap((t) => {
+                const dnevni_izvjestaji = [];
+                dnevni_izvjestaji.push(
+                    {
+                        title: t.opisRadova,
+                        detail: t.datum,
+                        subline: "ukupno " + t.ukupniSati + " sati"
+                    }
+                );
+                return dnevni_izvjestaji;
+            });
+        }
+        case "sumarni_izvjestaji":{
+            return dataArray.flatMap((t) => {
+                const sumarni_izvjestaji = [];
+                sumarni_izvjestaji.push(
+                    {
+                        title: t.opis,
+                        detail: t.pocetniDatum + " do " + t.krajnjiDatum,
+                        subline: "ukupno " + t.ukupniSatiRada + " sati"
+                    }
+                );
+                return sumarni_izvjestaji;
+            });
+        }
+        case "zahtjevi":{
+            return dataArray.flatMap((t) => {
+                const zahtjevi = [];
+                zahtjevi.push(
+                    {
+                        title: t.opis,
+                        detail: t.datumSlanja,
+                        subline: t.stanjeZahtjeva
+                    }
+                );
+                return zahtjevi;
+            });
+        }
+        case "resursi-u-zahtjevu":{
+            return dataArray.flatMap((t) => {
+                const resursiUZahtjevu = [];
+                resursiUZahtjevu.push(
+                    {
+                        title: t.resurs,
+                        detail: t.kolicina,
+                        subline: t.odobrenoZaduzenje
+                    }
+                );
+                return resursiUZahtjevu;
+            });
+        }
+        case "izvjestaji":{
+            return dataArray.flatMap((t) => {
+                const tehnicari = [];
+                tehnicari.push(
+                    {
+                        title: t.opis,
+                        detail: t.datumKreiranja,
+                        subline: t.detalji
+                    }
+                );
+                return tehnicari;
+            });
+        }
     }
 }
