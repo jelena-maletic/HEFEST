@@ -113,8 +113,9 @@
     align-items: center;
     text-align: center;
 
-    min-width: 220px;          /* manja širina */
-    min-height: 220px;
+    min-width: 220px; /* manja širina */
+    min-height: 150px;
+    max-height: 200px;
     padding: 16px;
     margin: 0;             /* margin ne nasljeđuje iz list-element */
     /*background: #e6e6e6;*/

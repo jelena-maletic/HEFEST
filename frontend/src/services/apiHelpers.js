@@ -26,8 +26,8 @@ export const fetchData = async (tag) => {
 
     const dataArray = Array.isArray(response.data) ? response.data : [response.data]
 
-    switch (tag){
-        case "radna-oprema":{
+    switch (tag) {
+        case "radna-oprema": {
             return dataArray.flatMap((t) => {
                 const oprema = [];
 
@@ -44,7 +44,7 @@ export const fetchData = async (tag) => {
             });
         }
 
-        case "vozila":{
+        case "vozila": {
             return dataArray.flatMap((t) => {
                 const vozila = [];
 
@@ -60,7 +60,7 @@ export const fetchData = async (tag) => {
                 return vozila;
             });
         }
-        case "materijal":{
+        case "materijal": {
             return dataArray.flatMap((t) => {
                 const materijal = [];
 
@@ -78,7 +78,7 @@ export const fetchData = async (tag) => {
             });
         }
 
-        case "zaposleni":{
+        case "zaposleni": {
             return dataArray.flatMap((t) => {
                 const zaposleni = [];
 
@@ -93,7 +93,7 @@ export const fetchData = async (tag) => {
             })
         }
 
-        case "dnevni_izvjestaji":{
+        case "dnevni_izvjestaji": {
             return dataArray.flatMap((t) => {
                 const dnevni = [];
 
@@ -109,7 +109,7 @@ export const fetchData = async (tag) => {
             })
         }
 
-        case "sumarni_izvjestaji":{
+        case "sumarni_izvjestaji": {
             return dataArray.flatMap((t) => {
                 const sumarni = [];
 
@@ -125,58 +125,62 @@ export const fetchData = async (tag) => {
             })
         }
 
-        case "tehnicari":{
+        case "tehnicari": {
             return dataArray.flatMap((t) => {
                 const tehnicari = [];
-                tehnicari.push(
-                    {
+                let temp = {
                         title: t.ime + " " + t.prezime,
                         detail: t.idProjekta,
                         subline: t.detalji
-                    }
-                );
+                    };
+                Object.assign(temp, t);
+
+                tehnicari.push(temp)
                 return tehnicari;
             });
         }
 
 
-        case "zahtjevi":{
+        case "zahtjevi": {
             return dataArray.flatMap((t) => {
                 const zahtjevi = [];
-                zahtjevi.push(
-                    {
+                let temp = {
                         title: t.opis,
                         detail: t.datumSlanja,
                         subline: t.stanjeZahtjeva
-                    }
-                );
+                    };
+                Object.assign(temp, t);
+
+                zahtjevi.push(temp)
                 return zahtjevi;
             });
         }
-        case "resursi-u-zahtjevu":{
+        case "resursi-u-zahtjevu": {
             return dataArray.flatMap((t) => {
                 const resursiUZahtjevu = [];
-                resursiUZahtjevu.push(
-                    {
+                let temp = {
                         title: t.resurs,
                         detail: t.kolicina,
                         subline: t.odobrenoZaduzenje
-                    }
-                );
+                    };
+                Object.assign(temp, t);
+
+                resursiUZahtjevu.push(temp)
                 return resursiUZahtjevu;
             });
         }
-        case "izvjestaji":{
+        case "izvjestaji": {
             return dataArray.flatMap((t) => {
-                const tehnicari = [];
-                tehnicari.push(
-                    {
+                const izvjestaji = [];
+                let temp = {
                         title: t.opis,
                         detail: t.datumKreiranja,
                         subline: t.detalji
-                    }
-                );
-                return tehnicari;
+                    };
+                Object.assign(temp, t);
+
+                izvjestaji.push(temp)
+                return izvjestaji;
             });
         }
     }
