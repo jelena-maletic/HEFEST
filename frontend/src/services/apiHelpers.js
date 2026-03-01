@@ -60,7 +60,6 @@ export const fetchData = async (tag) => {
                 return vozila;
             });
         }
-
         case "materijal":{
             return dataArray.flatMap((t) => {
                 const materijal = [];
@@ -126,6 +125,59 @@ export const fetchData = async (tag) => {
             })
         }
 
-        case ""
+        case "tehnicari":{
+            return dataArray.flatMap((t) => {
+                const tehnicari = [];
+                tehnicari.push(
+                    {
+                        title: t.ime + " " + t.prezime,
+                        detail: t.idProjekta,
+                        subline: t.detalji
+                    }
+                );
+                return tehnicari;
+            });
+        }
+
+
+        case "zahtjevi":{
+            return dataArray.flatMap((t) => {
+                const zahtjevi = [];
+                zahtjevi.push(
+                    {
+                        title: t.opis,
+                        detail: t.datumSlanja,
+                        subline: t.stanjeZahtjeva
+                    }
+                );
+                return zahtjevi;
+            });
+        }
+        case "resursi-u-zahtjevu":{
+            return dataArray.flatMap((t) => {
+                const resursiUZahtjevu = [];
+                resursiUZahtjevu.push(
+                    {
+                        title: t.resurs,
+                        detail: t.kolicina,
+                        subline: t.odobrenoZaduzenje
+                    }
+                );
+                return resursiUZahtjevu;
+            });
+        }
+        case "izvjestaji":{
+            return dataArray.flatMap((t) => {
+                const tehnicari = [];
+                tehnicari.push(
+                    {
+                        title: t.opis,
+                        detail: t.datumKreiranja,
+                        subline: t.detalji
+                    }
+                );
+                return tehnicari;
+            });
+        }
     }
 }
