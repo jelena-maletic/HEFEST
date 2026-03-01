@@ -15,7 +15,7 @@ export const fetchData = async (tag) => {
     try {
         response = await api.service(false).get(`/${tag}`);
     } catch (error) {
-        console.error("Greška pri dohvatanju projekta: " + error);
+        console.error("Greška pri dohvatanju podataka: " + error);
         return [];
     }
 
@@ -30,41 +30,102 @@ export const fetchData = async (tag) => {
         case "radna-oprema":{
             return dataArray.flatMap((t) => {
                 const oprema = [];
-                oprema.push(
-                    {
-                        title: t.naziv,
-                        detail: t.stanjeMagacina,
-                        subline: t.kategorija
-                    }
-                );
+
+                let temp = {
+                    title: t.naziv,
+                    detail: t.stanjeMagacina,
+                    subline: t.kategorija
+                };
+                Object.assign(temp, t);
+
+                oprema.push(temp);
+
                 return oprema;
             });
         }
+
         case "vozila":{
             return dataArray.flatMap((t) => {
-                const vozilo = [];
-                vozilo.push(
-                    {
-                        title: t.naziv + " - " + t.registarskiBroj,
-                        detail: t.stanjeMagacina,
-                        subline: t.datumRegistracije + " do " + t.datumIstekaRegistracije
-                    }
-                );
-                return vozilo;
+                const vozila = [];
+
+                let temp = {
+                    title: t.naziv + " - " + t.registarskiBroj,
+                    detail: t.stanjeMagacina,
+                    subline: t.datumRegistracije + " do " + t.datumIstekaRegistracije
+                }
+                Object.assign(temp, t);
+
+                vozila.push(temp);
+
+                return vozila;
             });
         }
+
         case "materijal":{
             return dataArray.flatMap((t) => {
                 const materijal = [];
-                materijal.push(
-                    {
-                        title: t.naziv,
-                        detail: t.stanjeMagacina + " " + t.jedinicaMjere,
-                        subline: t.kategorija
-                    }
-                );
+
+                let temp = {
+                    title: t.naziv,
+                    detail: t.stanjeMagacina + " " + t.jedinicaMjere,
+                    subline: t.kategorija
+                };
+
+                Object.assign(temp, t);
+
+                materijal.push(temp);
+
                 return materijal;
             });
         }
+
+        case "zaposleni":{
+            return dataArray.flatMap((t) => {
+                const zaposleni = [];
+
+                let temp = {
+                    title: t.ime + " " + t.prezime,
+                    detail: t.brojTelefona
+                }
+                Object.assign(temp, t);
+
+                zaposleni.push(temp);
+                return zaposleni;
+            })
+        }
+
+        case "dnevni_izvjestaji":{
+            return dataArray.flatMap((t) => {
+                const dnevni = [];
+
+                let temp = {
+                    title: "nemamo naziv kreatora!!!",
+                    detail: t.datum,
+                    subline: t.opisRadova
+                }
+                Object.assign(temp, t);
+
+                dnevni.push(temp);
+                return dnevni;
+            })
+        }
+
+        case "sumarni_izvjestaji":{
+            return dataArray.flatMap((t) => {
+                const sumarni = [];
+
+                let temp = {
+                    title: "ovjde vjv treba naziv projekta",
+                    detail: t.pocetniDatum + " - " + t.krajnjiDatum,
+                    subline: t.opis
+                }
+                Object.assign(temp, t);
+
+                sumarni.push(temp);
+                return sumarni;
+            })
+        }
+
+        case ""
     }
 }
