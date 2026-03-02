@@ -2,6 +2,8 @@ package org.etfbl.backend.service;
 
 import jakarta.transaction.Transactional;
 import org.etfbl.backend.dto.Materijal;
+import org.etfbl.backend.dto.Poslovodja;
+import org.etfbl.backend.dto.Projekat;
 import org.etfbl.backend.dto.SumarniIzvjestaj;
 import org.etfbl.backend.repository.SumarniIzvjestajRepository;
 import org.modelmapper.ModelMapper;
@@ -28,8 +30,22 @@ public class SumarniIzvjestajService {
             dto.setDatumKreiranja(entity.getDatumKreiranja());
 
             if (entity.getPoslovodjaUpravljaProjektom() != null) {
-                dto.setIdProjekta(entity.getPoslovodjaUpravljaProjektom().getIdProjekta());
-                dto.setJmbPoslovodja(entity.getPoslovodjaUpravljaProjektom().getPoslovodjaJMB());
+
+                var pup = entity.getPoslovodjaUpravljaProjektom();
+
+                if (pup.getProjekat() != null) {
+                    Projekat pDto = new Projekat();
+                    pDto.setId(pup.getProjekat().getIdProjekta());
+                    pDto.setNaziv(pup.getProjekat().getNaziv());
+                    dto.setProjekat(pDto);
+                }
+
+                if (pup.getPoslovodja() != null) {
+                    Poslovodja rDto = new Poslovodja();
+                    rDto.setIme(pup.getPoslovodja().getIme());
+                    rDto.setPrezime(pup.getPoslovodja().getPrezime());
+                    dto.setPoslovodja(rDto);
+                }
             }
 
             dto.setPocetniDatum(entity.getPocetniDatum());

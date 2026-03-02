@@ -1,5 +1,7 @@
 package org.etfbl.backend.dto;
 
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
 import lombok.Value;
 import org.etfbl.backend.model.DnevniIzvjestajEntity;
@@ -15,10 +17,12 @@ import java.time.LocalDate;
 public class DnevniIzvjestaj implements Serializable {
     private Integer idIzvjestaja;
     private LocalDate datumKreiranja;
-    private Integer idProjekta;
-    private String jmbPoslovodja;
-
-    private String jmbTehnicar;
+    //private Integer idProjekta;
+    //private String jmbPoslovodja;
+    //private String jmbTehnicar;
+    private Projekat projekat;
+    private Poslovodja poslovodja;
+    private Tehnicar tehnicar;
     private LocalDate datum;
     private BigDecimal satiRada;
     private BigDecimal nocniSati;

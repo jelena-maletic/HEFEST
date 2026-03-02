@@ -2,6 +2,8 @@ package org.etfbl.backend.service;
 
 import jakarta.transaction.Transactional;
 import org.etfbl.backend.dto.DnevniIzvjestaj;
+import org.etfbl.backend.dto.Poslovodja;
+import org.etfbl.backend.dto.Projekat;
 import org.etfbl.backend.dto.SumarniIzvjestaj;
 import org.etfbl.backend.repository.DnevniIzvjestajRepository;
 import org.etfbl.backend.repository.SumarniIzvjestajRepository;
@@ -21,35 +23,40 @@ public class DnevniIzvjestajService {
             this.dnevniIzvjestajRepository = dnevniIzvjestajRepository;
         }
 
-    public List<DnevniIzvjestaj> getAll() {
-        return dnevniIzvjestajRepository.findAll().stream().map(entity -> {
-            DnevniIzvjestaj dto = new DnevniIzvjestaj();
+        public List<DnevniIzvjestaj> getAll() {
+            return dnevniIzvjestajRepository.findAll().stream().map(entity -> {
+                DnevniIzvjestaj dto = new DnevniIzvjestaj();
 
-            // 1. Polja iz roditeljske klase (IzvjestajEntity)
-            dto.setIdIzvjestaja(entity.getId());
-            dto.setDatumKreiranja(entity.getDatumKreiranja());
+                dto.setIdIzvjestaja(entity.getId());
+                dto.setDatumKreiranja(entity.getDatumKreiranja());
 
-            // 2. Podaci o projektu i poslovođi (iz asocijacije u roditelju)
-            if (entity.getPoslovodjaUpravljaProjektom() != null) {
-                dto.setIdProjekta(entity.getPoslovodjaUpravljaProjektom().getIdProjekta());
-                dto.setJmbPoslovodja(entity.getPoslovodjaUpravljaProjektom().getPoslovodjaJMB());
-            }
+                if (entity.getPoslovodjaUpravljaProjektom() != null) {
+                    var pup = entity.getPoslovodjaUpravljaProjektom();
 
-            // 3. Podaci iz DnevniIzvjestajEntity
-            dto.setDatum(entity.getDatum());
-            dto.setSatiRada(entity.getSatiRada());
-            dto.setNocniSati(entity.getNocniSati());
-            dto.setPrekovremeniSati(entity.getPrekovremeniSati());
-            dto.setTerenskiSati(entity.getTerenskiSati());
-            dto.setUkupniSati(entity.getUkupniSati());
-            dto.setOpisRadova(entity.getOpisRadova());
+                    if (pup.getProjekat() != null) {
+                        Projekat pDto = new Projekat();
+                        pDto.setId(pup.getProjekat().getIdProjekta());
+                        pDto.setNaziv(pup.getProjekat().getNaziv());
+                        dto.setProjekat(pDto);
+                    }
 
-            // 4. JMB Tehničara (izvlačimo iz TehnicarEntity veze)
-            //if (entity.getTehnicar() != null) {
-            //    dto.setJmbTehnicar(entity.getTehnicar().getJmb());
-            //}
+                    if (pup.getPoslovodja() != null) {
+                        Poslovodja rDto = new Poslovodja();
+                        rDto.setIme(pup.getPoslovodja().getIme());
+                        rDto.setPrezime(pup.getPoslovodja().getPrezime());
+                        dto.setPoslovodja(rDto);
+                    }
+                }
 
-            return dto;
-        }).toList();
-    }
+                dto.setDatum(entity.getDatum());
+                dto.setSatiRada(entity.getSatiRada());
+                dto.setNocniSati(entity.getNocniSati());
+                dto.setPrekovremeniSati(entity.getPrekovremeniSati());
+                dto.setTerenskiSati(entity.getTerenskiSati());
+                dto.setUkupniSati(entity.getUkupniSati());
+                dto.setOpisRadova(entity.getOpisRadova());
+
+                return dto;
+            }).toList();
+        }
 }
