@@ -33,8 +33,8 @@ export const fetchData = async (tag) => {
 
                 let temp = {
                     title: t.naziv,
-                    detail: t.stanjeMagacina,
-                    subline: t.kategorija
+                    detail: "Stanje magacina: " + t.stanjeMagacina,
+                    subline: "Kategorija: " + t.kategorija
                 };
                 Object.assign(temp, t);
 
@@ -50,8 +50,8 @@ export const fetchData = async (tag) => {
 
                 let temp = {
                     title: t.naziv + " - " + t.registarskiBroj,
-                    detail: t.stanjeMagacina,
-                    subline: t.datumRegistracije + " do " + t.datumIstekaRegistracije
+                    detail: t.tipVozila,
+                    subline: "Registracija važi od " + t.datumRegistracije + " do " + t.datumIstekaRegistracije
                 }
                 Object.assign(temp, t);
 
@@ -66,8 +66,8 @@ export const fetchData = async (tag) => {
 
                 let temp = {
                     title: t.naziv,
-                    detail: t.stanjeMagacina + " " + t.jedinicaMjere,
-                    subline: t.kategorija
+                    detail: "Stanje magacina: " + t.stanjeMagacina + " " + t.jedinicaMjere,
+                    subline: "Kategorija: " + t.kategorija
                 };
 
                 Object.assign(temp, t);
@@ -84,7 +84,8 @@ export const fetchData = async (tag) => {
 
                 let temp = {
                     title: t.ime + " " + t.prezime,
-                    detail: t.brojTelefona
+                    detail: t.brojTelefona,
+                    subline: t.email
                 }
                 Object.assign(temp, t);
 
@@ -115,7 +116,7 @@ export const fetchData = async (tag) => {
 
                 let temp = {
                     title: "ovjde vjv treba naziv projekta",
-                    detail: t.pocetniDatum + " - " + t.krajnjiDatum,
+                    detail: "Od " + t.pocetniDatum + " do " + t.krajnjiDatum,
                     subline: t.opis
                 }
                 Object.assign(temp, t);
@@ -146,8 +147,8 @@ export const fetchData = async (tag) => {
                 const zahtjevi = [];
                 let temp = {
                         title: t.opis,
-                        detail: t.datumSlanja,
-                        subline: t.stanjeZahtjeva
+                        detail: "Datum slanja: " + t.datumSlanja,
+                        subline: "Stanje zahtjeva: " + t.stanjeZahtjeva
                     };
                 Object.assign(temp, t);
 
@@ -155,32 +156,32 @@ export const fetchData = async (tag) => {
                 return zahtjevi;
             });
         }
-        case "resursi-u-zahtjevu": {
+        case "zaduzenja": {
             return dataArray.flatMap((t) => {
-                const resursiUZahtjevu = [];
+                const zaduzenja = [];
                 let temp = {
-                        title: t.resurs,
-                        detail: t.kolicina,
-                        subline: t.odobrenoZaduzenje
+                        title: t.zaduzenaKolicina + " " + t.resurs.naziv,
+                        detail: t.poslovodja.ime + " " + t.poslovodja.prezime,
+                        subline: "Datum zaduženja: " + t.datumZaduzenja
                     };
                 Object.assign(temp, t);
 
-                resursiUZahtjevu.push(temp)
-                return resursiUZahtjevu;
+                zaduzenja.push(temp)
+                return zaduzenja;
             });
         }
-        case "izvjestaji": {
+        case "projekti": {
             return dataArray.flatMap((t) => {
-                const izvjestaji = [];
+                const projects = [];
                 let temp = {
-                        title: t.opis,
-                        detail: t.datumKreiranja,
-                        subline: t.detalji
+                        title: t.naziv,
+                        detail: t.opis,
+                        subline: "Datum početka rada: " + t.pocetakRada
                     };
                 Object.assign(temp, t);
 
-                izvjestaji.push(temp)
-                return izvjestaji;
+                projects.push(temp)
+                return projects;
             });
         }
     }

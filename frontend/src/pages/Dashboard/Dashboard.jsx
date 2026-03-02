@@ -46,10 +46,14 @@ export function Dashboard({sidebarContents, role}) {
                     {activeScreen === "tools" && <List isEditable={true} listTitle={screenTitle} screenState="tools" tag="radna-oprema" />}
                     {activeScreen === "vehicles" && <List isEditable={true} listTitle={screenTitle} screenState="truck" tag="vozila" />}
                     {activeScreen === "materials" && <List isEditable={true} listTitle={screenTitle} screenState="material" tag="materijal" />}
-                    {activeScreen === "taken-resources" && <List isEditable={true} listTitle={screenTitle} screenState="taken-resources"/>}
-                    {activeScreen === "request-overview" && <List isEditable={false} listTitle={screenTitle} screenState="request-overview" tag="resursi-u-zahtjevu" />}
+                    {activeScreen === "taken-resources" && <List isEditable={true} listTitle={screenTitle} screenState="taken-resources" tag="zaduzenja" />}
+                    {activeScreen === "request-overview" && <List isEditable={false} listTitle={screenTitle} screenState="request-overview" tag="zahtjevi" />}
                     {activeScreen === "technicians" && <List isEditable={false} listTitle={screenTitle} screenState="user" tag="tehnicari"/>}
-                    {activeScreen === "report-overview-manager" && <List isEditable={false} listTitle={screenTitle} screenState="report-overview" />}
+                    {activeScreen === "report-overview-manager" && <div className={"report-lists"}>
+                                                                <List isEditable={false} listTitle={"Dnevni " + screenTitle} screenState="report-overview" dividerWidth={"90%"} tag="dnevni_izvjestaji" />
+                                                                 <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview" dividerWidth={"90%"} tag="sumarni_izvjestaji"/>
+                                                              </div>}
+                    {activeScreen === "projects" && <List isEditable={false} listTitle={screenTitle} screenState="projects" tag="projekti"/>}
                 </main>
             </div>
         </div>
