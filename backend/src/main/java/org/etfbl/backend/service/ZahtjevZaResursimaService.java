@@ -2,10 +2,8 @@ package org.etfbl.backend.service;
 
 
 import jakarta.transaction.Transactional;
-import org.etfbl.backend.dto.Projekat;
-import org.etfbl.backend.dto.ResursUZahtjevu;
-import org.etfbl.backend.dto.Vozilo;
-import org.etfbl.backend.dto.ZahtjevZaResursima;
+import org.etfbl.backend.dto.*;
+import org.etfbl.backend.exceptions.NotFoundException;
 import org.etfbl.backend.model.*;
 import org.etfbl.backend.repository.MagacionerRepository;
 import org.etfbl.backend.repository.PoslovodjaRepository;
@@ -53,5 +51,18 @@ public class ZahtjevZaResursimaService {
         entity.setMagacioner(magacioner);
         ZahtjevZaResursimaEntity sacuvan = zahtjevZaResursimaRepository.save(entity);
         return modelMapper.map(sacuvan, ZahtjevZaResursima.class);
+    }
+
+    public List<ZahtjevZaResursima> getZahtjeviByPoslovodjaId(String poslovodjaId) throws NotFoundException {
+
+        List<ZahtjevZaResursimaEntity> entiteti = zahtjevZaResursimaRepository.findAllByPoslovodja_jmb(poslovodjaId);
+
+        if (entiteti.isEmpty()) {
+            throw new NotFoundException("Nisu pronađeni zahtjevi za poslovođu sa JMB: " + poslovodjaId);
+        }
+
+        return entiteti.stream()
+                .map(z -> modelMapper.map(z, ZahtjevZaResursima.class))
+                .toList();
     }
 }

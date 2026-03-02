@@ -1,6 +1,7 @@
 package org.etfbl.backend.repository;
 
 import org.etfbl.backend.model.StanjeZahtjeva;
+import org.etfbl.backend.model.ZaduzenjeEntity;
 import org.etfbl.backend.model.ZahtjevZaResursimaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,4 +19,5 @@ public interface ZahtjevZaResursimaRepository extends JpaRepository<ZahtjevZaRes
 
     // Pronalaženje svih neobrađenih zahtjeva
     List<ZahtjevZaResursimaEntity> findAllByStanjeZahtjeva(StanjeZahtjeva stanje);
+    List<ZahtjevZaResursimaEntity> findAllByPoslovodja_jmb(String jmb);
 }
