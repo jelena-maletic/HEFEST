@@ -13,8 +13,8 @@ import java.util.Optional;
 @Repository
 public interface ZahtjevZaResursimaRepository extends JpaRepository<ZahtjevZaResursimaEntity,Integer> {
 
-    @Query("SELECT z FROM ZahtjevZaResursimaEntity z LEFT JOIN FETCH z.resursUZahtjevu WHERE z.id = :id")
-    Optional<ZahtjevZaResursimaEntity> findByIdWithResources(Integer id);
+   // @Query("SELECT z FROM ZahtjevZaResursimaEntity z LEFT JOIN FETCH z.resursUZahtjevu WHERE z.id = :id")
+    //Optional<ZahtjevZaResursimaEntity> findByIdWithResources(Integer id);
 
     // Pronalaženje svih neobrađenih zahtjeva
     List<ZahtjevZaResursimaEntity> findAllByStanjeZahtjeva(StanjeZahtjeva stanje);

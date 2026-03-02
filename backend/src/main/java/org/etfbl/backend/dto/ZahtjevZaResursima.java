@@ -17,5 +17,5 @@ public class ZahtjevZaResursima implements Serializable {
     Instant datumObrade;
     String opis;
     StanjeZahtjeva stanjeZahtjeva=StanjeZahtjeva.neobradjen;
-    Set<ResursUZahtjevu> resursUZahtjevu;
+    //Set<ResursUZahtjevu> resursUZahtjevu;
 }

@@ -37,4 +37,10 @@ public class ZaduzenjeService {
                 .map(z -> modelMapper.map(z, Zaduzenje.class))
                 .toList();
     }
+
+    public List<Zaduzenje> getAllZaduzenje() {
+
+        return zaduzenjeRepository.findAll().stream().map(z -> modelMapper.map(z, Zaduzenje.class )).toList();
+
+    }
 }

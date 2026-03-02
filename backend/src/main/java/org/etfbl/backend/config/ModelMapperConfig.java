@@ -1,5 +1,7 @@
 package org.etfbl.backend.config;
 
+import org.etfbl.backend.dto.ResursUZahtjevu;
+import org.etfbl.backend.model.ResursUZahtjevuEntity;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +14,8 @@ public class ModelMapperConfig {
         ModelMapper modelMapper = new ModelMapper();
 
         modelMapper.getConfiguration()
-                .setAmbiguityIgnored(true);
+                .setAmbiguityIgnored(true)
+                .setCollectionsMergeEnabled(false);
 
         return modelMapper;
     }

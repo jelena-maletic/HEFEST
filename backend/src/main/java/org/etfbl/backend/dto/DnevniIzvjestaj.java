@@ -17,6 +17,7 @@ public class DnevniIzvjestaj implements Serializable {
     private LocalDate datumKreiranja;
     private Integer idProjekta;
     private String jmbPoslovodja;
+
     private String jmbTehnicar;
     private LocalDate datum;
     private BigDecimal satiRada;

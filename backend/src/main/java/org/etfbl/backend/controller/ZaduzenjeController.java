@@ -2,6 +2,7 @@ package org.etfbl.backend.controller;
 
 
 import org.etfbl.backend.dto.ResursUZahtjevu;
+import org.etfbl.backend.dto.Vozilo;
 import org.etfbl.backend.dto.Zaduzenje;
 import org.etfbl.backend.exceptions.NotFoundException;
 import org.etfbl.backend.repository.ZaduzenjeRepository;
@@ -26,4 +27,10 @@ public class ZaduzenjeController {
         List<Zaduzenje> r=zaduzenjeService.getZaduzenjaByPoslovodjaId(poslovodjaJMB);
         return ResponseEntity.ok(r);
     }
+
+    @GetMapping
+    public List<Zaduzenje> getAll() {
+        return zaduzenjeService.getAllZaduzenje();
+    }
+
 }

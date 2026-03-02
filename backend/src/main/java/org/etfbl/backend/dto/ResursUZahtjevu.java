@@ -15,3 +15,4 @@ public class ResursUZahtjevu implements Serializable {
     BigDecimal kolicina;
     Boolean odobrenoZaduzenje;
 }
+

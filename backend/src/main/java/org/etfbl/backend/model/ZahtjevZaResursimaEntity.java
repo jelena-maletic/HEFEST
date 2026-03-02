@@ -39,7 +39,7 @@ public class ZahtjevZaResursimaEntity {
     @JoinColumn(name = "Magacioner_JMB", nullable = false)
     private MagacionerEntity magacioner;
 
-    @OneToMany(mappedBy = "zahtjev")
+   /* @OneToMany(mappedBy = "zahtjev")
     private Set<ResursUZahtjevuEntity> resursUZahtjevu = new LinkedHashSet<>();
-    //prilikom ucitavanja zahtjeva se mogu ucitati i svi resursi koji su trazeni u zahtjevu
+    //prilikom ucitavanja zahtjeva se mogu ucitati i svi resursi koji su trazeni u zahtjevu*/
 }

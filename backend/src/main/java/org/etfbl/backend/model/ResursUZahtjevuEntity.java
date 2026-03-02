@@ -2,6 +2,8 @@ package org.etfbl.backend.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.etfbl.backend.model.manytomanyid.ResursUZahtjevuId;
 
 import java.io.Serializable;
@@ -24,6 +26,8 @@ public class ResursUZahtjevuEntity implements Serializable {
     @MapsId
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "IdZahtjeva", referencedColumnName = "IdZahtjeva",nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private ZahtjevZaResursimaEntity zahtjev;
 
     @MapsId
