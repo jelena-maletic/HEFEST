@@ -1,5 +1,15 @@
 import dayjs from 'dayjs';
 
+export const loadAssets = () => {
+    const imagesLong = import.meta.glob('../assets/*.svg', { eager: true });
+
+    return Object.entries(imagesLong).reduce((acc, [path, module]) => {
+        let name = path.split('/').pop().replace(/\.svg/, '');
+        acc[name] = module.default;
+        return acc;
+    }, {});
+}
+
 export const formatDate = (isoDate) => {
     if (!isoDate) return 'N/A';
     return dayjs(isoDate).format('DD.MM.YYYY.');

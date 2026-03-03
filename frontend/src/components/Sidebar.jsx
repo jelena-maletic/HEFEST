@@ -4,20 +4,13 @@ import keyIcon from "../assets/key-icon.svg";
 import logoutIcon from "../assets/logout-icon.svg";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
+import {loadAssets} from "../utils/dataHelpers.js";
 
 
 export function Sidebar({contents, screenHandle, activeHandle, active}) {
     const [activeScreen, setActiveScreen] = useState("home");
 
-    const imagesLong = import.meta.glob('../assets/*.svg', {
-        eager: true
-    });
-
-    const images = Object.entries(imagesLong).reduce((acc, [path, module]) => {
-        let name = path.split('/').pop().replace(/\.svg/, '');
-        acc[name] = module.default;
-        return acc;
-    }, {});
+    const images = loadAssets();
 
     const navigate = useNavigate();
     return (<aside className="sidebar">

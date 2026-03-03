@@ -11,7 +11,7 @@ export default {
         if (useAuth) {
             instance.interceptors.request.use(
                 async (config) => {
-                    const token = sessionStorage.getItem("auth");
+                    const token = sessionStorage.getItem("auth-token");
                     if (token) {
                         config.headers = {
                             ...config.headers,

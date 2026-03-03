@@ -1,16 +1,13 @@
 import './ListElement.css'
 import React, {useState} from 'react';
 import {SmallButton} from "../../SmallButton.jsx";
+import {loadAssets} from "../../../utils/dataHelpers.js";
 
 export function ListElement({screenState, listElementData, onClickFunc, isEditable, className}) {
     const [isHovered, setIsHovered] = useState(false);
-    const imagesLong = import.meta.glob('../../../assets/*.svg', { eager: true });
 
-    const images = Object.entries(imagesLong).reduce((acc, [path, module]) => {
-        let name = path.split('/').pop().replace(/\.svg/, '');
-        acc[name] = module.default;
-        return acc;
-    }, {});
+    const images = loadAssets();
+    console.log(images);
 
     const smallButtons = (editable) => {
         if (editable === true) {

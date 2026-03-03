@@ -5,6 +5,8 @@
     gap:0.0em;
     width: 100%;
     font-family: inherit;
+    height: 100%;
+    overflow: hidden;
 }
 
 .list-header {
@@ -42,6 +44,10 @@
     gap: 0;
     width: 100%;
     margin-top: 1.0em;
+    flex: 1; /* Take up all remaining space under the header */
+    min-height: 0; /* Crucial flexbox fix to allow scrolling */
+    overflow-y: auto; /* Scroll ONLY the list items */
+    padding-bottom: 2em;
 }
 
 /* ================= GRID VIEW ================= */
@@ -53,4 +59,8 @@
     gap: 1em;
     width: 100%;
     margin-top: 1.5em;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto; /* Makes the grid scrollable too */
+    padding-bottom: 2em;
 }

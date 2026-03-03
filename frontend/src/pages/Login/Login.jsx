@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import { login } from "../../auth/authService";
-// import { saveAuth } from "../../auth/auth";
+import { login } from "../../auth/authService";
+import { saveAuth } from "../../auth/auth";
 import "./Login.css";
 import hefestLogo from "../../assets/hefest-logo.svg";
 import loginIcon from "../../assets/login-icon.png";
@@ -10,7 +10,7 @@ import usernameIcon from "../../assets/user.svg";
 import eyeOpen from "../../assets/eye.svg";
 import eyeClosed from "../../assets/eye-off.svg";
 
-function Login() {
+function Login({roleHandle}) {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
@@ -21,40 +21,54 @@ function Login() {
         e.preventDefault();
         setError("");
 
-        // if (!username.trim() || !password.trim()) {
-        //     setError("Please enter username and password");
-        //     return;
-        // }
+        if (!username.trim() || !password.trim()) {
+            console.log("Please enter a valid username");
+            setError("Molimo unesite korisničko ime i lozinku.");
+            return;
+        }
 
-        // try {
-        //     const res = await login(username, password);
-        //     const { token, role } = res.data;
-        //     saveAuth(token, username, role);
-        //     switch (role) {
-        //         case "ROLE_DIREKTOR":
-        //             navigate("/direktor/dashboard");
-        //             break;
-        //         case "ROLE_MAGACIONER":
-        //             navigate("/magacioner/dashboard");
-        //             break;
-        //         case "ROLE_TEHNICAR":
-        //             navigate("/tehnicar/dashboard");
-        //             break;
-        //         case "ROLE_POSLOVODJA":
-        //             navigate("/poslovodja/dashboard");
-        //             break;
-        //         case "ROLE_KNJIGOVODJA":
-        //             navigate("/knjigovodja/dashboard");
-        //             break;
-        //         default:
-        //             setError("Unknown role — access denied");
-        //             sessionStorage.clear();
-        //             break;
-        //     }
-        // } catch (err) {
-        //     setError(err.response?.data?.message || "Invalid username or password");
-        // }
-        navigate("/dashboard");
+        try {
+            const res = await login(username, password);
+            // Bekend vraća LoginResponse sa poljima: token, username, role
+            const { token, role, username: returnedUsername } = res.data;
+
+            // Čuvamo u sessionStorage
+            saveAuth(token, returnedUsername, role);
+
+            // Preusmjeravanje na osnovu uloge iz bekenda
+            switch (role) {
+                case "ROLE_DIREKTOR":
+                    roleHandle("direktor");
+                    navigate("/dashboard");
+                    break;
+                case "ROLE_MAGACIONER":
+                    roleHandle("magacioner");
+                    navigate("/dashboard");
+                    break;
+                case "ROLE_TEHNICAR":
+                    roleHandle("tehnicar");
+                    navigate("/dashboard");
+                    break;
+                case "ROLE_POSLOVODJA":
+                    roleHandle("poslovodja");
+                    navigate("/dashboard");
+                    break;
+                case "ROLE_KNJIGOVODJA":
+                    roleHandle("knjigovodja");
+                    navigate("/dashboard");
+                    break;
+                default:
+                    setError("Nemate ovlaštenja za pristup.");
+                    sessionStorage.clear();
+                    break;
+            }
+        } catch (err) {
+            console.error("Login error object:", err); // Log this to see the real structure
+            const errorMessage = err.response?.data?.message
+                || err.response?.data?.error
+                || "Neispravno korisničko ime ili lozinka";
+            setError(errorMessage);
+        }
     };
 
 
@@ -65,19 +79,19 @@ function Login() {
 
             <img src={loginIcon} alt="User icon" className="login-icon" />
 
-            <div className="input-group">
-                <img src={usernameIcon} alt="User" className="input-icon" />
-                <input
-                    type="text"
-                    placeholder="Username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    onDrop={(e) => e.preventDefault()}
-                    onDragOver={(e) => e.preventDefault()}
-
-                />
-            </div>
             <form onSubmit={handleSubmit}>
+                <div className="input-group">
+                    <img src={usernameIcon} alt="User" className="input-icon" />
+                    <input
+                        type="text"
+                        placeholder="Username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        onDrop={(e) => e.preventDefault()}
+                        onDragOver={(e) => e.preventDefault()}
+
+                    />
+                </div>
                 <div className="input-group">
                     <img src={lockIcon} alt="Lock" className="input-icon" />
                     <input
@@ -96,12 +110,9 @@ function Login() {
                     />
                 </div>
 
-                {error && <p className="error-message">{error}</p>}
+                {error && <p className="error-message">{`${error}`}</p>}
 
                 <button className="login-button" type="submit">Log in</button>
-                {/*
-                <p className="forgot-password">Forgot password?</p>
-                */}
             </form>
         </div>
     );

@@ -77,6 +77,26 @@ body, html {
     cursor: pointer;
 }
 
+.error-message {
+    color: #d93025; /* A clear error red */
+    font-size: 13px;
+    margin: 5px 0;
+    font-weight: 500;
+    text-align: center;
+    /*background-color: #ffebee; !* Light red background *!*/
+    padding: 2px;
+    border-radius: 8px;
+    animation: shake 0.2s ease-in-out 0s 2;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(3px); }
+    50% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
+    100% { transform: translateX(0); }
+}
+
 
 .login-button {
     margin-top: 15px;
@@ -95,15 +115,6 @@ body, html {
     color: #424242;
     border-color: #424242;
 }
-
-/*
-.forgot-password {
-    margin-top: 10px;
-    font-size: 12px;
-    color: gray;
-    cursor: pointer;
-}
-*/
 
 /* Uklanja automatske "show password" i "clear" ikonice iz input polja na svim browserima */
 

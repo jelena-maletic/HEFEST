@@ -11,7 +11,7 @@ export function List({
                          screenState,
                          onClick = noop,
                          isEditable,
-                         numElements = 4,
+                         numElements = 8,
                          dividerWidth = "60%",
                          tag
                      }) {
