@@ -1,12 +1,15 @@
 import React from 'react';
 import { Card, Descriptions, Button, Space, Empty, Spin } from 'antd';
-import { InfoCircleOutlined, ToolOutlined, TeamOutlined, EditOutlined, DeleteOutlined, ProjectOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined, ToolOutlined, TeamOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import ProjectTimeline from '../ProjectTimeline/ProjectTimeline.jsx';
 import './EntityDetailCard.css';
+import projectIcon from '../../assets/projects.svg';
 
-
+const ProjectIcon = () => (
+    <img src={projectIcon} alt="Project"  className="card-title-icon" style={{ width: '24px', marginRight: '8px' }} />
+);
 const IconMap = {
-    PROJECT: ProjectOutlined,
+    PROJECT: ProjectIcon,
     EMPLOYEE: TeamOutlined,
     TECHNICIAN: ToolOutlined,
     REPORT: InfoCircleOutlined,
@@ -26,7 +29,9 @@ const EntityDetailCard = ({
                           }) => {
     const IconComponent = IconMap[entityType] || IconMap.DEFAULT;
     const showTimeline = isProject;
-    const canPerformActions = userRole === 'Direktor' && entityType === 'PROJECT';
+    const canPerformActions =
+        userRole?.toLowerCase() === 'direktor' &&
+        entityType === 'PROJECT';
 
     if (loading) {
         return (
@@ -57,7 +62,6 @@ const EntityDetailCard = ({
                 </div>
             }
             extra={extraActions}
-            bordered={false}
         >
 
             {items && items.length > 0 ? (
@@ -66,7 +70,7 @@ const EntityDetailCard = ({
                     {items.map((section, sectionIndex) => (
                         <div key={section.title} className="entity-detail-section">
 
-                            {/* Naslov sekcije */}
+
                             <h4 className="section-title">{section.title}</h4>
 
 
@@ -104,5 +108,6 @@ const EntityDetailCard = ({
         </Card>
     );
 };
+
 
 export default EntityDetailCard;

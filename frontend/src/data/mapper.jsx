@@ -1,0 +1,96 @@
+import React from 'react';
+import { Tag } from 'antd';
+import { formatDate, getStatusTagColor, getPriorityTagColor, calculateAgeFromJMBG } from '../utils/dataHelpers';
+import TimesheetViewer from '../components/TimesheetViewer/TimesheetViewer.jsx';
+
+
+const isVisible = (userRole, allowedRoles) => {
+    if (!allowedRoles || allowedRoles.length === 0) return true;
+    return allowedRoles.includes(userRole?.toLowerCase());
+};
+
+// Pomoćna funkcija za grupisanje sekcija
+const groupItems = (items) => {
+    return items.reduce((acc, item) => {
+        const lastSection = acc[acc.length - 1];
+        if (lastSection && lastSection.title === item.section) {
+            lastSection.items.push(item);
+        } else {
+            acc.push({ title: item.section, items: [item] });
+        }
+        return acc;
+    }, []);
+};
+
+// --- MAPERI ZA SPECIFIČNE ENTITETE ---
+
+const mapProjectDetails = (data,role) => {
+    const allItems=[
+        { section: 'Osnovni Detalji', label: 'Naziv', value: data.naziv, key: 'naziv' },
+        { section: 'Osnovni Detalji', label: 'Opis', value: data.opis, key: 'opis' },
+        { section: 'Osnovni Detalji', label: 'Prioritet', value: data.prioritet, key: 'prio',
+            render: (v) => <Tag color={getPriorityTagColor(v)}>{v}</Tag> },
+        { section: 'Osnovni Detalji', label: 'Klijent', value: data.klijent, key: 'klijent' },
+        { section: 'Vremenski Okvir', label: 'Status', value: data.status, key: 'status',
+            render: (v) => <Tag color={getStatusTagColor(v)}>{v}</Tag> },
+        { section: 'Vremenski Okvir', label: 'Početak rada', value: formatDate(data.pocetakRada), key: 'start' },
+        { section: 'Vremenski Okvir', label: 'Rok', value: formatDate(data.rok), key: 'deadline' },
+        { section: 'Vremenski Okvir', label: 'Završeno', value: data.krajRada ? formatDate(data.krajRada) : 'U toku', key: 'end' },
+        {
+            section: 'Kreiranje i izmjena projekta',
+            label: 'Kreiranje projekta',
+            value: formatDate(data.datumKreiranja),
+            key: 'datumK',
+            roles: ['direktor']
+        },
+        {
+            section: 'Kreiranje i izmjena projekta',
+            label: 'Posljednja izmjena projekta',
+            value: formatDate(data.posljednjaIzmjena),
+            key: 'datumI',
+            roles: ['direktor']
+        }
+    ];
+    const filteredItems = allItems.filter(item => isVisible(role, item.roles));
+    return groupItems(filteredItems);
+};
+
+const mapEmployeeDetails = (data) => {
+    return groupItems([
+        { section: 'Lične Informacije', label: 'Ime i Prezime', value: `${data.ime} ${data.prezime}`, key: 'full_name' },
+        { section: 'Lične Informacije', label: 'Email', value: data.email, key: 'email' },
+        { section: 'Lične Informacije', label: 'Telefon', value: data.brojTelefona, key: 'tel' },
+
+        { section: 'Evidencija Rada', value: data.timesheet, key: 'ts', span: 3,
+            render: (ts) => <TimesheetViewer timesheet={ts} /> }
+    ]);
+};
+
+const mapVehicleDetails = (data) => {
+    return groupItems([
+        { section: 'Tehnički Podaci', label: 'Naziv', value: data.naziv, key: 'name' },
+        { section: 'Tehnički Podaci', label: 'Registracija', value: data.registarskiBroj, key: 'reg' },
+        { section: 'Tehnički Podaci', label: 'Tip Vozila', value: data.tipVozila, key: 'type' }, //enum?
+        { section: 'Dokumentacija', label: 'Registracija važi od', value: formatDate(data.datumRegistracije), key: 'reg_from' },
+        { section: 'Dokumentacija', label: 'Registracija ističe', value: formatDate(data.datumIstekaRegistracije), key: 'reg_to' }
+    ]);
+};
+
+const mapToolDetails = (data) => {
+    return groupItems([
+        { section: 'Informacije o Opremi', label: 'Naziv', value: data.naziv, key: 'name' },
+        { section: 'Informacije o Opremi', label: 'Kategorija', value: data.kategorija, key: 'cat' },//enum
+        { section: 'Skladište', label: 'Stanje u magacinu', value: data.stanjeMagacina, key: 'stock' },
+        { section: 'Skladište', label: 'Minimalna kolicina', value: data.stanjeMagacina, key: 'state' }
+    ]);
+};
+//+ detalji o tehnicaru, o materijalu, o izvjestaju
+
+// --- GLAVNI EKSPORT ---
+export const mappers = {
+    PROJECT: { title: 'Detalji Projekta', mapper: mapProjectDetails },
+    EMPLOYEE: { title: 'Detalji Zaposlenog', mapper: mapEmployeeDetails },
+    VEHICLE: { title: 'Detalji Vozila', mapper: mapVehicleDetails },
+    TOOL: { title: 'Detalji Opreme', mapper: mapToolDetails },
+
+};

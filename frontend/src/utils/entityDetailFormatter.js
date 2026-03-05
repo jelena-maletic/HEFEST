@@ -1,10 +1,10 @@
-import { entityMappers } from '../data/entityMappers.jsx';
+import { mappers } from '../data/mapper.jsx';
 
 export const formatEntityDetails = (entityData, entityType, userRole) => {
-    const mapperConfig = entityMappers[entityType];
+    const mapperConfig = mappers[entityType];
 
     if (!mapperConfig || !entityData) {
-        const title = entityType ? entityMappers[entityType]?.title || 'Detalji Entiteta' : 'Nema podataka';
+        const title = entityType ? mappers[entityType]?.title || 'Detalji Entiteta' : 'Nema podataka';
         return { title: title, items: [], isProject: false, rawData: null };
     }
 

@@ -21,7 +21,7 @@ export function ListElement({screenState, listElementData, onClickFunc, isEditab
     return (
         <button
             className={`list-element ${className || ''}`} // <-- OVDE dodaješ prop className
-            onClick={() => {onClickFunc()}}
+            onClick={() => {onClickFunc(listElementData)}}
             onMouseOver={() => setIsHovered(true)}
             onMouseOut={() => setIsHovered(false)}
         >
