@@ -99,9 +99,9 @@ export const fetchData = async (tag) => {
                 const dnevni = [];
 
                 let temp = {
-                    title: "nemamo naziv kreatora!!!",
+                    title: t.projekat.naziv,
                     detail: t.datum,
-                    subline: t.opisRadova
+                    subline: t.poslovodja.ime + " " + t.poslovodja.prezime
                 }
                 Object.assign(temp, t);
 
@@ -115,9 +115,9 @@ export const fetchData = async (tag) => {
                 const sumarni = [];
 
                 let temp = {
-                    title: "ovjde vjv treba naziv projekta",
+                    title: t.projekat.naziv,
                     detail: "Od " + t.pocetniDatum + " do " + t.krajnjiDatum,
-                    subline: t.opis
+                    subline: t.poslovodja.ime + " " + t.poslovodja.prezime
                 }
                 Object.assign(temp, t);
 
