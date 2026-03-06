@@ -5,13 +5,55 @@ import Calendar from "../../components/Calendar.jsx";
 import hefestLogo from '../../assets/hefest-logo.svg';
 import {TopBar} from "../../components/TopBar.jsx"
 import {Sidebar} from "../../components/Sidebar.jsx";
-import {List} from "../../components/List/List.jsx";
+import { List } from "../../components/List/List.jsx";
+import CenteredOverlay from "../../components/CenteredOverlay/CenteredOverlay.jsx";
+import EntityDetailCard from "../../components/EntityDetailCard/EntityDetailCard.jsx";
+import { formatEntityDetails } from "../../utils/entityDetailFormatter.js";
 
 
 export function Dashboard({sidebarContents, role}) {
     const [isActive, setIsActive] = useState(false);
     const [activeScreen, setActiveScreen] = useState("home");
     const [screenTitle, setScreenTitle] = useState("home");
+
+
+
+    const [isDetailVisible, setIsDetailVisible] = useState(false);
+    const [detailData, setDetailData] = useState(null);
+    const [rawEntityData, setRawEntityData] = useState(null);
+    const [entityType, setEntityType] = useState("");
+
+    const TAG_MAP = {
+        "projekti": "PROJECT",
+        "zaposleni": "EMPLOYEE",
+        "tehnicari": "TECHNICIAN",
+        "vozila": "VEHICLE",
+        "radna-oprema": "TOOL",
+        "materijal": "MATERIAL",
+        "dnevni_izvjestaji": "REPORT"
+    };
+    const handleOpenDetails = (rawData, tag) => {
+        const type = TAG_MAP[tag];
+        if (!type) return;
+
+        const formatted = formatEntityDetails(rawData, type, role);
+
+        setDetailData(formatted.items);
+        setRawEntityData(rawData);
+        setEntityType(type);
+        setIsDetailVisible(true);
+    };
+
+    const handleCloseDetails = () => {
+        setIsDetailVisible(false);
+        setDetailData(null);
+    };
+
+    const handleEdit = () => {
+        console.log("Otvaram formu za uređivanje:", rawEntityData);
+        // Ovdje ćeš kasnije dodati navigaciju na formu ili novi modal
+    };
+
 
     const toggleStatus = () => setIsActive(!isActive);
 
@@ -36,6 +78,7 @@ export function Dashboard({sidebarContents, role}) {
                           backgroundImage: activeScreen === "home" ? `url(${hefestLogo})` : "none"
                       }}
                 >
+
                     {activeScreen === "map" && <MapView />}
                     {activeScreen === "calendar" && <Calendar/>}
                     {activeScreen === "employees" && <List isEditable={false} listTitle={screenTitle} screenState="user" tag="zaposleni" />}
@@ -53,10 +96,30 @@ export function Dashboard({sidebarContents, role}) {
                                                                 <List isEditable={false} listTitle={"Dnevni " + screenTitle} screenState="report-overview" dividerWidth={"90%"} tag="dnevni_izvjestaji" />
                                                                  <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview" dividerWidth={"90%"} tag="sumarni_izvjestaji"/>
                                                               </div>}
-                    {activeScreen === "projects" && <List isEditable={false} listTitle={screenTitle} screenState="projects" tag="projekti"/>}
+                    {activeScreen === "projects" && <List isEditable={false} listTitle={screenTitle} screenState="projects" onClick={(data) => handleOpenDetails(data, "projekti")} tag="projekti"/>}
                 </main>
             </div>
+
+            <CenteredOverlay isVisible={isDetailVisible} onClose={handleCloseDetails}>
+                {detailData && (
+                    <div style={{ minWidth: '650px', maxWidth: '850px' }}>
+                        <EntityDetailCard
+                            entityTitle={entityType === 'PROJECT' ? rawEntityData?.naziv : (rawEntityData?.title || rawEntityData?.ime + " " + rawEntityData?.prezime || "Detalji")}
+                            entityType={entityType}
+                            items={detailData}
+                            rawData={rawEntityData}
+                            isProject={entityType === 'PROJECT'}
+                            userRole={role}
+                            onEdit={handleEdit}
+                            onDelete={() => {}}
+                        />
+                    </div>
+                )}
+            </CenteredOverlay>
+
         </div>
+
+
     );
 }
 

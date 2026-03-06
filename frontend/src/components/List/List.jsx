@@ -4,7 +4,7 @@ import "./List.css";
 import {useEffect, useState} from "react";
 import {fetchData} from "../../services/apiHelpers.js";
 
-const noop = () => {};
+const noop = (data) => {};
 
 export function List({
                          listTitle,
@@ -73,7 +73,8 @@ export function List({
                         key={index}
                         screenState={screenState}
                         listElementData={data}
-                        onClickFunc={() => onClick()}
+                        //onClickFunc={() => onClick()}
+                        onClickFunc={(clickedData) => onClick(clickedData)}
                         isEditable={isEditable}
                         className={viewState === "grid" ? "grid-element" : "list-element"}
                     />
