@@ -2,7 +2,10 @@ import {ListElement} from "./ListElement/ListElement.jsx";
 import {SmallButton} from "../SmallButton.jsx";
 import "./List.css";
 import {useEffect, useState} from "react";
-import {fetchData} from "../../services/apiHelpers.js";
+import {createProjekat, fetchData} from "../../services/apiHelpers.js";
+import { schemaMap } from "../../data/SchemaMap.jsx";
+import DynamicForm from "../DynamicForm.jsx";
+import CenteredOverlay from "../CenteredOverlay/CenteredOverlay.jsx";
 
 const noop = (data) => {};
 
@@ -16,9 +19,19 @@ export function List({
                          tag
                      }) {
 
+    const [showForm, setShowForm] = useState(false);
+
+    const selectedSchema = schemaMap[tag];
+
     const addButton = (editable) => {
         if(editable === true){
-            return(<SmallButton style={'padding:20px'} type="add"/>)
+            return(
+                <SmallButton
+                    style={'padding:20px'}
+                    type="add"
+                    onClickHandler={() => setShowForm(true)}
+                />
+            )
         }
     }
 
@@ -77,9 +90,21 @@ export function List({
                         onClickFunc={(clickedData) => onClick(clickedData)}
                         isEditable={isEditable}
                         className={viewState === "grid" ? "grid-element" : "list-element"}
+                        tag = {tag}
                     />
                 ))}
             </div>
+
+            {showForm && (
+                <CenteredOverlay isVisible={showForm} onClose={() => setShowForm(false)}>
+                    <DynamicForm
+                        schema={selectedSchema}
+                        onClose={() => setShowForm(false)}
+                        onSubmit={(data) => createProjekat(data)}
+                    />
+                </CenteredOverlay>
+            )}
+
         </div>
     );
 }

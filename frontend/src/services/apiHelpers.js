@@ -1,4 +1,7 @@
 import api from "../auth/axiosInstance.js";
+import axios from "axios";
+const API_BASE = "http://localhost:8080/api";
+
 
 export const fetchProjects = async () => {
     try {
@@ -8,6 +11,16 @@ export const fetchProjects = async () => {
         console.error("Greška pri dohvatanju projekta: " + error);
         return [];
     }
+}
+
+export const createProjekat = async (data) => {
+    const response = await axios.post(`${API_BASE}/projekti`, data);
+    return response.data;
+};
+
+export const deleteElement = async (tag, id) => {
+    const response = await axios.delete(`${API_BASE}/${tag}/${id}`);
+    return response.data;
 }
 
 export const fetchData = async (tag) => {
