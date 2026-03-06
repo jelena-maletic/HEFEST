@@ -31,7 +31,7 @@ public class ProjekatService {
     }
 
     public List<Projekat> getAllProjekti() {
-        return projekatRepository.findAll().stream().map(projekat -> modelMapper.map(projekat, Projekat.class )).toList();
+        return projekatRepository.findAll().stream().filter(p -> !p.getObrisan()).map(projekat -> modelMapper.map(projekat, Projekat.class )).toList();
     }
 
     public Projekat sacuvajProjekat(Projekat dto) {
