@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Select, DatePicker, InputNumber, Card } from "antd";
 import axios from "axios";
+import dayjs from "dayjs";
 
 const { Option } = Select;
 
@@ -12,11 +13,30 @@ const componentMap = {
     textarea: Input.TextArea
 };
 
-const DynamicForm = ({ schema, onSubmit, onClose }) => {
+const DynamicForm = ({ schema, onSubmit, onClose, initialValues}) => {
     // 1. Hook-ovi MORAJU biti na samom vrhu, bez ikakvih if-ova iznad njih
     console.log("SCHEMA:", schema);
     const [form] = Form.useForm();
     const [dynamicOptions, setDynamicOptions] = useState({});
+
+    useEffect(() => {
+        if (initialValues && schema.fields) {
+            // Kreiramo kopiju podataka da ne menjamo original
+            const formattedValues = { ...initialValues };
+
+            // Prolazimo kroz šemu i tražimo polja tipa "date"
+            schema.fields.forEach(field => {
+                if (field.type === 'date' && formattedValues[field.name]) {
+                    // Konvertujemo string u Dayjs objekat
+                    formattedValues[field.name] = dayjs(formattedValues[field.name]);
+                }
+            });
+
+            form.setFieldsValue(formattedValues);
+        } else {
+            form.resetFields();
+        }
+    }, [initialValues, schema.fields, form]);
 
     useEffect(() => {
         // Ako šema nema polja, nemoj raditi ništa
@@ -69,16 +89,26 @@ const DynamicForm = ({ schema, onSubmit, onClose }) => {
             );
         }
 
+        if (field.type === "date") {
+            return (
+                <DatePicker
+                    style={{ width: "100%" }}
+                    // AntD automatski konvertuje ako mu proslediš dayjs objekat
+                />
+            );
+        }
+
         // Uzmi komponentu iz mape ili koristi običan Input kao fallback
         const Component = componentMap[field.type] || Input;
         return <Component placeholder={field.placeholder} style={{ width: "100%" }} />;
     };
 
     return (
-        <Card title={schema.title || "Unos podataka"} style={{ marginTop: '20px', width: '100%' }}>
+        <Card title={initialValues ? `Uredi: ${schema.title}` : schema.title} style={{ marginTop: '20px', width: '100%' }}>
             <Form
                 form={form}
                 layout="vertical"
+                initialValues={initialValues}
                 onFinish={(values) => {
                     onSubmit(values);
                     form.resetFields(); // Opciono: očisti formu nakon slanja
@@ -90,6 +120,11 @@ const DynamicForm = ({ schema, onSubmit, onClose }) => {
                         key={field.name}
                         name={field.name}
                         label={field.label}
+                        {...(field.type === "date" ? {
+                            getValueProps: (value) => ({
+                                value: value ? dayjs(value) : null,
+                            })
+                        } : {})}
                         rules={[
                             {
                                 required: field.required,

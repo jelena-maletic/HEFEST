@@ -91,6 +91,7 @@ export function List({
                         isEditable={isEditable}
                         className={viewState === "grid" ? "grid-element" : "list-element"}
                         tag = {tag}
+                        selectedSchema={selectedSchema}
                     />
                 ))}
             </div>

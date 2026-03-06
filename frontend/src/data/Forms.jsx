@@ -1,5 +1,5 @@
 export const projectSchema = {
-    submitLabel: "Kreiraj projekat",
+    submitLabel: "Potvrdi",
     layout: "vertical",
     fields: [
         {

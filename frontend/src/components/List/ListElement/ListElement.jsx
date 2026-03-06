@@ -2,10 +2,13 @@ import './ListElement.css';
 import React, { useState } from 'react';
 import { SmallButton } from "../../SmallButton.jsx";
 import { loadAssets } from "../../../utils/dataHelpers.js";
-import {deleteElement} from "../../../services/apiHelpers.js";
+import {createProjekat, deleteElement, updateProjekat} from "../../../services/apiHelpers.js";
+import CenteredOverlay from "../../CenteredOverlay/CenteredOverlay.jsx";
+import DynamicForm from "../../DynamicForm.jsx";
 
-export function ListElement({ screenState, listElementData, onClickFunc, isEditable, className, tag}) {
+export function ListElement({ screenState, listElementData, onClickFunc, isEditable, className, tag, selectedSchema }) {
     const [isHovered, setIsHovered] = useState(false);
+    const [updateForm, setUpdateForm] = useState(false);
 
     const images = loadAssets();
 
@@ -22,6 +25,7 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
                         onClickHandler={(e) => {
                             e.stopPropagation(); // Sprečava da klik na edit otvori glavni onClick
                             console.log("Edit kliknut za:", listElementData.id);
+                            setUpdateForm(true)
                         }}
                     />
                     <SmallButton
@@ -68,6 +72,17 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
 
             {/* Renderujemo dugmiće ako je isEditable true */}
             {renderActionButtons(isEditable)}
+
+            {updateForm && (
+                <CenteredOverlay isVisible={updateForm} onClose={() => setUpdateForm(false)}>
+                    <DynamicForm
+                        schema={selectedSchema}
+                        onClose={() => setUpdateForm(false)}
+                        initialValues={listElementData}
+                        onSubmit={(listElementData) => updateProjekat(tag, listElementData.id, listElementData)}
+                    />
+                </CenteredOverlay>
+            )}
         </div>
     );
 }

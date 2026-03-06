@@ -23,6 +23,11 @@ export const deleteElement = async (tag, id) => {
     return response.data;
 }
 
+export const updateProjekat = async (tag, id, data) => {
+    const response = await axios.put(`${API_BASE}/${tag}/${id}`, data);
+    return response.data;
+};
+
 export const fetchData = async (tag) => {
     let response;
     try {
