@@ -30,5 +30,8 @@ public class VoziloEntity extends ResursEntity {
     @Column(name = "DatumIstekaRegistracije", nullable = false)
     private LocalDate datumIstekaRegistracije;
 
+    public Object getResurs() {
+        return null;
+    }
 }
 
