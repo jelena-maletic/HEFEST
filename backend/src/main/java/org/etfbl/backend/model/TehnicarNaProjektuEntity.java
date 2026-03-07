@@ -2,12 +2,14 @@ package org.etfbl.backend.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.etfbl.backend.model.manytomanyid.TehnicarNaProjektuId;
 
 @Data
 @Entity
 @Table(name = "Tehnicar_Na_Projektu")
-@IdClass(TehnicarNaProjektuEntity.class)
+@IdClass(TehnicarNaProjektuId.class) // Koristi novu ID klasu!
 public class TehnicarNaProjektuEntity {
+
     @Id
     @Column(name="IdProjekta")
     private Integer idProjekta;
@@ -16,14 +18,11 @@ public class TehnicarNaProjektuEntity {
     @Column(name="Tehnicar_JMB")
     private String tehnicarJMB;
 
-    @MapsId
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "IdProjekta", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "IdProjekta", insertable = false, updatable = false) // Ključno!
     private ProjekatEntity projekat;
 
-    @MapsId
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "Tehnicar_JMB", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "Tehnicar_JMB", insertable = false, updatable = false) // Ključno!
     private TehnicarEntity tehnicar;
-
 }

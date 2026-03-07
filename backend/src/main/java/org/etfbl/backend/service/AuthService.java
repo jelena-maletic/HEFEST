@@ -36,6 +36,6 @@ public class AuthService {
                 .map(Object::toString)
                 .orElseThrow(() -> new IllegalStateException("User has no assigned role"));
 
-        return new LoginResponse(token, userDetails.getUsername(), role);
+        return new LoginResponse(token, userDetails.getUsername(), role, userDetails.getKorisnik().getJmb());
     }
 }

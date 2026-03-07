@@ -6,6 +6,6 @@ import java.io.Serializable;
 
 @Data
 public class TehnicarNaProjektuId implements Serializable {
-    private Integer IdProjekta;
+    private Integer idProjekta;
     private String tehnicarJMB;
 }

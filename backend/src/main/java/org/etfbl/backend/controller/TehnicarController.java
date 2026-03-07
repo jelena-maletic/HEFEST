@@ -24,4 +24,10 @@ public class TehnicarController {
     public List<Tehnicar> getAll() {
         return tehnicarService.getAll();
     }
+
+    @GetMapping("/only")
+    public List<Tehnicar> getAllOnlyTehnicari() {
+        return tehnicarService.getAllOnlyTehnicari();
+    }
+
 }
