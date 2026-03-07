@@ -13,8 +13,8 @@ export const fetchProjects = async () => {
     }
 }
 
-export const createProjekat = async (data) => {
-    const response = await axios.post(`${API_BASE}/projekti`, data);
+export const createElement = async (tag, data) => {
+    const response = await axios.post(`${API_BASE}/${tag}`, data);
     return response.data;
 };
 
@@ -23,7 +23,7 @@ export const deleteElement = async (tag, id) => {
     return response.data;
 }
 
-export const updateProjekat = async (tag, id, data) => {
+export const updateElement = async (tag, id, data) => {
     const response = await axios.put(`${API_BASE}/${tag}/${id}`, data);
     return response.data;
 };

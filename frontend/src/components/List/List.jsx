@@ -2,7 +2,7 @@ import {ListElement} from "./ListElement/ListElement.jsx";
 import {SmallButton} from "../SmallButton.jsx";
 import "./List.css";
 import {useEffect, useState} from "react";
-import {createProjekat, fetchData} from "../../services/apiHelpers.js";
+import {createElement, fetchData} from "../../services/apiHelpers.js";
 import { schemaMap } from "../../data/SchemaMap.jsx";
 import DynamicForm from "../DynamicForm.jsx";
 import CenteredOverlay from "../CenteredOverlay/CenteredOverlay.jsx";
@@ -101,7 +101,7 @@ export function List({
                     <DynamicForm
                         schema={selectedSchema}
                         onClose={() => setShowForm(false)}
-                        onSubmit={(data) => createProjekat(data)}
+                        onSubmit={(data) => createElement(tag, data)}
                     />
                 </CenteredOverlay>
             )}

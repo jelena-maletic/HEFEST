@@ -108,3 +108,79 @@ export const projectSchema = {
         },
     ],
 };
+
+export const vehicleSchema = {
+    submitLabel: "Sačuvaj vozilo",
+    layout: "vertical",
+    fields: [
+        {
+            name: "naziv", // Match: String naziv
+            label: "Naziv (Marka i model)",
+            type: "input",
+            required: true,
+            span: 12,
+        },
+        {
+            name: "registarskiBroj", // Match: String registarskiBroj
+            label: "Registarski broj",
+            type: "input",
+            required: true,
+            span: 12,
+        },
+        {
+            name: "tipVozila", // Match: TipVozila tipVozila (Enum)
+            label: "Tip vozila",
+            type: "select",
+            required: true,
+            span: 12,
+            options: [
+                { value: "PUTNICKO", label: "Putničko vozilo" },
+                { value: "TERETNO", label: "Teretno vozilo" },
+                { value: "KOMBI", label: "Kombi / Dostavno" },
+                { value: "MASINA", label: "Radna mašina" },
+            ],
+        },
+        {
+            name: "brojPutnika", // Match: Integer brojPutnika
+            label: "Broj putnika",
+            type: "number",
+            span: 12,
+        },
+        {
+            name: "maksimalnaNosivost", // Match: BigDecimal maksimalnaNosivost
+            label: "Maksimalna nosivost (kg)",
+            type: "number",
+            span: 12,
+        },
+        {
+            name: "stanjeMagacina", // Match: BigDecimal stanjeMagacina
+            label: "Stanje magacina",
+            type: "number",
+            required: true,
+            min: 0,
+            span: 12,
+        },
+        {
+            name: "minimalnaKolicina", // Match: BigDecimal minimalnaKolicina
+            label: "Minimalna količina",
+            type: "number",
+            required: true,
+            min: 0,
+            span: 12,
+        },
+        {
+            name: "datumRegistracije", // Match: LocalDate datumRegistracije
+            label: "Datum registracije",
+            type: "date",
+            required: false,
+            span: 12,
+        },
+        {
+            name: "datumIstekaRegistracije", // Match: LocalDate datumIstekaRegistracije
+            label: "Datum isteka registracije",
+            type: "date",
+            required: false,
+            span: 12,
+        },
+    ],
+};

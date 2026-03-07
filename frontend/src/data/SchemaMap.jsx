@@ -1,8 +1,8 @@
 import {
-    projectSchema
+    projectSchema,
+    vehicleSchema,
     /*materialSchema,
     toolSchema,
-    vehicleSchema,
     equipmentSchema,
     assignmentSchema,
     passwordSchema,
@@ -13,7 +13,8 @@ import {
 } from "./Forms.jsx";
 
 export const schemaMap = {
-    "projekti": projectSchema
+    "projekti": projectSchema,
+    "vozila": vehicleSchema,
     /*materijal: materialSchema,
     alat: toolSchema,
     vozilo: vehicleSchema,

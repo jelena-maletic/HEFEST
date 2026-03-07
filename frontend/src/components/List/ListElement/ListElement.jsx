@@ -2,7 +2,7 @@ import './ListElement.css';
 import React, { useState } from 'react';
 import { SmallButton } from "../../SmallButton.jsx";
 import { loadAssets } from "../../../utils/dataHelpers.js";
-import {createProjekat, deleteElement, updateProjekat} from "../../../services/apiHelpers.js";
+import {createElement, deleteElement, updateElement} from "../../../services/apiHelpers.js";
 import CenteredOverlay from "../../CenteredOverlay/CenteredOverlay.jsx";
 import DynamicForm from "../../DynamicForm.jsx";
 
