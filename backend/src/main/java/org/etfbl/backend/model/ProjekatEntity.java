@@ -8,6 +8,8 @@ import org.hibernate.annotations.Where;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -60,5 +62,17 @@ public class ProjekatEntity {
     @ColumnDefault("0")
     @Column(name = "Obrisan", nullable = false)
     private Boolean obrisan = false;
+
+    @ManyToMany
+    @JoinTable(name = "poslovodja_upravlja_projektom",
+            joinColumns = @JoinColumn(name = "IdProjekta"),
+            inverseJoinColumns = @JoinColumn(name = "Poslovodja_JMB"))
+    private Set<PoslovodjaEntity> poslovodje = new LinkedHashSet<>();
+
+    @ManyToMany
+    @JoinTable(name = "tehnicar_na_projektu",
+            joinColumns = @JoinColumn(name = "IdProjekta"),
+            inverseJoinColumns = @JoinColumn(name = "Tehnicar_JMB"))
+    private Set<TehnicarEntity> tehnicari = new LinkedHashSet<>();
 
 }

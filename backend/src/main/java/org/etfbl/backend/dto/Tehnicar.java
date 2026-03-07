@@ -12,4 +12,5 @@ import java.io.Serializable;
 public class Tehnicar implements Serializable {
     String ime;
     String prezime;
+    String jmb;
 }

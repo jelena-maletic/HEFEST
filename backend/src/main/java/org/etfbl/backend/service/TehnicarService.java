@@ -6,6 +6,7 @@ import org.etfbl.backend.dto.Tehnicar;
 import org.etfbl.backend.repository.TehnicarRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
@@ -21,5 +22,10 @@ public class TehnicarService {
     }
 
     public List<Tehnicar> getAll() { return tehnicarRepository.findAll().stream().map(t -> modelMapper.map(t, Tehnicar.class )).toList();}
+
+
+    public List<Tehnicar> getAllOnlyTehnicari() {
+        return tehnicarRepository.findAllOnlyTehnicari().stream().map(t -> modelMapper.map(t, Tehnicar.class )).toList();
+    }
 }
 

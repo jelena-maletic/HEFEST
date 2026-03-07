@@ -3,10 +3,8 @@ package org.etfbl.backend.service;
 import jakarta.transaction.Transactional;
 import org.etfbl.backend.dto.Projekat;
 import org.etfbl.backend.exceptions.NotFoundException;
-import org.etfbl.backend.model.DirektorEntity;
-import org.etfbl.backend.model.ProjekatEntity;
-import org.etfbl.backend.repository.DirektorRepository;
-import org.etfbl.backend.repository.ProjekatRepository;
+import org.etfbl.backend.model.*;
+import org.etfbl.backend.repository.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,11 +21,18 @@ public class ProjekatService {
     private final ModelMapper modelMapper;
     private final ProjekatRepository projekatRepository;
     private final DirektorRepository direktorRepository;
-
-    public ProjekatService(ProjekatRepository projekatRepository, ModelMapper modelMapper, DirektorRepository direktorRepository) {
+    private final PoslovodjaRepository poslovodjaRepository;
+    private final PoslovodjaUpravljaProjektomRepository poslovodjaUpravljaProjektomRepository;
+    private final TehnicarRepository tehnicarRepository;
+    private final TehnicarNaProjektuRepository tehnicarNaProjektuRepository;
+    public ProjekatService(ProjekatRepository projekatRepository, ModelMapper modelMapper, DirektorRepository direktorRepository, PoslovodjaRepository poslovodjaRepository, PoslovodjaUpravljaProjektomRepository poslovodjaUpravljaProjektomRepository, TehnicarRepository tehnicarRepository, TehnicarNaProjektuRepository tehnicarNaProjektuRepository) {
         this.projekatRepository = projekatRepository;
         this.modelMapper = modelMapper;
         this.direktorRepository = direktorRepository;
+        this.poslovodjaRepository = poslovodjaRepository;
+        this.poslovodjaUpravljaProjektomRepository = poslovodjaUpravljaProjektomRepository;
+        this.tehnicarRepository = tehnicarRepository;
+        this.tehnicarNaProjektuRepository = tehnicarNaProjektuRepository;
     }
 
     public List<Projekat> getAllProjekti() {
@@ -35,20 +40,65 @@ public class ProjekatService {
     }
 
     public Projekat sacuvajProjekat(Projekat dto) {
+        // 1. Mapiranje osnovnih polja
         ProjekatEntity entity = modelMapper.map(dto, ProjekatEntity.class);
 
+        // 2. Vremenski pečati
         Instant sada = Instant.now();
         entity.setDatumKreiranja(sada);
         entity.setPosljednjaIzmjena(sada);
-        //entity.setIdProjekta(2);
+        entity.setObrisan(false); // Eksplicitno postavi na false za svaki slučaj
 
-        DirektorEntity direktor = direktorRepository.findById("1308003106401")
-                .orElseThrow(() -> new RuntimeException("Direktor ne postoji"));
-        //hardkodovani jmb je zbog toga sto nismo ulogovani kao doticni direktor, tako da bi tu islo tipa this.id
+        // 3. SIGURNOSNA PROVJERA ZA JMB
+        String jmb = dto.getUlogovaniJmb();
+        if (jmb == null || jmb.trim().isEmpty() || "undefined".equals(jmb)) {
+            // Ovdje možeš ili baciti grešku ili postaviti nekog defaultnog direktora za test
+            throw new RuntimeException("Nevalidan JMB direktora: " + jmb);
+        }
 
-        entity.setDirektor(direktor);
 
+        // 4. Povezivanje direktora
+        try {
+            entity.setDirektor(direktorRepository.getReferenceById(jmb));
+        } catch (Exception e) {
+            throw new RuntimeException("Direktor sa JMB-om " + jmb + " ne postoji u bazi.");
+        }
+        // 5. Čuvanje
         ProjekatEntity sacuvan = projekatRepository.save(entity);
+
+        if (dto.getPoslovodja() != null) {
+            PoslovodjaUpravljaProjektomEntity veza = new PoslovodjaUpravljaProjektomEntity();
+
+            // Postavljamo ID-ove (iz IdClass)
+            veza.setIdProjekta(sacuvan.getIdProjekta());
+            veza.setPoslovodjaJMB(dto.getPoslovodja());
+
+            // Postavljamo objekte (zbog @MapsId i @ManyToOne)
+            veza.setProjekat(sacuvan);
+            veza.setPoslovodja(poslovodjaRepository.getReferenceById(dto.getPoslovodja()));
+
+            // Snimamo u bazu u tabelu Poslovodja_Upravlja_Projektom
+            poslovodjaUpravljaProjektomRepository.save(veza);
+        }
+
+        if (dto.getTimTehnicara() != null && !dto.getTimTehnicara().isEmpty()) {
+            for (String tehJmb : dto.getTimTehnicara()) {
+                // Kreiramo instancu veznog entiteta za svakog tehničara
+                TehnicarNaProjektuEntity vezaTehnicar = new TehnicarNaProjektuEntity();
+
+                // Postavljanje ID-ova (prilagodi nazive polja tvom entitetu)
+                vezaTehnicar.setIdProjekta(sacuvan.getIdProjekta());
+                vezaTehnicar.setTehnicarJMB(tehJmb);
+
+                // Postavljanje relacija
+                vezaTehnicar.setProjekat(sacuvan);
+                vezaTehnicar.setTehnicar(tehnicarRepository.getReferenceById(tehJmb));
+
+                // Snimanje u tabelu 'tehnicar_na_projektu'
+                tehnicarNaProjektuRepository.save(vezaTehnicar);
+            }
+        }
+        // 6. Mapiranje nazad u DTO
         return modelMapper.map(sacuvan, Projekat.class);
     }
 
