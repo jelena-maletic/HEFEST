@@ -1,7 +1,9 @@
-export function saveAuth(token, username, role) {
+export function saveAuth(token, username, role, jmb) {
     sessionStorage.setItem("token", token);
     sessionStorage.setItem("username", username);
     sessionStorage.setItem("role", role);
+    sessionStorage.setItem("jmb", jmb);
+
 }
 
 export function logout() {
@@ -14,4 +16,8 @@ export function getRole() {
 
 export function isAuthenticated() {
     return !!sessionStorage.getItem("token");
+}
+
+export function getJmb() {
+    return sessionStorage.getItem("jmb");
 }

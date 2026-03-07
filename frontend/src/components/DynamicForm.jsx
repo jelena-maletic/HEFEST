@@ -76,8 +76,18 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues}) => {
                 >
                     {options.map((option, index) => {
                         // Prilagođeno tvom API-ju (ime + prezime ili label)
-                        const label = option.label || `${option.ime || ''} ${option.prezime || ''}`.trim() || `Opcija ${index}`;
-                        const value = option.value !== undefined ? option.value : (option.id ?? index);
+                        //const label = option.label || `${option.ime || ''} ${option.prezime || ''}`.trim() || `Opcija ${index}`;
+                        const label = option.label ||
+                            `${option[field.optionLabel] || option.ime || ''} ${option.prezime || ''}`.trim() ||
+                            `Opcija ${index}`;
+                        /*const value = option[field.optionValue] !== undefined
+                            ? option[field.optionValue]
+                            : (option.jmb ?? option.id ?? index);*/
+                        const value = field.optionValue && option[field.optionValue] !== undefined
+                            ? option[field.optionValue]
+                            : option.value !== undefined
+                                ? option.value
+                                : (option.jmb ?? option.id ?? index);
 
                         return (
                             <Option key={value} value={value}>

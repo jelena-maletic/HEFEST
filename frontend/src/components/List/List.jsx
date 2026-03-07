@@ -101,7 +101,16 @@ export function List({
                     <DynamicForm
                         schema={selectedSchema}
                         onClose={() => setShowForm(false)}
-                        onSubmit={(data) => createProjekat(data)}
+                        //onSubmit={(data) => createProjekat(data)}
+                        onSubmit={async (data) => {
+                            // OVDJE VIDIŠ ŠTA SE ŠALJE
+                            console.log("Podaci iz forme koji idu ka servisu:", data);
+
+                            // Ovdje se zapravo kreira tvoj DTO (možeš ga modifikovati prije slanja)
+                            await createProjekat(data);
+
+                            setShowForm(false);
+                        }}
                     />
                 </CenteredOverlay>
             )}

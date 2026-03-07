@@ -1,5 +1,6 @@
 import api from "../auth/axiosInstance.js";
 import axios from "axios";
+import { getJmb } from "../auth/auth.js";
 const API_BASE = "http://localhost:8080/api";
 
 
@@ -13,8 +14,23 @@ export const fetchProjects = async () => {
     }
 }
 
-export const createProjekat = async (data) => {
+/*export const createProjekat = async (data) => {
     const response = await axios.post(`${API_BASE}/projekti`, data);
+    return response.data;
+};*/
+
+export const createProjekat = async (data) => {
+
+    const ulogovaniJmb = getJmb();
+
+    const payload = {
+        ...data,
+        ulogovaniJmb: ulogovaniJmb // Ključ mora biti isti kao u tvom Java DTO-u
+    };
+
+
+
+    const response = await axios.post(`${API_BASE}/projekti`, payload);
     return response.data;
 };
 
