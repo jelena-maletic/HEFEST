@@ -26,7 +26,7 @@ export const projectSchema = {
             span: 8,
             apiEndpoint: "http://localhost:8080/api/poslovodje",
             optionLabel: "ime",   // polje iz DTO
-            optionValue: "prezime",         // polje iz DTO
+            optionValue: "jmb",         // polje iz DTO
         },
 
         // STATIČKI SELECT – nema potrebe da ide iz baze
@@ -94,9 +94,9 @@ export const projectSchema = {
             required: false,
             span: 24,
             mode: "multiple",
-            apiEndpoint: "http://localhost:8080/api/tehnicari",
+            apiEndpoint: "http://localhost:8080/api/tehnicari/only",
             optionLabel: "ime",
-            optionValue: "prezime",
+            optionValue: "jmb",
         },
 
         {

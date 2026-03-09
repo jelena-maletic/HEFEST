@@ -2,7 +2,7 @@ import {ListElement} from "./ListElement/ListElement.jsx";
 import {SmallButton} from "../SmallButton.jsx";
 import "./List.css";
 import {useEffect, useState} from "react";
-import {createElement, fetchData} from "../../services/apiHelpers.js";
+import {createProjekat, fetchData} from "../../services/apiHelpers.js";
 import { schemaMap } from "../../data/SchemaMap.jsx";
 import DynamicForm from "../DynamicForm.jsx";
 import CenteredOverlay from "../CenteredOverlay/CenteredOverlay.jsx";
@@ -101,7 +101,16 @@ export function List({
                     <DynamicForm
                         schema={selectedSchema}
                         onClose={() => setShowForm(false)}
-                        onSubmit={(data) => createElement(tag, data)}
+                        //onSubmit={(data) => createProjekat(data)}
+                        onSubmit={async (data) => {
+                            // OVDJE VIDIŠ ŠTA SE ŠALJE
+                            console.log("Podaci iz forme koji idu ka servisu:", data);
+
+                            // Ovdje se zapravo kreira tvoj DTO (možeš ga modifikovati prije slanja)
+                            await createProjekat(data);
+
+                            setShowForm(false);
+                        }}
                     />
                 </CenteredOverlay>
             )}
