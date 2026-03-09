@@ -7,7 +7,7 @@ import { schemaMap } from "../../data/SchemaMap.jsx";
 import DynamicForm from "../DynamicForm.jsx";
 import CenteredOverlay from "../CenteredOverlay/CenteredOverlay.jsx";
 
-const noop = (data) => {};
+const noop = () => {};
 
 export function List({
                          listTitle,
@@ -97,7 +97,7 @@ export function List({
             </div>
 
             {showForm && (
-                <CenteredOverlay isVisible={showForm} onClose={() => setShowForm(false)}>
+                <CenteredOverlay className="form-overlay" isVisible={showForm} onClose={() => setShowForm(false)}>
                     <DynamicForm
                         schema={selectedSchema}
                         onClose={() => setShowForm(false)}
