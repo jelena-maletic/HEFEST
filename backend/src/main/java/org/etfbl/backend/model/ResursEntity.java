@@ -23,7 +23,7 @@ public class ResursEntity {
     @Column(name = "Naziv", nullable = false, length = 100)
     private String naziv;
 
-    @Column(name = "StanjeMagacina", nullable = false, precision = 5, scale = 2)
+    @Column(name = "StanjeMagacina", precision = 5, scale = 2)
     private BigDecimal stanjeMagacina;
 
     @Column(name = "MinimalnaKolicina", precision = 5, scale = 2)

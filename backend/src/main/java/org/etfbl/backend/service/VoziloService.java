@@ -3,6 +3,7 @@ package org.etfbl.backend.service;
 import jakarta.transaction.Transactional;
 import org.etfbl.backend.dto.Vozilo;
 import org.etfbl.backend.exceptions.NotFoundException;
+import org.etfbl.backend.model.ResursEntity;
 import org.etfbl.backend.model.VoziloEntity;
 import org.etfbl.backend.repository.VoziloRepository;
 import org.modelmapper.ModelMapper;
@@ -34,11 +35,15 @@ public class VoziloService {
 
     public Vozilo sacuvajVozilo(Vozilo dto) {
         VoziloEntity entity = modelMapper.map(dto, VoziloEntity.class);
+        ResursEntity noviResurs = modelMapper.map(dto, ResursEntity.class);
 
-        // Ovdje logika slična kao kod projekta:
-        // Ako vozilo mora biti povezano sa nekim resursom ili tipom, uradi to ovdje
+        entity.setId(noviResurs.getId());
+
+
+
 
         VoziloEntity sacuvano = voziloRepository.save(entity);
+
         return modelMapper.map(sacuvano, Vozilo.class);
     }
 

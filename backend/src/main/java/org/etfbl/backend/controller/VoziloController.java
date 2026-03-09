@@ -26,7 +26,7 @@ public class VoziloController {
     // OVO TI JE FALILO: Kreiranje novog vozila
     @PostMapping
     public ResponseEntity<Vozilo> kreirajVozilo(@RequestBody Vozilo vozilo) {
-        Vozilo novoVozilo = this.voziloService.sacuvajVozilo(vozilo);
+        Vozilo novoVozilo = voziloService.sacuvajVozilo(vozilo);
         return new ResponseEntity<>(novoVozilo, HttpStatus.CREATED);
     }
 
