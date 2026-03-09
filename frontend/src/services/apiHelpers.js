@@ -14,211 +14,210 @@ export const fetchProjects = async () => {
     }
 }
 
-/*export const createProjekat = async (data) => {
-    const response = await axios.post(`${API_BASE}/projekti`, data);
-    return response.data;
-};*/
+// apiHelpers.js
 
-export const createProjekat = async (data) => {
+export const createElement = async (tag, data) => {
+    const ulogovaniJmb = getJmb(); // Dobavljamo JMB iz sesije/localstorage-a
 
-    const ulogovaniJmb = getJmb();
-
+    // Kreiramo finalni payload koji ide ka Javi
     const payload = {
         ...data,
-        ulogovaniJmb: ulogovaniJmb // Ključ mora biti isti kao u tvom Java DTO-u
+        ulogovaniJmb: ulogovaniJmb
     };
 
-
-
-    const response = await axios.post(`${API_BASE}/projekti`, payload);
-export const createElement = async (tag, data) => {
-    const response = await axios.post(`${API_BASE}/${tag}`, data);
-    return response.data;
-};
-
-export const deleteElement = async (tag, id) => {
-    const response = await axios.delete(`${API_BASE}/${tag}/${id}`);
-    return response.data;
-}
-
-export const updateElement = async (tag, id, data) => {
-    const response = await axios.put(`${API_BASE}/${tag}/${id}`, data);
-    return response.data;
-};
-
-export const fetchData = async (tag) => {
-    let response;
     try {
-        response = await api.service(false).get(`/${tag}`);
+        // Šaljemo na URL npr. "api/projekti" ili "api/zaposleni"
+        const response = await axios.post(`${API_BASE}/${tag}`, payload);
+        return response.data; // Vraćamo kreirani objekat sa servera
     } catch (error) {
-        console.error("Greška pri dohvatanju podataka: " + error);
-        return [];
+        console.error(`Greška pri kreiranju elementa na tagu ${tag}:`, error);
+        throw error; // Prosleđujemo grešku dalje da je komponenta obradi
     }
+};
 
-    if (!response.data || !Array.isArray(response.data)) {
-        console.error("Server nije vratio niz!");
-        return;
-    }
+    export const deleteElement = async (tag, id) => {
+        const response = await axios.delete(`${API_BASE}/${tag}/${id}`);
+        return response.data;
+    };
 
-    const dataArray = Array.isArray(response.data) ? response.data : [response.data]
+    export const updateElement = async (tag, id, data) => {
+        const response = await axios.put(`${API_BASE}/${tag}/${id}`, data);
+        return response.data;
+    };
 
-    switch (tag) {
-        case "radna-oprema": {
-            return dataArray.flatMap((t) => {
-                const oprema = [];
-
-                let temp = {
-                    title: t.naziv,
-                    detail: "Stanje magacina: " + t.stanjeMagacina,
-                    subline: "Kategorija: " + t.kategorija
-                };
-                Object.assign(temp, t);
-
-                oprema.push(temp);
-
-                return oprema;
-            });
+    export const fetchData = async (tag) => {
+        let response;
+        try {
+            response = await api.service(false).get(`/${tag}`);
+        } catch (error) {
+            console.error("Greška pri dohvatanju podataka: " + error);
+            return [];
         }
 
-        case "vozila": {
-            return dataArray.flatMap((t) => {
-                const vozila = [];
-
-                let temp = {
-                    title: t.naziv + " - " + t.registarskiBroj,
-                    detail: t.tipVozila,
-                    subline: "Registracija važi od " + t.datumRegistracije + " do " + t.datumIstekaRegistracije
-                }
-                Object.assign(temp, t);
-
-                vozila.push(temp);
-
-                return vozila;
-            });
-        }
-        case "materijal": {
-            return dataArray.flatMap((t) => {
-                const materijal = [];
-
-                let temp = {
-                    title: t.naziv,
-                    detail: "Stanje magacina: " + t.stanjeMagacina + " " + t.jedinicaMjere,
-                    subline: "Kategorija: " + t.kategorija
-                };
-
-                Object.assign(temp, t);
-
-                materijal.push(temp);
-
-                return materijal;
-            });
+        if (!response.data || !Array.isArray(response.data)) {
+            console.error("Server nije vratio niz!");
+            return;
         }
 
-        case "zaposleni": {
-            return dataArray.flatMap((t) => {
-                const zaposleni = [];
+        const dataArray = Array.isArray(response.data) ? response.data : [response.data]
 
-                let temp = {
-                    title: t.ime + " " + t.prezime,
-                    detail: t.brojTelefona,
-                    subline: t.email
-                }
-                Object.assign(temp, t);
+        switch (tag) {
+            case "radna-oprema": {
+                return dataArray.flatMap((t) => {
+                    const oprema = [];
 
-                zaposleni.push(temp);
-                return zaposleni;
-            })
-        }
+                    let temp = {
+                        title: t.naziv,
+                        detail: "Stanje magacina: " + t.stanjeMagacina,
+                        subline: "Kategorija: " + t.kategorija
+                    };
+                    Object.assign(temp, t);
 
-        case "dnevni_izvjestaji": {
-            return dataArray.flatMap((t) => {
-                const dnevni = [];
+                    oprema.push(temp);
 
-                let temp = {
-                    title: t.projekat.naziv,
-                    detail: t.datum,
-                    subline: t.poslovodja.ime + " " + t.poslovodja.prezime
-                }
-                Object.assign(temp, t);
+                    return oprema;
+                });
+            }
 
-                dnevni.push(temp);
-                return dnevni;
-            })
-        }
+            case "vozila": {
+                return dataArray.flatMap((t) => {
+                    const vozila = [];
 
-        case "sumarni_izvjestaji": {
-            return dataArray.flatMap((t) => {
-                const sumarni = [];
+                    let temp = {
+                        title: t.naziv + " - " + t.registarskiBroj,
+                        detail: t.tipVozila,
+                        subline: "Registracija važi od " + t.datumRegistracije + " do " + t.datumIstekaRegistracije
+                    }
+                    Object.assign(temp, t);
 
-                let temp = {
-                    title: t.projekat.naziv,
-                    detail: "Od " + t.pocetniDatum + " do " + t.krajnjiDatum,
-                    subline: t.poslovodja.ime + " " + t.poslovodja.prezime
-                }
-                Object.assign(temp, t);
+                    vozila.push(temp);
 
-                sumarni.push(temp);
-                return sumarni;
-            })
-        }
+                    return vozila;
+                });
+            }
+            case "materijal": {
+                return dataArray.flatMap((t) => {
+                    const materijal = [];
 
-        case "tehnicari": {
-            return dataArray.flatMap((t) => {
-                const tehnicari = [];
-                let temp = {
+                    let temp = {
+                        title: t.naziv,
+                        detail: "Stanje magacina: " + t.stanjeMagacina + " " + t.jedinicaMjere,
+                        subline: "Kategorija: " + t.kategorija
+                    };
+
+                    Object.assign(temp, t);
+
+                    materijal.push(temp);
+
+                    return materijal;
+                });
+            }
+
+            case "zaposleni": {
+                return dataArray.flatMap((t) => {
+                    const zaposleni = [];
+
+                    let temp = {
+                        title: t.ime + " " + t.prezime,
+                        detail: t.brojTelefona,
+                        subline: t.email
+                    }
+                    Object.assign(temp, t);
+
+                    zaposleni.push(temp);
+                    return zaposleni;
+                })
+            }
+
+            case "dnevni_izvjestaji": {
+                return dataArray.flatMap((t) => {
+                    const dnevni = [];
+
+                    let temp = {
+                        title: t.projekat.naziv,
+                        detail: t.datum,
+                        subline: t.poslovodja.ime + " " + t.poslovodja.prezime
+                    }
+                    Object.assign(temp, t);
+
+                    dnevni.push(temp);
+                    return dnevni;
+                })
+            }
+
+            case "sumarni_izvjestaji": {
+                return dataArray.flatMap((t) => {
+                    const sumarni = [];
+
+                    let temp = {
+                        title: t.projekat.naziv,
+                        detail: "Od " + t.pocetniDatum + " do " + t.krajnjiDatum,
+                        subline: t.poslovodja.ime + " " + t.poslovodja.prezime
+                    }
+                    Object.assign(temp, t);
+
+                    sumarni.push(temp);
+                    return sumarni;
+                })
+            }
+
+            case "tehnicari": {
+                return dataArray.flatMap((t) => {
+                    const tehnicari = [];
+                    let temp = {
                         title: t.ime + " " + t.prezime,
                         detail: t.idProjekta,
                         subline: t.detalji
                     };
-                Object.assign(temp, t);
+                    Object.assign(temp, t);
 
-                tehnicari.push(temp)
-                return tehnicari;
-            });
-        }
+                    tehnicari.push(temp)
+                    return tehnicari;
+                });
+            }
 
 
-        case "zahtjevi": {
-            return dataArray.flatMap((t) => {
-                const zahtjevi = [];
-                let temp = {
+            case "zahtjevi": {
+                return dataArray.flatMap((t) => {
+                    const zahtjevi = [];
+                    let temp = {
                         title: t.opis,
                         detail: "Datum slanja: " + t.datumSlanja,
                         subline: "Stanje zahtjeva: " + t.stanjeZahtjeva
                     };
-                Object.assign(temp, t);
+                    Object.assign(temp, t);
 
-                zahtjevi.push(temp)
-                return zahtjevi;
-            });
-        }
-        case "zaduzenja": {
-            return dataArray.flatMap((t) => {
-                const zaduzenja = [];
-                let temp = {
+                    zahtjevi.push(temp)
+                    return zahtjevi;
+                });
+            }
+            case "zaduzenja": {
+                return dataArray.flatMap((t) => {
+                    const zaduzenja = [];
+                    let temp = {
                         title: t.zaduzenaKolicina + " " + t.resurs.naziv,
                         detail: t.poslovodja.ime + " " + t.poslovodja.prezime,
                         subline: "Datum zaduženja: " + t.datumZaduzenja
                     };
-                Object.assign(temp, t);
+                    Object.assign(temp, t);
 
-                zaduzenja.push(temp)
-                return zaduzenja;
-            });
-        }
-        case "projekti": {
-            return dataArray.flatMap((t) => {
-                const projects = [];
-                let temp = {
+                    zaduzenja.push(temp)
+                    return zaduzenja;
+                });
+            }
+            case "projekti": {
+                return dataArray.flatMap((t) => {
+                    const projects = [];
+                    let temp = {
                         title: t.naziv,
                         detail: t.opis,
                         subline: "Datum početka rada: " + t.pocetakRada
                     };
-                Object.assign(temp, t);
+                    Object.assign(temp, t);
 
-                projects.push(temp)
-                return projects;
-            });
+                    projects.push(temp)
+                    return projects;
+                });
+            }
         }
     }
-}
