@@ -2,7 +2,7 @@ import './ListElement.css';
 import React, { useState } from 'react';
 import { SmallButton } from "../../SmallButton.jsx";
 import { loadAssets } from "../../../utils/dataHelpers.js";
-import {deleteElement, updateProjekat} from "../../../services/apiHelpers.js";
+import {deleteElement, updateElement} from "../../../services/apiHelpers.js";
 import CenteredOverlay from "../../CenteredOverlay/CenteredOverlay.jsx";
 import DynamicForm from "../../DynamicForm.jsx";
 
@@ -83,7 +83,7 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
                         schema={selectedSchema}
                         onClose={() => setUpdateForm(false)}
                         initialValues={listElementData}
-                        onSubmit={(listElementData) => updateProjekat(tag, listElementData.id, listElementData)}
+                        onSubmit={(listElementData) => updateElement(tag, listElementData.id, listElementData)}
                     />
                 </CenteredOverlay>
             )}
