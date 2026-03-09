@@ -2,7 +2,7 @@ import './ListElement.css';
 import React, { useState } from 'react';
 import { SmallButton } from "../../SmallButton.jsx";
 import { loadAssets } from "../../../utils/dataHelpers.js";
-import {createProjekat, deleteElement, updateProjekat} from "../../../services/apiHelpers.js";
+import {deleteElement, updateProjekat} from "../../../services/apiHelpers.js";
 import CenteredOverlay from "../../CenteredOverlay/CenteredOverlay.jsx";
 import DynamicForm from "../../DynamicForm.jsx";
 
@@ -24,6 +24,7 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
                         type="edit"
                         onClickHandler={(e) => {
                             e.stopPropagation(); // Sprečava da klik na edit otvori glavni onClick
+                            setIsHovered(false);
                             console.log("Edit kliknut za:", listElementData.id);
                             setUpdateForm(true)
                         }}
@@ -33,8 +34,9 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
                         type="delete"
                         onClickHandler={(e) => {
                             e.stopPropagation();
+                            setIsHovered(false);
                             const r = deleteElement(tag, listElementData.id);
-                            console.log("Delete kliknut za: ", listElementData.id), "  ", r;
+                            console.log("Delete kliknut za: ", listElementData.id, "  ", r);
                         }}
                     />
                 </div>
@@ -43,8 +45,10 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
         return null;
     };
 
+    var image = isHovered ? images[`${screenState}-inverted`] : images[`${screenState}`];
+
     return (
-        /* PROMENJENO: Iz <button> u <div> da izbegnemo nesting grešku */
+        <>
         <div
             className={`list-element ${className || ''} ${isHovered ? 'hovered' : ''}`}
             onClick={() => onClickFunc(listElementData)}
@@ -55,7 +59,7 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
             <img
                 className="list-image"
                 alt="List Icon"
-                src={isHovered ? images[`${screenState}-inverted`] : images[`${screenState}`]}
+                src={image}
             />
 
             <div className="list-element-info">
@@ -72,10 +76,10 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
 
             {/* Renderujemo dugmiće ako je isEditable true */}
             {renderActionButtons(isEditable)}
-
+        </div>
             {updateForm && (
-                <CenteredOverlay isVisible={updateForm} onClose={() => setUpdateForm(false)}>
-                    <DynamicForm
+                <CenteredOverlay className="form-overlay" isVisible={updateForm} onClose={() => setUpdateForm(false)}>
+                    <DynamicForm className="form"
                         schema={selectedSchema}
                         onClose={() => setUpdateForm(false)}
                         initialValues={listElementData}
@@ -83,6 +87,6 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
                     />
                 </CenteredOverlay>
             )}
-        </div>
+        </>
     );
 }
