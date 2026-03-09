@@ -6,8 +6,11 @@ import {createElement, fetchData} from "../../services/apiHelpers.js";
 import { schemaMap } from "../../data/SchemaMap.jsx";
 import DynamicForm from "../DynamicForm.jsx";
 import CenteredOverlay from "../CenteredOverlay/CenteredOverlay.jsx";
+import { NotificationProvider, useNotification } from "../NotificationContext.jsx";
 
 const noop = () => {};
+
+
 
 export function List({
                          listTitle,
@@ -18,6 +21,8 @@ export function List({
                          tag
                      }) {
 
+    const notify = useNotification();
+    console.log("notify object:", notify);
     const [showForm, setShowForm] = useState(false);
 
     const selectedSchema = schemaMap[tag];
@@ -106,7 +111,22 @@ export function List({
                             console.log("Podaci iz forme koji idu ka servisu:", data);
 
                             // Ovdje se zapravo kreira tvoj DTO (možeš ga modifikovati prije slanja)
-                            await createElement(tag, data);
+                            //var response = await createElement(tag, data);
+                            //console.log("Podaci iz forme koji idu:", response);
+                            try {
+                                const responseStatus = await createElement(tag, data);
+                                console.log("Response status:", responseStatus);
+
+                                if (responseStatus >= 200 && responseStatus < 300) {
+                                     notify.success("Element je uspješno dodat", "Podaci su sačuvani");
+
+                                }
+
+                                setShowForm(false);
+                            } catch (error) {
+                                console.error("Greška pri kreiranju elementa:", error);
+                                notify.error("Neuspješno dodavanje elementa", "Došlo je do greške, pokušajte ponovo")
+                            }
 
                             setShowForm(false);
                         }}
