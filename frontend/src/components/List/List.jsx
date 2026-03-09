@@ -14,7 +14,6 @@ export function List({
                          screenState,
                          onClick = noop,
                          isEditable,
-                         numElements = 8,
                          dividerWidth = "60%",
                          tag
                      }) {
@@ -81,7 +80,7 @@ export function List({
             <hr className="divider" style={{ width: dividerWidth }} />
 
             <div className={`list-content ${viewState}`}>
-                {listData.slice(0, numElements).map((data, index) => (
+                {listData.map((data, index) => (
                     <ListElement
                         key={index}
                         screenState={screenState}
