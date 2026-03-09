@@ -2,7 +2,7 @@ import {ListElement} from "./ListElement/ListElement.jsx";
 import {SmallButton} from "../SmallButton.jsx";
 import "./List.css";
 import {useEffect, useState} from "react";
-import {createProjekat, fetchData} from "../../services/apiHelpers.js";
+import {createElement, fetchData} from "../../services/apiHelpers.js";
 import { schemaMap } from "../../data/SchemaMap.jsx";
 import DynamicForm from "../DynamicForm.jsx";
 import CenteredOverlay from "../CenteredOverlay/CenteredOverlay.jsx";
@@ -107,7 +107,7 @@ export function List({
                             console.log("Podaci iz forme koji idu ka servisu:", data);
 
                             // Ovdje se zapravo kreira tvoj DTO (možeš ga modifikovati prije slanja)
-                            await createProjekat(data);
+                            await createElement(data);
 
                             setShowForm(false);
                         }}
