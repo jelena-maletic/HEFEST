@@ -21,4 +21,5 @@ public class Vozilo implements Serializable {
     TipVozila tipVozila;
     LocalDate datumRegistracije;
     LocalDate datumIstekaRegistracije;
+    String id;
 }
