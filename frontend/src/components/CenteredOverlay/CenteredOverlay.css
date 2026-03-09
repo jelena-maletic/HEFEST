@@ -23,3 +23,7 @@
     padding: 20px;
     overflow-y: auto;
 }
+
+.form-overlay {
+    width: 35em;
+}

@@ -30,10 +30,10 @@ function Login({roleHandle}) {
         try {
             const res = await login(username, password);
             // Bekend vraća LoginResponse sa poljima: token, username, role
-            const { token, role, username: returnedUsername } = res.data;
+            const { token, role, username: returnedUsername, jmb } = res.data;
 
             // Čuvamo u sessionStorage
-            saveAuth(token, returnedUsername, role);
+            saveAuth(token, returnedUsername, role, jmb);
 
             // Preusmjeravanje na osnovu uloge iz bekenda
             switch (role) {

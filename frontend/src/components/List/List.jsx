@@ -2,9 +2,12 @@ import {ListElement} from "./ListElement/ListElement.jsx";
 import {SmallButton} from "../SmallButton.jsx";
 import "./List.css";
 import {useEffect, useState} from "react";
-import {fetchData} from "../../services/apiHelpers.js";
+import {createElement, fetchData} from "../../services/apiHelpers.js";
+import { schemaMap } from "../../data/SchemaMap.jsx";
+import DynamicForm from "../DynamicForm.jsx";
+import CenteredOverlay from "../CenteredOverlay/CenteredOverlay.jsx";
 
-const noop = (data) => {};
+const noop = () => {};
 
 export function List({
                          listTitle,
@@ -16,9 +19,19 @@ export function List({
                          tag
                      }) {
 
+    const [showForm, setShowForm] = useState(false);
+
+    const selectedSchema = schemaMap[tag];
+
     const addButton = (editable) => {
         if(editable === true){
-            return(<SmallButton style={'padding:20px'} type="add"/>)
+            return(
+                <SmallButton
+                    style={'padding:20px'}
+                    type="add"
+                    onClickHandler={() => setShowForm(true)}
+                />
+            )
         }
     }
 
@@ -77,9 +90,31 @@ export function List({
                         onClickFunc={(clickedData) => onClick(clickedData)}
                         isEditable={isEditable}
                         className={viewState === "grid" ? "grid-element" : "list-element"}
+                        tag = {tag}
+                        selectedSchema={selectedSchema}
                     />
                 ))}
             </div>
+
+            {showForm && (
+                <CenteredOverlay className="form-overlay" isVisible={showForm} onClose={() => setShowForm(false)}>
+                    <DynamicForm
+                        schema={selectedSchema}
+                        onClose={() => setShowForm(false)}
+                        //onSubmit={(data) => createProjekat(data)}
+                        onSubmit={async (data) => {
+                            // OVDJE VIDIŠ ŠTA SE ŠALJE
+                            console.log("Podaci iz forme koji idu ka servisu:", data);
+
+                            // Ovdje se zapravo kreira tvoj DTO (možeš ga modifikovati prije slanja)
+                            await createElement(tag, data);
+
+                            setShowForm(false);
+                        }}
+                    />
+                </CenteredOverlay>
+            )}
+
         </div>
     );
 }

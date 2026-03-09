@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tag } from 'antd';
-import { formatDate, getStatusTagColor, getPriorityTagColor, calculateAgeFromJMBG } from '../utils/dataHelpers';
+import { formatDate, getStatusTagColor, getPriorityTagColor} from '../utils/dataHelpers';
 import TimesheetViewer from '../components/TimesheetViewer/TimesheetViewer.jsx';
 
 

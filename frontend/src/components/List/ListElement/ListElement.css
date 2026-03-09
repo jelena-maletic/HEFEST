@@ -162,3 +162,7 @@
     gap: 10px;
     margin-top: 10px;
 }
+
+.form-overlay .centered-centered-overlay-backdrop{
+    width: 35em;
+}

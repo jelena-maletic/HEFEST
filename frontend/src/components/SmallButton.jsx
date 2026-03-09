@@ -30,7 +30,7 @@ export function SmallButton({type, onClickHandler}){
     const config = CONFIG_MAP[type];
 
     return(
-        <button className="small-button" onClick={onClickHandler}
+        <button type="button" className="small-button" onClick={onClickHandler}
             onMouseOver={() => setIsHovered(true)}
             onMouseOut={() => setIsHovered(false)}>
             <img className="icon" src={isHovered ? config.invertedIcon : config.icon} alt="x"/>
