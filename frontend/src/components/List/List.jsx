@@ -107,7 +107,7 @@ export function List({
                             console.log("Podaci iz forme koji idu ka servisu:", data);
 
                             // Ovdje se zapravo kreira tvoj DTO (možeš ga modifikovati prije slanja)
-                            await createElement(data);
+                            await createElement(tag, data);
 
                             setShowForm(false);
                         }}
