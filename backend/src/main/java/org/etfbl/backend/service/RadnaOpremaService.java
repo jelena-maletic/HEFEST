@@ -31,12 +31,8 @@ public class RadnaOpremaService {
 
     public RadnaOprema sacuvajRadnuOpremu(RadnaOprema dto) {
         RadnaOpremaEntity entity = modelMapper.map(dto, RadnaOpremaEntity.class);
-        ResursEntity noviResurs = modelMapper.map(dto, ResursEntity.class);
-
-        entity.setId(noviResurs.getId());
 
         RadnaOpremaEntity sacuvano = radnaOpremaRepository.save(entity);
-
         return modelMapper.map(sacuvano, RadnaOprema.class);
     }
 
