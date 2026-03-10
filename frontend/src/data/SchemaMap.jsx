@@ -1,9 +1,9 @@
 import {
     projectSchema,
     vehicleSchema,
+    equipmentSchema,
     /*materialSchema,
     toolSchema,
-    equipmentSchema,
     assignmentSchema,
     passwordSchema,
     dailyReportSchema,
@@ -15,10 +15,9 @@ import {
 export const schemaMap = {
     "projekti": projectSchema,
     "vozila": vehicleSchema,
+    "radna-oprema": equipmentSchema,
     /*materijal: materialSchema,
     alat: toolSchema,
-    vozilo: vehicleSchema,
-    oprema: equipmentSchema,
     zaduzenje: assignmentSchema,
     lozinka: passwordSchema,
     dnevniIzvjestaj: dailyReportSchema,

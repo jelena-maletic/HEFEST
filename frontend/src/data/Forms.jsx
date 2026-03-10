@@ -184,3 +184,44 @@ export const vehicleSchema = {
         },
     ],
 };
+
+export const equipmentSchema = {
+    submitLabel: "Sačuvaj opremu",
+    layout: "vertical",
+    fields: [
+        {
+            name: "naziv", // Match: String naziv
+            label: "Naziv (Marka i model)",
+            type: "input",
+            required: true,
+            span: 12,
+        },
+        {
+            name: "stanjeMagacina", // Match: BigDecimal stanjeMagacina
+            label: "Stanje magacina",
+            type: "number",
+            required: true,
+            min: 0,
+            span: 12,
+        },
+        {
+            name: "minimalnaKolicina", // Match: BigDecimal minimalnaKolicina
+            label: "Minimalna količina",
+            type: "number",
+            required: true,
+            min: 0,
+            span: 12,
+        },
+        {
+            name: "kategorija", // Match: TipVozila tipVozila (Enum)
+            label: "Kategorija",
+            type: "select",
+            required: true,
+            span: 12,
+            options: [
+                { value: "alat", label: "Alat" },
+                { value: "radna_odjeca", label: "Radna odjeća" },
+            ],
+        },
+    ],
+};
