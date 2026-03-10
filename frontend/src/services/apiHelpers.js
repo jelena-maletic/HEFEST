@@ -28,7 +28,7 @@ export const createElement = async (tag, data) => {
     try {
         // Šaljemo na URL npr. "api/projekti" ili "api/zaposleni"
         const response = await axios.post(`${API_BASE}/${tag}`, payload);
-        return response.data; // Vraćamo kreirani objekat sa servera
+        return response.status; // Vraćamo kreirani objekat sa servera
     } catch (error) {
         console.error(`Greška pri kreiranju elementa na tagu ${tag}:`, error);
         throw error; // Prosleđujemo grešku dalje da je komponenta obradi
