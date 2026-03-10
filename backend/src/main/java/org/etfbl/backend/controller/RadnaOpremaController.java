@@ -1,12 +1,12 @@
 package org.etfbl.backend.controller;
 
 import org.etfbl.backend.dto.RadnaOprema;
+import org.etfbl.backend.dto.Vozilo;
 import org.etfbl.backend.model.RadnaOpremaEntity;
 import org.etfbl.backend.service.RadnaOpremaService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,7 +22,25 @@ public class RadnaOpremaController {
     }
 
     @GetMapping
-    public List<RadnaOprema> findAll() {
-        return radnaOpremaService.getAll();
+    public List<RadnaOprema> getAll() {
+        return radnaOpremaService.getAllRadnaOprema();
+    }
+
+    @PostMapping
+    public ResponseEntity<RadnaOprema> kreirajRadnuOpremu(@RequestBody RadnaOprema ro) {
+        RadnaOprema novaRO = radnaOpremaService.sacuvajRadnuOpremu(ro);
+        return new ResponseEntity<>(novaRO, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping({"/{id}"})
+    public ResponseEntity<Void> obrisiRadnuOpremu(@PathVariable Integer id) {
+        this.radnaOpremaService.obrisiRadnuOpremu(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping({"/{id}"})
+    public ResponseEntity<RadnaOprema> getById(@PathVariable Integer id) {
+        RadnaOprema ro = this.radnaOpremaService.getRadnaOpremaById(id);
+        return ResponseEntity.ok(ro);
     }
 }

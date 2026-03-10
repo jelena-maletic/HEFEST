@@ -11,8 +11,9 @@ import java.math.BigDecimal;
  */
 @Data
 public class RadnaOprema implements Serializable {
-    String naziv;
-    BigDecimal stanjeMagacina;
-    BigDecimal minimalnaKolicina;
-    Kategorija kategorija;
+    private Integer id;
+    private String naziv;
+    private BigDecimal stanjeMagacina;
+    private BigDecimal minimalnaKolicina;
+    private Kategorija kategorija;
 }
