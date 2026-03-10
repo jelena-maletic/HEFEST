@@ -37,6 +37,14 @@ public class VoziloController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Vozilo> azurirajVozilo(@PathVariable Long id, @RequestBody Vozilo vozilo) {
+        vozilo.setId(id.toString());
+
+        Vozilo azuriranoVozilo = this.voziloService.updateVozilo(vozilo);
+        return new ResponseEntity<>(azuriranoVozilo, HttpStatus.ACCEPTED);
+    }
+
     // Opciono: Ako treba da dohvatiš vozilo po ID-u
     @GetMapping({"/{id}"})
     public ResponseEntity<Vozilo> getById(@PathVariable Integer id) {

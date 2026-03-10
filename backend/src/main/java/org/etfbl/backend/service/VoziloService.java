@@ -2,14 +2,15 @@ package org.etfbl.backend.service;
 
 import jakarta.transaction.Transactional;
 import org.etfbl.backend.dto.Vozilo;
-import org.etfbl.backend.exceptions.NotFoundException;
 import org.etfbl.backend.model.ResursEntity;
 import org.etfbl.backend.model.VoziloEntity;
 import org.etfbl.backend.repository.VoziloRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Transactional
 @Service
@@ -39,12 +40,25 @@ public class VoziloService {
 
         entity.setId(noviResurs.getId());
 
-
-
-
         VoziloEntity sacuvano = voziloRepository.save(entity);
 
         return modelMapper.map(sacuvano, Vozilo.class);
+    }
+
+    @Transactional
+    public Vozilo updateVozilo(Vozilo dto){
+        VoziloEntity entity = modelMapper.map(dto, VoziloEntity.class);
+        Optional<VoziloEntity> v = voziloRepository.findById(entity.getId());
+
+        if(v.isPresent()){
+            VoziloEntity voziloEntity = v.get();
+            BeanUtils.copyProperties(entity, voziloEntity);
+            voziloEntity.setDatumRegistracije(entity.getDatumRegistracije());
+            voziloEntity.setDatumIstekaRegistracije(entity.getDatumIstekaRegistracije());
+            return modelMapper.map(voziloRepository.save(voziloEntity), Vozilo.class);
+        }
+        else
+            throw new RuntimeException("Vozilo ne postoji");
     }
 
     public Vozilo getVoziloById(Integer id) {
