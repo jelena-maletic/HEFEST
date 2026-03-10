@@ -134,10 +134,9 @@ export const vehicleSchema = {
             required: true,
             span: 12,
             options: [
-                { value: "PUTNICKO", label: "Putničko vozilo" },
-                { value: "TERETNO", label: "Teretno vozilo" },
-                { value: "KOMBI", label: "Kombi / Dostavno" },
-                { value: "MASINA", label: "Radna mašina" },
+                { value: "putnicko", label: "Putničko vozilo" },
+                { value: "teretno", label: "Teretno vozilo" },
+                { value: "kombi", label: "Kombi / Dostavno" }
             ],
         },
         {

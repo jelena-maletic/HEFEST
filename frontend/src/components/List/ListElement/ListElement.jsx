@@ -12,9 +12,6 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
 
     const images = loadAssets();
 
-    console.log(listElementData);
-
-    // Funkcija za prikaz akcionih dugmića (edit/delete)
     const renderActionButtons = (editable) => {
         if (editable === true) {
             return (
@@ -83,7 +80,10 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
                         schema={selectedSchema}
                         onClose={() => setUpdateForm(false)}
                         initialValues={listElementData}
-                        onSubmit={(listElementData) => updateElement(tag, listElementData.id, listElementData)}
+                        onSubmit={(formData) => {
+                            const r = updateElement(tag, listElementData.id, formData)
+                            return r;
+                        }}
                     />
                 </CenteredOverlay>
             )}

@@ -49,11 +49,9 @@ export function List({
 
     const viewButton = (viewState) => {
         if(viewState === "list"){
-            console.log("viewState: ", viewState);
             return(<SmallButton style={'padding:20px'} type={viewState} onClickHandler={() => setViewState("grid")}/>)
         }
         else if(viewState === "grid"){
-            console.log("viewState: ", viewState);
             return(<SmallButton style={'padding:20px'} type={viewState} onClickHandler={() => setViewState("list")}/>)
         }
     }
