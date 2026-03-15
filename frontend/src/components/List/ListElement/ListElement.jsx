@@ -20,9 +20,10 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
                         className="nested-button"
                         type="edit"
                         onClickHandler={(e) => {
-                            e.stopPropagation(); // Sprečava da klik na edit otvori glavni onClick
+                            e.stopPropagation();
                             setIsHovered(false);
                             console.log("Edit kliknut za:", listElementData.id);
+                            console.log(listElementData);
                             setUpdateForm(true)
                         }}
                     />
@@ -51,7 +52,7 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
             onClick={() => onClickFunc(listElementData)}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            style={{ cursor: 'pointer' }} // Zadržavamo kursor ruke da korisnik zna da je klikabilno
+            style={{ cursor: 'pointer' }}
         >
             <img
                 className="list-image"
@@ -71,7 +72,6 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
                 </span>
             </div>
 
-            {/* Renderujemo dugmiće ako je isEditable true */}
             {renderActionButtons(isEditable)}
         </div>
             {updateForm && (

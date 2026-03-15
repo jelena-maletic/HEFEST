@@ -20,13 +20,13 @@ export const formatDate = (isoDate) => {
 export const getStatusTagColor = (status) => {
     const lowerStatus = status ? status.toLowerCase() : '';
     switch (lowerStatus) {
-        case 'zavrsen':
-            return 'success';
+        case 'završen':
+            return 'red';
         case 'aktivan':
-            return 'processing';
+            return 'green';
         case 'neaktivan':
             return 'default';
-        case 'u pripremi':
+        case 'dogovoren':
             return 'blue';
         default:
             return 'default';

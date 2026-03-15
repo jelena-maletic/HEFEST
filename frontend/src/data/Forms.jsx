@@ -51,8 +51,9 @@ export const projectSchema = {
             span: 8,
             options: [
                 { value: "DOGOVOREN", label: "Dogovoren" },
-                { value: "U_TOKU", label: "Radovi u toku" },
-                { value: "ZAVRSEN", label: "Završen" },
+                { value: "AKTIVAN", label: "Aktivan" },
+                { value: "NEAKTIVAN", label: "Neaktivan" },
+                { value: "ZAVRŠEN", label: "Završen" },
             ],
         },
 
@@ -67,14 +68,14 @@ export const projectSchema = {
             name: "pocetakRada",
             label: "Početak radova",
             type: "date",
-            required: true,
+            required: false,
             span: 8,
         },
         {
             name: "krajRada",
             label: "Kraj radova",
             type: "date",
-            required: true,
+            required: false,
             span: 8,
         },
 
@@ -103,7 +104,7 @@ export const projectSchema = {
             name: "opis",
             label: "Opis projekta",
             type: "textarea",
-            required: true,
+            required: false,
             span: 24,
         },
     ],
