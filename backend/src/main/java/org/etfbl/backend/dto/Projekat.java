@@ -1,11 +1,7 @@
 package org.etfbl.backend.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Value;
-
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -33,6 +29,6 @@ public class Projekat implements Serializable {
     @JsonProperty("projectTeam")
     List<String> timTehnicara;
     @JsonProperty("manager")
-    private String poslovodja;
+    String poslovodja;
 
 }

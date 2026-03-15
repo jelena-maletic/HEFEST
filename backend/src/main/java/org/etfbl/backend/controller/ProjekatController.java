@@ -2,13 +2,9 @@ package org.etfbl.backend.controller;
 
 import org.etfbl.backend.dto.Projekat;
 import org.etfbl.backend.exceptions.NotFoundException;
-import org.etfbl.backend.model.ProjekatEntity;
-import org.etfbl.backend.security.KorisnikDetails;
 import org.etfbl.backend.service.ProjekatService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -58,5 +54,12 @@ public class ProjekatController {
     @GetMapping("/lokacije")
     public List<String> getLokacije() {
         return projekatService.getPostojeceLokacije();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Projekat> azurirajProjekat(@PathVariable Integer id, @RequestBody Projekat projekat) throws NotFoundException {
+        projekat.setId(id);
+        Projekat azuriran=projekatService.updateProjekat(id,projekat);
+        return ResponseEntity.ok(azuriran);
     }
 }

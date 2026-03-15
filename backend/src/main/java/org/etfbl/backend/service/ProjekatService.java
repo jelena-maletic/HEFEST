@@ -6,11 +6,7 @@ import org.etfbl.backend.exceptions.NotFoundException;
 import org.etfbl.backend.model.*;
 import org.etfbl.backend.repository.*;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.time.Instant;
 import java.util.List;
 
@@ -25,6 +21,7 @@ public class ProjekatService {
     private final PoslovodjaUpravljaProjektomRepository poslovodjaUpravljaProjektomRepository;
     private final TehnicarRepository tehnicarRepository;
     private final TehnicarNaProjektuRepository tehnicarNaProjektuRepository;
+
     public ProjekatService(ProjekatRepository projekatRepository, ModelMapper modelMapper, DirektorRepository direktorRepository, PoslovodjaRepository poslovodjaRepository, PoslovodjaUpravljaProjektomRepository poslovodjaUpravljaProjektomRepository, TehnicarRepository tehnicarRepository, TehnicarNaProjektuRepository tehnicarNaProjektuRepository) {
         this.projekatRepository = projekatRepository;
         this.modelMapper = modelMapper;
@@ -36,78 +33,77 @@ public class ProjekatService {
     }
 
     public List<Projekat> getAllProjekti() {
-        return projekatRepository.findAll().stream().filter(p -> !p.getObrisan()).map(projekat -> modelMapper.map(projekat, Projekat.class )).toList();
+        return projekatRepository.findAll().stream()
+                .filter(p -> !p.getObrisan())
+                .map(projekatEntity -> {
+                    Projekat dto = modelMapper.map(projekatEntity, Projekat.class);
+                    Integer id = projekatEntity.getIdProjekta();
+
+                    String managerJmb = poslovodjaUpravljaProjektomRepository.findPoslovodjaJmbByIdProjekta(id);
+                    dto.setPoslovodja(managerJmb);
+                    List<String> tehnicari = tehnicarNaProjektuRepository.findTehnicarJMBByIdProjekta(id);
+                    dto.setTimTehnicara(tehnicari);
+
+
+                    return dto;
+                })
+                .toList();
     }
 
     public Projekat sacuvajProjekat(Projekat dto) {
-        // 1. Mapiranje osnovnih polja
+
         ProjekatEntity entity = modelMapper.map(dto, ProjekatEntity.class);
 
-        // 2. Vremenski pečati
+
         Instant sada = Instant.now();
         entity.setDatumKreiranja(sada);
         entity.setPosljednjaIzmjena(sada);
-        entity.setObrisan(false); // Eksplicitno postavi na false za svaki slučaj
+        entity.setObrisan(false);
 
-        // 3. SIGURNOSNA PROVJERA ZA JMB
         String jmb = dto.getUlogovaniJmb();
         if (jmb == null || jmb.trim().isEmpty() || "undefined".equals(jmb)) {
-            // Ovdje možeš ili baciti grešku ili postaviti nekog defaultnog direktora za test
+
             throw new RuntimeException("Nevalidan JMB direktora: " + jmb);
         }
 
-
-        // 4. Povezivanje direktora
         try {
             entity.setDirektor(direktorRepository.getReferenceById(jmb));
         } catch (Exception e) {
             throw new RuntimeException("Direktor sa JMB-om " + jmb + " ne postoji u bazi.");
         }
-        // 5. Čuvanje
         ProjekatEntity sacuvan = projekatRepository.save(entity);
 
         if (dto.getPoslovodja() != null) {
             PoslovodjaUpravljaProjektomEntity veza = new PoslovodjaUpravljaProjektomEntity();
 
-            // Postavljamo ID-ove (iz IdClass)
             veza.setIdProjekta(sacuvan.getIdProjekta());
             veza.setPoslovodjaJMB(dto.getPoslovodja());
 
-            // Postavljamo objekte (zbog @MapsId i @ManyToOne)
             veza.setProjekat(sacuvan);
             veza.setPoslovodja(poslovodjaRepository.getReferenceById(dto.getPoslovodja()));
 
-            // Snimamo u bazu u tabelu Poslovodja_Upravlja_Projektom
             poslovodjaUpravljaProjektomRepository.save(veza);
         }
 
         if (dto.getTimTehnicara() != null && !dto.getTimTehnicara().isEmpty()) {
             for (String tehJmb : dto.getTimTehnicara()) {
-                // Kreiramo instancu veznog entiteta za svakog tehničara
                 TehnicarNaProjektuEntity vezaTehnicar = new TehnicarNaProjektuEntity();
-
-                // Postavljanje ID-ova (prilagodi nazive polja tvom entitetu)
                 vezaTehnicar.setIdProjekta(sacuvan.getIdProjekta());
                 vezaTehnicar.setTehnicarJMB(tehJmb);
-
-                // Postavljanje relacija
                 vezaTehnicar.setProjekat(sacuvan);
                 vezaTehnicar.setTehnicar(tehnicarRepository.getReferenceById(tehJmb));
-
-                // Snimanje u tabelu 'tehnicar_na_projektu'
                 tehnicarNaProjektuRepository.save(vezaTehnicar);
             }
         }
-        // 6. Mapiranje nazad u DTO
         return modelMapper.map(sacuvan, Projekat.class);
     }
 
-    public Projekat getProjekatById(Integer id) throws NotFoundException{
+    public Projekat getProjekatById(Integer id) throws NotFoundException {
         ProjekatEntity entity = projekatRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Projekat sa id-om " + id + " nije pronađen."));
 
         return modelMapper.map(entity, Projekat.class);
-    }
+    }//ne dohvati poslovodju i tehnicare dobro (TODO)
 
     public void obrisiProjekat(Integer id) {
         if (!projekatRepository.existsById(id)) {
@@ -118,8 +114,6 @@ public class ProjekatService {
 
     public List<Projekat> pretraziPoLokaciji(String lokacija) throws NotFoundException {
         List<ProjekatEntity> projekti = projekatRepository.findAllByLokacijaContainingIgnoreCaseAndObrisanFalse(lokacija);
-
-        // Ako pretraga ne vrati ništa, bacamo 404
         if (projekti.isEmpty()) {
             throw new NotFoundException("Nema projekata na lokaciji: " + lokacija);
         }
@@ -133,6 +127,49 @@ public class ProjekatService {
     public List<String> getPostojeceLokacije() {
         return projekatRepository.findUniqueActiveLocations();
     }
+
+    public Projekat updateProjekat(Integer id, Projekat dto) throws NotFoundException {
+        ProjekatEntity postojeci = projekatRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Projekat sa ID-om " + id + " ne postoji."));
+        postojeci.setNaziv(dto.getNaziv());
+        postojeci.setOpis(dto.getOpis());
+        postojeci.setLokacija(dto.getLokacija());
+        postojeci.setRok(dto.getRok());
+        postojeci.setPocetakRada(dto.getPocetakRada());
+        postojeci.setKrajRada(dto.getKrajRada());
+        postojeci.setStatus(dto.getStatus());
+        postojeci.setPrioritet(dto.getPrioritet());
+        postojeci.setKlijent(dto.getKlijent());
+        postojeci.setPosljednjaIzmjena(Instant.now());
+        poslovodjaUpravljaProjektomRepository.deleteByProjekatId(id);
+        tehnicarNaProjektuRepository.deleteByProjekatId(id);
+
+        ProjekatEntity sacuvan = projekatRepository.save(postojeci);
+
+        if (dto.getPoslovodja() != null && !dto.getPoslovodja().trim().isEmpty()) {
+            PoslovodjaUpravljaProjektomEntity vezaPoslovodja = new PoslovodjaUpravljaProjektomEntity();
+            vezaPoslovodja.setIdProjekta(sacuvan.getIdProjekta());
+            vezaPoslovodja.setPoslovodjaJMB(dto.getPoslovodja());
+            vezaPoslovodja.setProjekat(sacuvan);
+            vezaPoslovodja.setPoslovodja(poslovodjaRepository.getReferenceById(dto.getPoslovodja()));
+            poslovodjaUpravljaProjektomRepository.save(vezaPoslovodja);
+        }
+
+
+        if (dto.getTimTehnicara() != null && !dto.getTimTehnicara().isEmpty()) {
+            for (String tehJmb : dto.getTimTehnicara()) {
+                TehnicarNaProjektuEntity vezaTehnicar = new TehnicarNaProjektuEntity();
+                vezaTehnicar.setIdProjekta(sacuvan.getIdProjekta());
+                vezaTehnicar.setTehnicarJMB(tehJmb);
+                vezaTehnicar.setProjekat(sacuvan);
+                vezaTehnicar.setTehnicar(tehnicarRepository.getReferenceById(tehJmb));
+                tehnicarNaProjektuRepository.save(vezaTehnicar);
+            }
+        }
+
+            return modelMapper.map(sacuvan, Projekat.class);
+        }
+
 
 
 }
