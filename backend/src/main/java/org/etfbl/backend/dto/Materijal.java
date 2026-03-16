@@ -16,4 +16,5 @@ public class Materijal implements Serializable {
     BigDecimal minimalnaKolicina;
     String jedinicaMjere;
     String kategorija;
+    String id;
 }

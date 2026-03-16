@@ -38,6 +38,13 @@ public class RadnaOpremaController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<RadnaOprema> azurirajRadnuOpremu(@PathVariable Integer id, @RequestBody RadnaOprema radnaOprema) {
+        radnaOprema.setId(id);
+        RadnaOprema azuriranaRadnaOprema = this.radnaOpremaService.updateRadnaOprema(radnaOprema);
+        return new ResponseEntity<>(azuriranaRadnaOprema, HttpStatus.ACCEPTED);
+    }
+
     @GetMapping({"/{id}"})
     public ResponseEntity<RadnaOprema> getById(@PathVariable Integer id) {
         RadnaOprema ro = this.radnaOpremaService.getRadnaOpremaById(id);

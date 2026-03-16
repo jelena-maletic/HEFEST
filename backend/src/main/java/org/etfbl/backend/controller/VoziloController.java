@@ -17,20 +17,17 @@ public class VoziloController {
         this.voziloService = voziloService;
     }
 
-    // Dohvatanje svih vozila
     @GetMapping
     public List<Vozilo> getAll() {
         return this.voziloService.getAllVozilo();
     }
 
-    // OVO TI JE FALILO: Kreiranje novog vozila
     @PostMapping
     public ResponseEntity<Vozilo> kreirajVozilo(@RequestBody Vozilo vozilo) {
         Vozilo novoVozilo = voziloService.sacuvajVozilo(vozilo);
         return new ResponseEntity<>(novoVozilo, HttpStatus.CREATED);
     }
 
-    // Opciono: Ako treba da brišeš vozila
     @DeleteMapping({"/{id}"})
     public ResponseEntity<Void> obrisiVozilo(@PathVariable Integer id) {
         this.voziloService.obrisiVozilo(id);
@@ -45,7 +42,6 @@ public class VoziloController {
         return new ResponseEntity<>(azuriranoVozilo, HttpStatus.ACCEPTED);
     }
 
-    // Opciono: Ako treba da dohvatiš vozilo po ID-u
     @GetMapping({"/{id}"})
     public ResponseEntity<Vozilo> getById(@PathVariable Integer id) {
         Vozilo vozilo = this.voziloService.getVoziloById(id);
