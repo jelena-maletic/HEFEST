@@ -225,3 +225,64 @@ export const equipmentSchema = {
         },
     ],
 };
+
+export const materialSchema = {
+    submitLabel: "Sačuvaj materijal",
+    layout: "vertical",
+    fields: [
+        {
+            name: 'naziv',
+            label: 'Naziv materijala',
+            type: "input",
+            required: true,
+            span: 12
+        },
+        {
+            name: "stanjeMagacina",
+            label: "Stanje magacina",
+            type: "number",
+            required: true,
+            min: 0,
+            span: 12,
+        },
+        {
+            name: "minimalnaKolicina",
+            label: "Minimalna količina",
+            type: "number",
+            required: true,
+            min: 0,
+            span: 12,
+        },
+        {
+            name: 'kategorija',
+            label: 'Kategorija',
+            type: 'select',
+            required: true,
+            span: 12,
+            options: [
+                { value: 'kablovi', label: 'Kablovi i vodiči' },
+                { value: 'prekidaci', label: 'Prekidači i utičnice' },
+                { value: 'kutije', label: 'Razvodne kutije' },
+                { value: 'osiguraci', label: 'Osigurači i zaštitni elementi' },
+                { value: 'ormari', label: 'Razvodni ormari' },
+                { value: 'rasvjeta', label: 'Rasvjeta' },
+                { value: 'cijevi', label: 'Instalacione cijevi i kanali' },
+                { value: 'spojni', label: 'Spojni materijal' },
+                { value: 'montazni', label: 'Montažni materijal' }
+            ]
+        },
+        {
+            name: 'jedinicaMjere',
+            label: 'Jedinica mjere',
+            type: 'select',
+            required: true,
+            span: 12,
+            options: [
+                { value: 'kom', label: 'Komad (kom)' },
+                { value: 'm', label: 'Metar (m)' },
+                { value: 'm2', label: 'Kvadratni metar (m²)' },
+                { value: 'kg', label: 'Kilogram (kg)' }
+            ]
+        },
+    ],
+};
