@@ -37,7 +37,7 @@ export const createElement = async (tag, data) => {
 
     export const deleteElement = async (tag, id) => {
         const response = await axios.delete(`${API_BASE}/${tag}/${id}`);
-        return response.data;
+        return response.status;
     };
 
     export const updateElement = async (tag, id, data) => {
