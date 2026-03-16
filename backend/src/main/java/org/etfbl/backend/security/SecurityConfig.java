@@ -78,6 +78,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/tehnicari/**").permitAll()
                         .requestMatchers("/api/zaposleni/**").permitAll()
                         .requestMatchers("/api/resursi/**").permitAll()
+                        .requestMatchers("/api/korisnici/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
