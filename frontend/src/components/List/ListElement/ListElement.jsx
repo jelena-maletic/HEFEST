@@ -5,12 +5,14 @@ import { loadAssets } from "../../../utils/dataHelpers.js";
 import {deleteElement, updateElement} from "../../../services/apiHelpers.js";
 import CenteredOverlay from "../../CenteredOverlay/CenteredOverlay.jsx";
 import DynamicForm from "../../DynamicForm.jsx";
+import { useNotification } from "../../NotificationContext.jsx";
 
 export function ListElement({ screenState, listElementData, onClickFunc, isEditable, className, tag, selectedSchema }) {
     const [isHovered, setIsHovered] = useState(false);
     const [updateForm, setUpdateForm] = useState(false);
 
     const images = loadAssets();
+    const notify = useNotification();
 
     const renderActionButtons = (editable) => {
         if (editable === true) {
@@ -30,11 +32,19 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
                     <SmallButton
                         className="nested-button"
                         type="delete"
-                        onClickHandler={(e) => {
+                        onClickHandler={async (e) => {
                             e.stopPropagation();
                             setIsHovered(false);
-                            const r = deleteElement(tag, listElementData.id);
-                            console.log("Delete kliknut za: ", listElementData.id, "  ", r);
+                            try {
+                                const responseStatus = await deleteElement(tag, listElementData.id);
+
+                                if (responseStatus >= 200 && responseStatus < 300) {
+                                    notify.success("Obrisano", "Element je uspješno uklonjen.");
+                                }
+                            } catch (error) {
+                                console.error("Greška pri brisanju:", error);
+                                notify.error("Greška", "Neuspješno brisanje elementa.");
+                            }
                         }}
                     />
                 </div>
