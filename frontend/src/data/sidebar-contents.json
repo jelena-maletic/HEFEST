@@ -118,7 +118,7 @@
       "label": "Dodijeljeni projekti",
       "icon": "projects",
       "iconHover": "projects-inverted",
-      "tag": "projects"
+      "tag": "assigned-projects"
     }
   ],
   "tehnicar": [
