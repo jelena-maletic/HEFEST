@@ -18,7 +18,8 @@ export function List({
                          onClick = noop,
                          isEditable,
                          dividerWidth = "60%",
-                         tag
+                         tag,
+                         filterByPoslovodja
                      }) {
 
     const notify = useNotification();
@@ -45,7 +46,7 @@ export function List({
 
     useEffect(() => {
         const getData = async () => {
-            const data = await fetchData(tag);
+            const data = await fetchData(tag, filterByPoslovodja);
             setListData(data || []); // Update state with the actual array
         };
 

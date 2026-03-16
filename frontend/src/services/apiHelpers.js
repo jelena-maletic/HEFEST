@@ -45,7 +45,7 @@ export const createElement = async (tag, data) => {
         return response.data;
     };
 
-    export const fetchData = async (tag) => {
+    export const fetchData = async (tag, filterPoslovodja = null) => {
         let response;
         try {
             response = await api.service(false).get(`/${tag}`);
@@ -59,7 +59,15 @@ export const createElement = async (tag, data) => {
             return;
         }
 
-        const dataArray = Array.isArray(response.data) ? response.data : [response.data]
+        let dataArray = Array.isArray(response.data) ? response.data : [response.data]
+
+        if (tag === "projekti" && filterPoslovodja) {
+            const ulogovaniJmb = getJmb();
+            console.log(ulogovaniJmb);
+            dataArray = dataArray.filter(t =>
+                t.manager === ulogovaniJmb
+            );
+        }
 
         switch (tag) {
             case "radna-oprema": {
