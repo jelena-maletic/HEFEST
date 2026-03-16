@@ -37,6 +37,28 @@ const mapProjectDetails = (data,role) => {
         { section: 'Vremenski Okvir', label: 'Rok', value: formatDate(data.rok), key: 'deadline' },
         { section: 'Vremenski Okvir', label: 'Završeno', value: data.krajRada ? formatDate(data.krajRada) : 'U toku', key: 'end' },
         {
+            section: 'Tim na projektu',
+            label: 'Odgovorni Poslovođa',
+            value: data.managerIme || data.manager, // Mapira se sa @JsonProperty("manager")
+            key: 'poslovodja_prikaz',
+            roles: ['direktor'], // Samo direktor vidi ko je poslovođa
+            render: (v) => v ? <strong>{v}</strong> : 'Nije dodijeljen'
+        },
+        {
+            section: 'Tim na projektu',
+            label: 'Tim Tehničara',
+            value: data.projectTeamImena || data.projectTeam,
+            key: 'tehnicari_prikaz',
+            roles: ['direktor', 'poslovodja'],
+            render: (imena) => (
+                <div style={{ fontWeight: 'normal', color: 'rgba(0, 0, 0, 0.85)' }}>
+                    {imena && imena.length > 0
+                        ? imena.join(', ') // Ispisuje imena jedno pored drugog odvojena zarezom
+                        : 'Nema dodijeljenih tehničara'}
+                </div>
+            )
+        },
+        {
             section: 'Kreiranje i izmjena projekta',
             label: 'Kreiranje projekta',
             value: formatDate(data.datumKreiranja),

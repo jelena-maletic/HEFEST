@@ -161,7 +161,7 @@ export const createElement = async (tag, data) => {
                 })
             }
 
-            case "tehnicari": {
+            case "tehnicari/only": {
                 return dataArray.flatMap((t) => {
                     const tehnicari = [];
                     let temp = {
@@ -221,3 +221,15 @@ export const createElement = async (tag, data) => {
             }
         }
     }
+
+export const getNazivPoJmb = async (jmb) => {
+    if (!jmb) return "Nije dodijeljen";
+    try {
+        // Pozivamo tvoj novi endpoint u KorisnikController-u
+        const response = await api.service(false).get(`/korisnici/${jmb}`);
+        return response.data; // Vraća string "Ime Prezime"
+    } catch (error) {
+        console.error("Greška pri dohvatanju imena za JMB: " + jmb, error);
+        return jmb; // Ako pukne, bar prikaži JMB
+    }
+};

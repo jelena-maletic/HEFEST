@@ -32,7 +32,7 @@ export function Dashboard({sidebarContents, role}) {
         "materijal": "MATERIAL",
         "dnevni_izvjestaji": "REPORT"
     };
-    const handleOpenDetails = (rawData, tag) => {
+    /*const handleOpenDetails = (rawData, tag) => {
         const type = TAG_MAP[tag];
         if (!type) return;
 
@@ -42,6 +42,23 @@ export function Dashboard({sidebarContents, role}) {
         setRawEntityData(rawData);
         setEntityType(type);
         setIsDetailVisible(true);
+    };*/
+    const handleOpenDetails = async (rawData, tag) => {
+        const type = TAG_MAP[tag];
+        if (!type) return;
+
+        try {
+            // 2. Dodajemo 'await' jer je formatEntityDetails postao asinhron (vraća Promise)
+            const formatted = await formatEntityDetails(rawData, type, role);
+
+            setDetailData(formatted.items);
+            setRawEntityData(rawData);
+            setEntityType(type);
+            setIsDetailVisible(true);
+        } catch (error) {
+            console.error("Greška pri formatiranju detalja:", error);
+            // Opciono: dodaj notification.error ako želiš obavijestiti korisnika
+        }
     };
 
     const handleCloseDetails = () => {
@@ -91,7 +108,7 @@ export function Dashboard({sidebarContents, role}) {
                     {activeScreen === "materials" && <List isEditable={true} listTitle={screenTitle} screenState="material" tag="materijal" />}
                     {activeScreen === "taken-resources" && <List isEditable={true} listTitle={screenTitle} screenState="taken-resources" tag="zaduzenja" />}
                     {activeScreen === "request-overview" && <List isEditable={false} listTitle={screenTitle} screenState="request-overview" tag="zahtjevi" />}
-                    {activeScreen === "technicians" && <List isEditable={false} listTitle={screenTitle} screenState="user" tag="tehnicari"/>}
+                    {activeScreen === "technicians" && <List isEditable={false} listTitle={screenTitle} screenState="user" tag="tehnicari/only"/>}
                     {activeScreen === "report-overview-manager" && <div className={"report-lists"}>
                                                                 <List isEditable={false} listTitle={"Dnevni " + screenTitle} screenState="report-overview" dividerWidth={"90%"} tag="dnevni_izvjestaji" />
                                                                  <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview" dividerWidth={"90%"} tag="sumarni_izvjestaji"/>
