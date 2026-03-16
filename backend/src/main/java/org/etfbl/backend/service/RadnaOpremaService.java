@@ -8,9 +8,12 @@ import org.etfbl.backend.model.ResursEntity;
 import org.etfbl.backend.model.VoziloEntity;
 import org.etfbl.backend.repository.RadnaOpremaRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 @Transactional
 @Service
 public class RadnaOpremaService {
@@ -34,6 +37,20 @@ public class RadnaOpremaService {
 
         RadnaOpremaEntity sacuvano = radnaOpremaRepository.save(entity);
         return modelMapper.map(sacuvano, RadnaOprema.class);
+    }
+
+    @Transactional
+    public RadnaOprema updateRadnaOprema(RadnaOprema dto){
+        RadnaOpremaEntity entity = modelMapper.map(dto, RadnaOpremaEntity.class);
+        Optional<RadnaOpremaEntity> ro = radnaOpremaRepository.findById(entity.getId());
+
+        if(ro.isPresent()){
+            RadnaOpremaEntity radnaOpremaEntity = ro.get();
+            BeanUtils.copyProperties(entity, radnaOpremaEntity);
+            return modelMapper.map(radnaOpremaRepository.save(radnaOpremaEntity), RadnaOprema.class);
+        }
+        else
+            throw new RuntimeException("Radna oprema ne postoji");
     }
 
     public RadnaOprema getRadnaOpremaById(Integer id) {
