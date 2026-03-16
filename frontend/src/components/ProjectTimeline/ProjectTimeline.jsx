@@ -26,7 +26,7 @@ export default function ProjectTimeline({ pocetakRada, rok }) {
 
     if (daysRemaining < 0) {
         statusColor = '#f5222d';
-        statusText = `Rok istekao pre ${Math.abs(daysRemaining)} dana`;
+        statusText = `Rok istekao prije ${Math.abs(daysRemaining)} dana`;
         percentage = 100;
     } else if (daysRemaining <= 30) {
         statusColor = '#f5222d';
