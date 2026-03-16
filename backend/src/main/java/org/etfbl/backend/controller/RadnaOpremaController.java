@@ -39,9 +39,8 @@ public class RadnaOpremaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RadnaOprema> azurirajRadnuOpremu(@PathVariable Long id, @RequestBody RadnaOprema radnaOprema) {
-        radnaOprema.setId(Integer.valueOf(id.toString()));
-
+    public ResponseEntity<RadnaOprema> azurirajRadnuOpremu(@PathVariable Integer id, @RequestBody RadnaOprema radnaOprema) {
+        radnaOprema.setId(id);
         RadnaOprema azuriranaRadnaOprema = this.radnaOpremaService.updateRadnaOprema(radnaOprema);
         return new ResponseEntity<>(azuriranaRadnaOprema, HttpStatus.ACCEPTED);
     }
