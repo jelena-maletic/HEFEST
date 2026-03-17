@@ -55,3 +55,15 @@ button:focus {
     width: 90%;
     padding: 0.5em 0;
 }
+
+.employees-filter-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: white;
+}
+
+.employees-filter-wrapper .list-container {
+    flex: 1;
+    overflow-y: auto;
+}

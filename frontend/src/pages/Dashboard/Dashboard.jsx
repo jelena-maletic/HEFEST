@@ -1,4 +1,5 @@
 import {useState} from "react";
+import { Select } from 'antd';
 import './Dashboard.css';
 import MapView from "../../components/MapView.jsx";
 import Calendar from "../../components/Calendar.jsx";
@@ -80,6 +81,18 @@ export function Dashboard({sidebarContents, role}) {
         console.log(activeScreen, screenTitle);
     };
 
+    // Unutar Dashboard komponente
+    const [selectedEmployeeTag, setSelectedEmployeeTag] = useState("zaposleni");
+
+// Opcije koje odgovaraju tvojim endpointima/tagovima u apiHelper-u
+    const employeeOptions = [
+        { value: "zaposleni", label: "Svi zaposleni" },
+        { value: "knjigovodje", label: "Knjigovođe" },
+        { value: "poslovodje", label: "Poslovođe" },
+        { value: "magacioneri", label: "Magacioneri" },
+        { value: "tehnicari", label: "Tehničari" }
+    ];
+
     return (
         <div className="app-container">
 
@@ -98,7 +111,7 @@ export function Dashboard({sidebarContents, role}) {
 
                     {activeScreen === "map" && <MapView />}
                     {activeScreen === "calendar" && <Calendar/>}
-                    {activeScreen === "employees" && <List isEditable={false} listTitle={screenTitle} screenState="user" tag="zaposleni" />}
+                    {/*{activeScreen === "employees" && <List isEditable={false} listTitle={screenTitle} screenState="user" tag="zaposleni" />}*/}
                     {activeScreen === "report-overview" && <div className={"report-lists"}>
                                                                 <List isEditable={false} listTitle={"Dnevni " + screenTitle} screenState="report-overview" dividerWidth={"90%"} tag="dnevni_izvjestaji" />
                                                                 <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview" dividerWidth={"90%"} tag="sumarni_izvjestaji"/>
@@ -115,6 +128,34 @@ export function Dashboard({sidebarContents, role}) {
                                                               </div>}
                     {activeScreen === "projects" && <List isEditable={true} listTitle={screenTitle} screenState="projects" onClick={(data) => handleOpenDetails(data, "projekti")} tag="projekti"/>}
                     {activeScreen === "assigned-projects" && <List isEditable={false} listTitle={screenTitle} screenState="projects" onClick={(data) => handleOpenDetails(data, "projekti")} tag="projekti" filterByPoslovodja={true}/>}
+                    {activeScreen === "employees" && (
+                        <div className="employees-filter-wrapper" style={{ width: '100%' }}>
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                padding: '10px 20px',
+                                background: '#fff',
+                                borderBottom: '1px solid #ddd'
+                            }}>
+                                <h2 style={{ margin: 0 }}>{screenTitle}</h2>
+                                <Select
+                                    defaultValue="zaposleni"
+                                    style={{ width: 200 }}
+                                    onChange={(value) => setSelectedEmployeeTag(value)}
+                                    options={employeeOptions}
+                                />
+                            </div>
+
+                            {/* List komponenta sada dobija dinamički tag */}
+                            <List
+                                isEditable={false}
+                                listTitle={false}
+                                screenState="user"
+                                tag={selectedEmployeeTag}
+                            />
+                        </div>
+                    )}
                 </main>
             </div>
 

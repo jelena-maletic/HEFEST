@@ -121,6 +121,10 @@ export const createElement = async (tag, data) => {
                 });
             }
 
+            case "knjigovodje":
+            case "poslovodje":
+            case "magacioneri":
+            case "tehnicari":
             case "zaposleni": {
                 return dataArray.flatMap((t) => {
                     const zaposleni = [];
