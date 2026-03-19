@@ -13,4 +13,6 @@ public class Knjigovodja implements Serializable {
     String ime;
     String prezime;
     String brojTelefona;
+    String email;
+    String jmb;
 }

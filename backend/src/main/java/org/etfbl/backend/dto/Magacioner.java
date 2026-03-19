@@ -13,4 +13,6 @@ public class Magacioner implements Serializable {
     String ime;
     String prezime;
     String brojTelefona;
+    String email;
+    String jmb;
 }

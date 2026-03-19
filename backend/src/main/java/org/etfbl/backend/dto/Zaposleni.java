@@ -16,4 +16,5 @@ public class Zaposleni implements Serializable {
     String prezime;
     String brojTelefona;
     String email;
+
 }

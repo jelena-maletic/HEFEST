@@ -14,4 +14,5 @@ public class Poslovodja implements Serializable {
     String prezime;
     String brojTelefona;
     String jmb;
+    String email;
 }

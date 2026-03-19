@@ -13,4 +13,7 @@ public class Tehnicar implements Serializable {
     String ime;
     String prezime;
     String jmb;
+    String email;
+    String brojTelefona;
+
 }
