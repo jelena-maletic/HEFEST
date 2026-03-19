@@ -120,9 +120,20 @@ export function Dashboard({sidebarContents, role}) {
                                                                 <List isEditable={false} listTitle={"Dnevni " + screenTitle} screenState="report-overview" dividerWidth={"90%"} tag="dnevni_izvjestaji" />
                                                                 <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview" dividerWidth={"90%"} tag="sumarni_izvjestaji"/>
                                                             </div>}
-                    {activeScreen === "tools" && <List isEditable={true} listTitle={screenTitle} screenState="tools" tag="radna-oprema" />}
-                    {activeScreen === "vehicles" && <List isEditable={true} listTitle={screenTitle} screenState="truck" tag="vozila" />}
-                    {activeScreen === "materials" && <List isEditable={true} listTitle={screenTitle} screenState="material" tag="materijal" />}
+                    {/* Radna oprema */}
+                    {activeScreen === "tools" &&
+                        <List isEditable={true} listTitle={screenTitle} screenState="tools" tag="radna-oprema"
+                              onClick={(data) => handleOpenDetails(data, "radna-oprema")} />}
+
+                    {/* Vozila */}
+                    {activeScreen === "vehicles" &&
+                        <List isEditable={true} listTitle={screenTitle} screenState="truck" tag="vozila"
+                              onClick={(data) => handleOpenDetails(data, "vozila")} />}
+
+                    {/* Materijal */}
+                    {activeScreen === "materials" &&
+                        <List isEditable={true} listTitle={screenTitle} screenState="material" tag="materijal"
+                              onClick={(data) => handleOpenDetails(data, "materijal")} />}
                     {activeScreen === "taken-resources" && <List isEditable={true} listTitle={screenTitle} screenState="taken-resources" tag="zaduzenja" />}
                     {activeScreen === "request-overview" && <List isEditable={false} listTitle={screenTitle} screenState="request-overview" tag="zahtjevi" />}
                     {activeScreen === "technicians" && (

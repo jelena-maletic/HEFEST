@@ -101,7 +101,9 @@ const mapVehicleDetails = (data) => {
     return groupItems([
         { section: 'Tehnički Podaci', label: 'Naziv', value: data.naziv, key: 'name' },
         { section: 'Tehnički Podaci', label: 'Registracija', value: data.registarskiBroj, key: 'reg' },
-        { section: 'Tehnički Podaci', label: 'Tip Vozila', value: data.tipVozila, key: 'type' }, //enum?
+        { section: 'Tehnički Podaci', label: 'Tip Vozila', value: data.tipVozila, key: 'type' },
+        { section: 'Tehnički Podaci', label: 'Broj Putnika', value: data.brojPutnika, key: 'type' },
+        { section: 'Tehnički Podaci', label: 'Maksimalna Nosivost', value: data.maksimalnaNosivost, key: 'type' },
         { section: 'Dokumentacija', label: 'Registracija važi od', value: formatDate(data.datumRegistracije), key: 'reg_from' },
         { section: 'Dokumentacija', label: 'Registracija ističe', value: formatDate(data.datumIstekaRegistracije), key: 'reg_to' }
     ]);
@@ -115,6 +117,14 @@ const mapToolDetails = (data) => {
         { section: 'Skladište', label: 'Minimalna kolicina', value: data.stanjeMagacina, key: 'state' }
     ]);
 };
+const mapMaterialDetails = (data) => {
+    return groupItems([
+        { section: 'Osnovne Informacije', label: 'Naziv', value: data.naziv, key: 'name' },
+        { section: 'Osnovne Informacije', label: 'Kategorija', value: data.kategorija, key: 'type' },
+        { section: 'Stanje', label: 'Trenutna Količina', value: `${data.stanjeMagacina} ${data.jedinicaMjere || 'kom'}`, key: 'stock' },
+        { section: 'Stanje', label: 'Minimalna Količina', value: data.minimalnaKolicina, key: 'min_stock' }
+    ]);
+};
 //+ detalji o tehnicaru, o materijalu, o izvjestaju
 
 // --- GLAVNI EKSPORT ---
@@ -123,5 +133,7 @@ export const mappers = {
     EMPLOYEE: { title: 'Detalji Zaposlenog', mapper: mapEmployeeDetails },
     VEHICLE: { title: 'Detalji Vozila', mapper: mapVehicleDetails },
     TOOL: { title: 'Detalji Opreme', mapper: mapToolDetails },
+    MATERIAL: {title: 'Detalji Materijala', mapper: mapMaterialDetails }
+
 
 };
