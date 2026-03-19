@@ -111,8 +111,8 @@ const mapVehicleDetails = (data) => {
 
 const mapToolDetails = (data) => {
     return groupItems([
-        { section: 'Informacije o Opremi', label: 'Naziv', value: data.naziv, key: 'name' },
-        { section: 'Informacije o Opremi', label: 'Kategorija', value: data.kategorija, key: 'cat' },//enum
+        { section: 'Osnovne Informacije', label: 'Naziv', value: data.naziv, key: 'name' },
+        { section: 'Osnovne Informacije', label: 'Kategorija', value: data.kategorija, key: 'cat' },//enum
         { section: 'Skladište', label: 'Stanje u magacinu', value: data.stanjeMagacina, key: 'stock' },
         { section: 'Skladište', label: 'Minimalna kolicina', value: data.stanjeMagacina, key: 'state' }
     ]);
@@ -121,8 +121,8 @@ const mapMaterialDetails = (data) => {
     return groupItems([
         { section: 'Osnovne Informacije', label: 'Naziv', value: data.naziv, key: 'name' },
         { section: 'Osnovne Informacije', label: 'Kategorija', value: data.kategorija, key: 'type' },
-        { section: 'Stanje', label: 'Trenutna Količina', value: `${data.stanjeMagacina} ${data.jedinicaMjere || 'kom'}`, key: 'stock' },
-        { section: 'Stanje', label: 'Minimalna Količina', value: data.minimalnaKolicina, key: 'min_stock' }
+        { section: 'Skladište', label: 'Trenutna Količina', value: `${data.stanjeMagacina} ${data.jedinicaMjere || 'kom'}`, key: 'stock' },
+        { section: 'Skladište', label: 'Minimalna Količina', value: data.minimalnaKolicina, key: 'min_stock' }
     ]);
 };
 //+ detalji o tehnicaru, o materijalu, o izvjestaju
