@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tag } from 'antd';
-import { formatDate, getStatusTagColor, getPriorityTagColor} from '../utils/dataHelpers';
+import {formatDate, getStatusTagColor, getPriorityTagColor, calculateAgeFromJMBG} from '../utils/dataHelpers';
 import TimesheetViewer from '../components/TimesheetViewer/TimesheetViewer.jsx';
 
 
@@ -80,11 +80,20 @@ const mapProjectDetails = (data,role) => {
 const mapEmployeeDetails = (data) => {
     return groupItems([
         { section: 'Lične Informacije', label: 'Ime i Prezime', value: `${data.ime} ${data.prezime}`, key: 'full_name' },
+        //{ section: 'Lične Informacije', label: 'JMBG', value: data.jmb, key: 'jmbg' },
+        {
+            section: 'Lične Informacije',
+            label: 'Godine',
+            // Koristimo tvoju funkciju za računanje godina
+            value: calculateAgeFromJMBG( data.jmb),//TREBACE DTO IZMIJENITI
+            key: 'age'
+        },
         { section: 'Lične Informacije', label: 'Email', value: data.email, key: 'email' },
         { section: 'Lične Informacije', label: 'Telefon', value: data.brojTelefona, key: 'tel' },
 
-        { section: 'Evidencija Rada', value: data.timesheet, key: 'ts', span: 3,
-            render: (ts) => <TimesheetViewer timesheet={ts} /> }
+
+       /* { section: 'Evidencija Rada', value: data.timesheet, key: 'ts', span: 3,
+            render: (ts) => <TimesheetViewer timesheet={ts} /> }*/
     ]);
 };
 

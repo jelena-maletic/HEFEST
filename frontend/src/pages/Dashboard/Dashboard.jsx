@@ -27,7 +27,11 @@ export function Dashboard({sidebarContents, role}) {
     const TAG_MAP = {
         "projekti": "PROJECT",
         "zaposleni": "EMPLOYEE",
-        "tehnicari": "TECHNICIAN",
+        "tehnicari": "EMPLOYEE", // Koristimo isti maper za sve tipove zaposlenih
+        "poslovodje": "EMPLOYEE",
+        "magacioneri": "EMPLOYEE",
+        "knjigovodje": "EMPLOYEE",
+        "tehnicari/only": "EMPLOYEE",
         "vozila": "VEHICLE",
         "radna-oprema": "TOOL",
         "materijal": "MATERIAL",
@@ -121,7 +125,15 @@ export function Dashboard({sidebarContents, role}) {
                     {activeScreen === "materials" && <List isEditable={true} listTitle={screenTitle} screenState="material" tag="materijal" />}
                     {activeScreen === "taken-resources" && <List isEditable={true} listTitle={screenTitle} screenState="taken-resources" tag="zaduzenja" />}
                     {activeScreen === "request-overview" && <List isEditable={false} listTitle={screenTitle} screenState="request-overview" tag="zahtjevi" />}
-                    {activeScreen === "technicians" && <List isEditable={false} listTitle={screenTitle} screenState="user" tag="tehnicari/only"/>}
+                    {activeScreen === "technicians" && (
+                        <List
+                            isEditable={false}
+                            listTitle={screenTitle}
+                            screenState="user"
+                            tag="tehnicari/only"
+                            onClick={(data) => handleOpenDetails(data, "tehnicari")} // DODAJ OVO
+                        />
+                    )}
                     {activeScreen === "report-overview-manager" && <div className={"report-lists"}>
                                                                 <List isEditable={false} listTitle={"Dnevni " + screenTitle} screenState="report-overview" dividerWidth={"90%"} tag="dnevni_izvjestaji" />
                                                                  <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview" dividerWidth={"90%"} tag="sumarni_izvjestaji"/>
@@ -153,6 +165,7 @@ export function Dashboard({sidebarContents, role}) {
                                 listTitle={false}
                                 screenState="user"
                                 tag={selectedEmployeeTag}
+                                onClick={(data) => handleOpenDetails(data, selectedEmployeeTag)}
                             />
                         </div>
                     )}
