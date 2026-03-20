@@ -67,3 +67,47 @@ button:focus {
     flex: 1;
     overflow-y: auto;
 }
+
+.custom-list-header {
+    display: flex;
+    align-items: center;
+    padding: 20px 40px;
+    background-color: transparent;
+}
+
+.employee-type-select .ant-select-selection-item {
+    font-size: 2.8rem !important;
+    font-weight: 600 !important;
+    color: #333 !important;
+    padding-left: 0 !important;
+}
+
+.employee-type-select {
+    min-width: 250px;
+}
+
+.employee-type-select .ant-select-arrow {
+    font-size: 14px;
+    color: #888;
+}
+
+.employee-header-select {
+    margin-left: -10px;
+}
+
+.employee-header-select .ant-select-selection-item {
+    font-size: 24px !important;
+    font-weight: 600 !important;
+    color: #000 !important;
+    display: flex;
+    align-items: center;
+}
+
+.employee-header-select .ant-select-selector {
+    height: auto !important;
+    padding: 0 !important;
+}
+
+.employee-header-select .ant-select-arrow {
+    right: -5px;
+}

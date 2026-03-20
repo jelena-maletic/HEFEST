@@ -10,6 +10,10 @@ import { List } from "../../components/List/List.jsx";
 import CenteredOverlay from "../../components/CenteredOverlay/CenteredOverlay.jsx";
 import EntityDetailCard from "../../components/EntityDetailCard/EntityDetailCard.jsx";
 import { formatEntityDetails } from "../../utils/entityDetailFormatter.js";
+import { deleteElement, updateElement } from "../../services/apiHelpers.js";
+import { useNotification } from "../../components/NotificationContext.jsx";
+import DynamicForm from "../../components/DynamicForm.jsx";
+import { schemaMap } from "../../data/SchemaMap.jsx";
 
 
 export function Dashboard({sidebarContents, role}) {
@@ -23,6 +27,11 @@ export function Dashboard({sidebarContents, role}) {
     const [detailData, setDetailData] = useState(null);
     const [rawEntityData, setRawEntityData] = useState(null);
     const [entityType, setEntityType] = useState("");
+
+    const [currentTag, setCurrentTag] = useState("");
+    const notify = useNotification();
+
+    const [isEditFormVisible, setIsEditFormVisible] = useState(false);
 
     const TAG_MAP = {
         "projekti": "PROJECT",
@@ -52,17 +61,15 @@ export function Dashboard({sidebarContents, role}) {
         const type = TAG_MAP[tag];
         if (!type) return;
 
+        setCurrentTag(tag); // Dodajemo ovo da zapamtimo tag za brisanje/edit
         try {
-            // 2. Dodajemo 'await' jer je formatEntityDetails postao asinhron (vraća Promise)
             const formatted = await formatEntityDetails(rawData, type, role);
-
             setDetailData(formatted.items);
             setRawEntityData(rawData);
             setEntityType(type);
             setIsDetailVisible(true);
         } catch (error) {
             console.error("Greška pri formatiranju detalja:", error);
-            // Opciono: dodaj notification.error ako želiš obavijestiti korisnika
         }
     };
 
@@ -152,33 +159,22 @@ export function Dashboard({sidebarContents, role}) {
                     {activeScreen === "projects" && <List isEditable={true} listTitle={screenTitle} screenState="projects" onClick={(data) => handleOpenDetails(data, "projekti")} tag="projekti"/>}
                     {activeScreen === "assigned-projects" && <List isEditable={false} listTitle={screenTitle} screenState="projects" onClick={(data) => handleOpenDetails(data, "projekti")} tag="projekti" filterByPoslovodja={true}/>}
                     {activeScreen === "employees" && (
-                        <div className="employees-filter-wrapper" style={{ width: '100%' }}>
-                            <div style={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                                padding: '10px 20px',
-                                background: '#fff',
-                                borderBottom: '1px solid #ddd'
-                            }}>
-                                <h2 style={{ margin: 0 }}>{screenTitle}</h2>
+                        <List
+                            isEditable={false}
+                            listTitle={
                                 <Select
                                     defaultValue="zaposleni"
-                                    style={{ width: 200 }}
+                                    variant="borderless"
+                                    className="header-select"
                                     onChange={(value) => setSelectedEmployeeTag(value)}
                                     options={employeeOptions}
+                                    dropdownMatchSelectWidth={false}
                                 />
-                            </div>
-
-                            {/* List komponenta sada dobija dinamički tag */}
-                            <List
-                                isEditable={false}
-                                listTitle={false}
-                                screenState="user"
-                                tag={selectedEmployeeTag}
-                                onClick={(data) => handleOpenDetails(data, selectedEmployeeTag)}
-                            />
-                        </div>
+                            }
+                            screenState="user"
+                            tag={selectedEmployeeTag}
+                            onClick={(data) => handleOpenDetails(data, selectedEmployeeTag)}
+                        />
                     )}
                 </main>
             </div>
@@ -193,12 +189,47 @@ export function Dashboard({sidebarContents, role}) {
                             rawData={rawEntityData}
                             isProject={entityType === 'PROJECT'}
                             userRole={role}
-                            onEdit={handleEdit}
-                            onDelete={() => {}}
+                            onEdit={() => setIsEditFormVisible(true)}
+                            onDelete={async () => {
+                                try {
+                                    // Pozivamo istu funkciju kao u ListElement
+                                    const responseStatus = await deleteElement(currentTag, rawEntityData.id);
+
+                                    if (responseStatus >= 200 && responseStatus < 300) {
+                                        notify.success("Obrisano", "Element je uspješno uklonjen.");
+                                        setIsDetailVisible(false); // Zatvaramo detalje nakon brisanja
+                                    }
+                                } catch (error) {
+                                    console.error("Greška pri brisanju:", error);
+                                    notify.error("Greška", "Neuspješno brisanje elementa.");
+                                }
+                            }}
                         />
                     </div>
                 )}
             </CenteredOverlay>
+
+            {/* DINAMIČKA FORMA ZA IZMJENU */}
+            {isEditFormVisible && (
+                <CenteredOverlay isVisible={isEditFormVisible} onClose={() => setIsEditFormVisible(false)}>
+                    <DynamicForm
+                        className="form"
+                        schema={schemaMap[currentTag]} // KORISTIMO ISTU MAPU KAO U LISTI
+                        onClose={() => setIsEditFormVisible(false)}
+                        initialValues={rawEntityData} // Popunjava formu trenutnim podacima
+                        onSubmit={async (formData) => {
+                            try {
+                                await updateElement(currentTag, rawEntityData.id, formData);
+                                notify.success("Izmijenjeno", "Podaci su uspješno ažurirani.");
+                                setIsEditFormVisible(false);
+                                setIsDetailVisible(false); // Zatvori i detalje da se osvježi lista
+                            } catch (error) {
+                                notify.error("Greška", "Ažuriranje nije uspjelo.");
+                            }
+                        }}
+                    />
+                </CenteredOverlay>
+            )}
 
         </div>
 
