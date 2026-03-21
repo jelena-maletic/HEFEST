@@ -13,7 +13,7 @@ const ConfirmationDialog = ({
                                 onCancel,
                                 isVisible,
                                 icon = <ExclamationCircleOutlined />,
-                                iconColor = '#ff4d4f',
+                                iconColor = '#333333',
                             }) => {
     if (!isVisible) return null;
 

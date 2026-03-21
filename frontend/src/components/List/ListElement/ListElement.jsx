@@ -6,10 +6,12 @@ import {deleteElement, updateElement} from "../../../services/apiHelpers.js";
 import CenteredOverlay from "../../CenteredOverlay/CenteredOverlay.jsx";
 import DynamicForm from "../../DynamicForm.jsx";
 import { useNotification } from "../../NotificationContext.jsx";
+import ConfirmationDialog from "../../ConfirmationDialog.jsx";
 
 export function ListElement({ screenState, listElementData, onClickFunc, isEditable, className, tag, selectedSchema, onSuccess }) {
     const [isHovered, setIsHovered] = useState(false);
     const [updateForm, setUpdateForm] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
 
     const images = loadAssets();
     const notify = useNotification();
@@ -32,20 +34,10 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
                     <SmallButton
                         className="nested-button"
                         type="delete"
-                        onClickHandler={async (e) => {
+                        onClickHandler={(e) => {
                             e.stopPropagation();
                             setIsHovered(false);
-                            try {
-                                const responseStatus = await deleteElement(tag, listElementData.id);
-
-                                if (responseStatus >= 200 && responseStatus < 300) {
-                                    notify.success("Obrisano", "Element je uspješno uklonjen.");
-                                    onSuccess && onSuccess();
-                                }
-                            } catch (error) {
-                                console.error("Greška pri brisanju:", error);
-                                notify.error("Greška", "Neuspješno brisanje elementa.");
-                            }
+                            setShowConfirm(true); // 🔥 otvori dialog
                         }}
                     />
                 </div>
@@ -107,6 +99,31 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
                     />
                 </CenteredOverlay>
             )}
+            <ConfirmationDialog
+                isVisible={showConfirm}
+                title="Potvrda brisanja"
+                message="Da li ste sigurni da želite obrisati ovaj element?"
+                confirmText="Obriši"
+                cancelText="Otkaži"
+                onCancel={() => setShowConfirm(false)}
+                onConfirm={async () => {
+                    try {
+                        const responseStatus = await deleteElement(tag, listElementData.id);
+
+                        if (responseStatus >= 200 && responseStatus < 300) {
+                            notify.success("Obrisano", "Element je uspješno uklonjen.");
+                            onSuccess && onSuccess(); // 🔥 refresh liste
+                        }
+
+                    } catch (error) {
+                        console.error("Greška pri brisanju:", error);
+                        notify.error("Greška", "Neuspješno brisanje elementa.");
+                    } finally {
+                        setShowConfirm(false); // 🔥 zatvori dialog
+                    }
+                }}
+            />
         </>
+
     );
 }
