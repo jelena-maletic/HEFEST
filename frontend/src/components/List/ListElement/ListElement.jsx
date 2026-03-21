@@ -90,10 +90,22 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
                         schema={selectedSchema}
                         onClose={() => setUpdateForm(false)}
                         initialValues={listElementData}
-                        onSubmit={(formData) => {
-                            const r = updateElement(tag, listElementData.id, formData)
-                            return r;
-                        }}
+                                 onSubmit={async (formData) => {
+                                     try {
+                                         const response = await updateElement(tag, listElementData.id, formData);
+
+                                         // Ako backend vraća status (preporuka)
+                                         // ili ako nema status, samo tretiraj kao uspjeh ako ne baci grešku
+
+                                         notify.success("Uspješno ažuriranje", "Podaci su uspješno izmijenjeni.");
+
+                                         setUpdateForm(false);
+
+                                     } catch (error) {
+                                         console.error("Greška pri ažuriranju:", error);
+                                         notify.error("Neuspješno ažuriranje", "Došlo je do greške, pokušajte ponovo.");
+                                     }
+                                 }}
                     />
                 </CenteredOverlay>
             )}

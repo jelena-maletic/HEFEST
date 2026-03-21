@@ -42,7 +42,7 @@ export const createElement = async (tag, data) => {
 
     export const updateElement = async (tag, id, data) => {
         const response = await axios.put(`${API_BASE}/${tag}/${id}`, data);
-        return response.data;
+        return response.status;
     };
 
     export const fetchData = async (tag, filterPoslovodja = null) => {
