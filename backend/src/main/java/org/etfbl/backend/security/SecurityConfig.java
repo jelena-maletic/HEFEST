@@ -79,6 +79,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/zaposleni/**").permitAll()
                         .requestMatchers("/api/resursi/**").permitAll()
                         .requestMatchers("/api/korisnici/**").permitAll()
+                        .requestMatchers("/api/korisnici/change-password").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
