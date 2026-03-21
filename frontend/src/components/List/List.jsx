@@ -28,6 +28,15 @@ export function List({
 
     const selectedSchema = schemaMap[tag];
 
+    const reloadData = async () => {
+        const data = await fetchData(tag, filterByPoslovodja);
+        setListData(data || []);
+    };
+
+    useEffect(() => {
+        reloadData();
+    }, [tag]);
+
     const addButton = (editable) => {
         if(editable === true){
             return(
@@ -95,6 +104,7 @@ export function List({
                         className={viewState === "grid" ? "grid-element" : "list-element"}
                         tag = {tag}
                         selectedSchema={selectedSchema}
+                        onSuccess={reloadData}
                     />
                 ))}
             </div>
@@ -118,7 +128,7 @@ export function List({
 
                                 if (responseStatus >= 200 && responseStatus < 300) {
                                      notify.success("Element je uspješno dodat", "Podaci su sačuvani");
-
+                                    await reloadData();
                                 }
 
                                 setShowForm(false);

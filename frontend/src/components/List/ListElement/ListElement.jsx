@@ -7,7 +7,7 @@ import CenteredOverlay from "../../CenteredOverlay/CenteredOverlay.jsx";
 import DynamicForm from "../../DynamicForm.jsx";
 import { useNotification } from "../../NotificationContext.jsx";
 
-export function ListElement({ screenState, listElementData, onClickFunc, isEditable, className, tag, selectedSchema }) {
+export function ListElement({ screenState, listElementData, onClickFunc, isEditable, className, tag, selectedSchema, onSuccess }) {
     const [isHovered, setIsHovered] = useState(false);
     const [updateForm, setUpdateForm] = useState(false);
 
@@ -40,6 +40,7 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
 
                                 if (responseStatus >= 200 && responseStatus < 300) {
                                     notify.success("Obrisano", "Element je uspješno uklonjen.");
+                                    onSuccess && onSuccess();
                                 }
                             } catch (error) {
                                 console.error("Greška pri brisanju:", error);
@@ -94,13 +95,10 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
                                      try {
                                          const response = await updateElement(tag, listElementData.id, formData);
 
-                                         // Ako backend vraća status (preporuka)
-                                         // ili ako nema status, samo tretiraj kao uspjeh ako ne baci grešku
-
                                          notify.success("Uspješno ažuriranje", "Podaci su uspješno izmijenjeni.");
 
                                          setUpdateForm(false);
-
+                                         onSuccess && onSuccess();
                                      } catch (error) {
                                          console.error("Greška pri ažuriranju:", error);
                                          notify.error("Neuspješno ažuriranje", "Došlo je do greške, pokušajte ponovo.");
