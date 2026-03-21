@@ -392,7 +392,7 @@ export const assignmentSchema = {
             name: "razduzenaKolicina",
             label: "Razdužena količina",
             type: "number",
-            required: true,
+            required: false,
             min: 0,
             span: 12,
         },
