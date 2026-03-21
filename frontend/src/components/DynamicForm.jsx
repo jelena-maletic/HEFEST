@@ -5,29 +5,25 @@ import dayjs from "dayjs";
 
 const { Option } = Select;
 
-// Mapa koja povezuje stringove iz tvoje šeme sa Ant Design komponentama
 const componentMap = {
     input: Input,
+    password: Input.Password,
     number: InputNumber,
     date: DatePicker,
     textarea: Input.TextArea
 };
 
 const DynamicForm = ({ schema, onSubmit, onClose, initialValues}) => {
-    // 1. Hook-ovi MORAJU biti na samom vrhu, bez ikakvih if-ova iznad njih
     console.log("SCHEMA:", schema);
     const [form] = Form.useForm();
     const [dynamicOptions, setDynamicOptions] = useState({});
 
     useEffect(() => {
         if (initialValues && schema.fields) {
-            // Kreiramo kopiju podataka da ne menjamo original
             const formattedValues = { ...initialValues };
 
-            // Prolazimo kroz šemu i tražimo polja tipa "date"
             schema.fields.forEach(field => {
                 if (field.type === 'date' && formattedValues[field.name]) {
-                    // Konvertujemo string u Dayjs objekat
                     formattedValues[field.name] = dayjs(formattedValues[field.name]);
                 }
             });
@@ -39,7 +35,6 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues}) => {
     }, [initialValues, schema.fields, form]);
 
     useEffect(() => {
-        // Ako šema nema polja, nemoj raditi ništa
         if (!schema || !schema.fields) return;
 
         schema.fields.forEach((field) => {
@@ -58,14 +53,12 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues}) => {
         });
     }, [schema]);
 
-    // 2. Uslovni render: Ako šema ne postoji, renderuj null (ali nakon što su hook-ovi inicijalizovani)
     if (!schema || !schema.fields) {
         return null;
     }
 
     const renderField = (field) => {
         if (field.type === "select") {
-            // Opcije iz šeme (statičke) ili iz API-ja (dinamičke)
             const options = field.options || dynamicOptions[field.name] || [];
 
             return (
@@ -75,7 +68,7 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues}) => {
                     allowClear
                 >
                     {options.map((option, index) => {
-                        // Prilagođeno tvom API-ju (ime + prezime ili label)
+
                         //const label = option.label || `${option.ime || ''} ${option.prezime || ''}`.trim() || `Opcija ${index}`;
                         const label = option.label ||
                             `${option[field.optionLabel] || option.ime || ''} ${option.prezime || ''}`.trim() ||
@@ -99,16 +92,23 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues}) => {
             );
         }
 
-        if (field.type === "date") {
+        if (field.type === "password") {
             return (
-                <DatePicker
-                    style={{ width: "100%" }}
-                    // AntD automatski konvertuje ako mu proslediš dayjs objekat
+                <Input.Password
+                    placeholder={field.placeholder}
+                    visibilityToggle={true}
                 />
             );
         }
 
-        // Uzmi komponentu iz mape ili koristi običan Input kao fallback
+        if (field.type === "date") {
+            return (
+                <DatePicker
+                    style={{ width: "100%" }}
+                />
+            );
+        }
+
         const Component = componentMap[field.type] || Input;
         return <Component placeholder={field.placeholder} style={{ width: "100%" }} />;
     };
@@ -121,7 +121,7 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues}) => {
                 initialValues={initialValues}
                 onFinish={(values) => {
                     onSubmit(values);
-                    form.resetFields(); // Opciono: očisti formu nakon slanja
+                    form.resetFields();
                     onClose?.();
                 }}
             >

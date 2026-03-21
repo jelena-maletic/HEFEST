@@ -17,7 +17,6 @@ export const projectSchema = {
             span: 12,
         },
 
-        // DINAMIČKI SELECT – manager iz baze
         {
             name: "manager",
             label: "Poslovođa na projektu",
@@ -25,11 +24,10 @@ export const projectSchema = {
             required: true,
             span: 8,
             apiEndpoint: "http://localhost:8080/api/poslovodje",
-            optionLabel: "ime",   // polje iz DTO
-            optionValue: "jmb",         // polje iz DTO
+            optionLabel: "ime",
+            optionValue: "jmb",
         },
 
-        // STATIČKI SELECT – nema potrebe da ide iz baze
         {
             name: "prioritet",
             label: "Prioritet",
@@ -87,7 +85,7 @@ export const projectSchema = {
             span: 24,
         },
 
-        // DINAMIČKI MULTISELECT – tim iz baze
+
         {
             name: "projectTeam",
             label: "Tehničari na projektu",
@@ -115,21 +113,21 @@ export const vehicleSchema = {
     layout: "vertical",
     fields: [
         {
-            name: "naziv", // Match: String naziv
+            name: "naziv",
             label: "Naziv (Marka i model)",
             type: "input",
             required: true,
             span: 12,
         },
         {
-            name: "registarskiBroj", // Match: String registarskiBroj
+            name: "registarskiBroj",
             label: "Registarski broj",
             type: "input",
             required: true,
             span: 12,
         },
         {
-            name: "tipVozila", // Match: TipVozila tipVozila (Enum)
+            name: "tipVozila",
             label: "Tip vozila",
             type: "select",
             required: true,
@@ -141,19 +139,19 @@ export const vehicleSchema = {
             ],
         },
         {
-            name: "brojPutnika", // Match: Integer brojPutnika
+            name: "brojPutnika",
             label: "Broj putnika",
             type: "number",
             span: 12,
         },
         {
-            name: "maksimalnaNosivost", // Match: BigDecimal maksimalnaNosivost
+            name: "maksimalnaNosivost",
             label: "Maksimalna nosivost (kg)",
             type: "number",
             span: 12,
         },
         {
-            name: "stanjeMagacina", // Match: BigDecimal stanjeMagacina
+            name: "stanjeMagacina",
             label: "Stanje magacina",
             type: "number",
             required: true,
@@ -161,7 +159,7 @@ export const vehicleSchema = {
             span: 12,
         },
         {
-            name: "minimalnaKolicina", // Match: BigDecimal minimalnaKolicina
+            name: "minimalnaKolicina",
             label: "Minimalna količina",
             type: "number",
             required: true,
@@ -169,14 +167,14 @@ export const vehicleSchema = {
             span: 12,
         },
         {
-            name: "datumRegistracije", // Match: LocalDate datumRegistracije
+            name: "datumRegistracije",
             label: "Datum registracije",
             type: "date",
             required: false,
             span: 12,
         },
         {
-            name: "datumIstekaRegistracije", // Match: LocalDate datumIstekaRegistracije
+            name: "datumIstekaRegistracije",
             label: "Datum isteka registracije",
             type: "date",
             required: false,
@@ -190,14 +188,14 @@ export const equipmentSchema = {
     layout: "vertical",
     fields: [
         {
-            name: "naziv", // Match: String naziv
+            name: "naziv",
             label: "Naziv (Marka i model)",
             type: "input",
             required: true,
             span: 12,
         },
         {
-            name: "stanjeMagacina", // Match: BigDecimal stanjeMagacina
+            name: "stanjeMagacina",
             label: "Stanje magacina",
             type: "number",
             required: true,
@@ -205,7 +203,7 @@ export const equipmentSchema = {
             span: 12,
         },
         {
-            name: "minimalnaKolicina", // Match: BigDecimal minimalnaKolicina
+            name: "minimalnaKolicina",
             label: "Minimalna količina",
             type: "number",
             required: true,
@@ -213,7 +211,7 @@ export const equipmentSchema = {
             span: 12,
         },
         {
-            name: "kategorija", // Match: TipVozila tipVozila (Enum)
+            name: "kategorija",
             label: "Kategorija",
             type: "select",
             required: true,
@@ -285,4 +283,46 @@ export const materialSchema = {
             ]
         },
     ],
+};
+export const changePasswordSchema = {
+    title: "Promjena lozinke",
+    submitLabel: "Promijeni lozinku",
+    layout: "vertical",
+    fields: [
+        {
+            name: "oldPassword",
+            label: "Trenutna lozinka",
+            type: "password",
+            required: true,
+            span: 24
+        },
+        {
+            name: "newPassword",
+            label: "Nova lozinka",
+            type: "password",
+            required: true,
+            span: 24,
+            rules: [
+                { min: 6, message: "Lozinka mora imati barem 6 karaktera!" },
+                { max: 20, message: "Lozinka ne može biti duža od 20 karaktera!" }
+            ]
+        },
+        {
+            name: "confirmPassword",
+            label: "Potvrdi novu lozinku",
+            type: "password",
+            required: true,
+            span: 24,
+            rules: [
+                ({ getFieldValue }) => ({
+                    validator(_, value) {
+                        if (!value || getFieldValue('newPassword') === value) {
+                            return Promise.resolve();
+                        }
+                        return Promise.reject(new Error('Lozinke se ne poklapaju!'));
+                    },
+                }),
+            ],
+        }
+    ]
 };

@@ -5,15 +5,24 @@ import logoutIcon from "../assets/logout-icon.svg";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {loadAssets} from "../utils/dataHelpers.js";
-
+import { useNotification } from "./NotificationContext.jsx";
+import DynamicForm from "../components/DynamicForm.jsx";
+import CenteredOverlay from "../components/CenteredOverlay/CenteredOverlay.jsx";
+import axios from "axios";
+import {changePasswordSchema} from "../data/Forms.jsx";
 
 export function Sidebar({contents, screenHandle, activeHandle, active}) {
     const [activeScreen, setActiveScreen] = useState("home");
+    const [showPasswordForm, setShowPasswordForm] = useState(false);
 
     const images = loadAssets();
 
     const navigate = useNavigate();
-    return (<aside className="sidebar">
+    const notify = useNotification();
+
+    return (
+        <>
+        <aside className="sidebar">
         <nav className="menu">
             {contents.map((item, index) => (
                 <button
@@ -50,7 +59,7 @@ export function Sidebar({contents, screenHandle, activeHandle, active}) {
             </div>
 
             <div className="bottom-buttons">
-                <button className="icon-btn">
+                <button className="icon-btn" onClick={() => setShowPasswordForm(true)}>
                     <img src={keyIcon} alt="Promjena šifre" className="icon-img key-icon" />
                     <span>Promjena šifre</span>
                 </button>
@@ -60,5 +69,45 @@ export function Sidebar({contents, screenHandle, activeHandle, active}) {
                 </button>
             </div>
         </div>
-    </aside>)
+    </aside>
+
+    {showPasswordForm && (
+        <CenteredOverlay isVisible={showPasswordForm} onClose={() => setShowPasswordForm(false)}>
+            <DynamicForm
+                schema={changePasswordSchema}
+                onClose={() => setShowPasswordForm(false)}
+                onSubmit={async (data) => {
+                    try {
+                        if (data.newPassword !== data.confirmPassword) {
+                            notify.error("Greška", "Lozinke se ne poklapaju!");
+                            return;
+                        }
+
+                        console.log(sessionStorage.getItem("token"));
+                        await axios.post(
+                            "http://localhost:8080/api/korisnici/change-password",
+                            {
+                                oldPassword: data.oldPassword,
+                                newPassword: data.newPassword
+                            },
+                            {
+                                headers: {
+                                    Authorization: `Bearer ${sessionStorage.getItem("token")}`
+                                }
+                            }
+                        );
+
+                        notify.success("Uspješno", "Lozinka je promijenjena.");
+                        setShowPasswordForm(false);
+                    } catch (err) {
+                        console.error(err);
+                        notify.error("Greška", "Došlo je do greške pri promjeni lozinke.");
+                    }
+                }}
+            />
+        </CenteredOverlay>
+    )}
+</>
+
+    );
 }
