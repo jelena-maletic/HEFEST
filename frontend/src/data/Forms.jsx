@@ -326,3 +326,75 @@ export const changePasswordSchema = {
         }
     ]
 };
+export const assignmentSchema = {
+    title: "Zaduživanje resursa",
+    submitLabel: "Sačuvaj zaduženje",
+    fields: [
+        {
+            name: "manager",
+            label: "Poslovođa",
+            type: "select",
+            required: true,
+            apiEndpoint: "http://localhost:8080/api/poslovodje",
+            optionLabel: "ime",
+            optionValue: "jmb",
+        },
+        {
+            name: "resourceType", // PRVO OVO BIRAMO
+            label: "Tip resursa",
+            type: "select",
+            required: true,
+            options: [
+                { value: "VOZILO", label: "Vozilo" },
+                { value: "OPREMA", label: "Radna oprema" },
+                { value: "MATERIJAL", label: "Materijal" }
+            ],
+        },
+        {
+            name: "resursId", // JEDINSTVENO POLJE ZA BACKEND
+            label: "Odaberi stavku",
+            type: "select",
+            required: true,
+            // Ovo polje zavisi od 'resourceType'
+            dependsOn: "resourceType",
+            // Mapa endpoint-a na osnovu vrednosti iz 'resourceType'
+            endpoints: {
+                VOZILO: "http://localhost:8080/api/vozila",
+                OPREMA: "http://localhost:8080/api/radna-oprema",
+                MATERIJAL: "http://localhost:8080/api/materijal"
+            },
+            optionLabel: "naziv",
+            optionValue: "id",
+        },
+        {
+            name: "datumZaduzenja",
+            label: "Datum zaduženja",
+            type: "date",
+            required: true,
+            span: 12,
+        },
+        {
+            name: "datumRazduzenja",
+            label: "Datum razduženja",
+            type: "date",
+            required: false,
+            span: 12,
+        },
+        {
+            name: "zaduzenaKolicina",
+            label: "Zadužena količina",
+            type: "number",
+            required: true,
+            min: 0,
+            span: 12,
+        },
+        {
+            name: "razduzenaKolicina",
+            label: "Razdužena količina",
+            type: "number",
+            required: true,
+            min: 0,
+            span: 12,
+        },
+    ],
+};

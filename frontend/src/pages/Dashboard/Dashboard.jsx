@@ -211,7 +211,7 @@ export function Dashboard({sidebarContents, role}) {
 
             {/* DINAMIČKA FORMA ZA IZMJENU */}
             {isEditFormVisible && (
-                <CenteredOverlay isVisible={isEditFormVisible} onClose={() => setIsEditFormVisible(false)}>
+                <CenteredOverlay className="form-overlay" isVisible={isEditFormVisible} onClose={() => setIsEditFormVisible(false)}>
                     <DynamicForm
                         className="form"
                         schema={schemaMap[currentTag]} // KORISTIMO ISTU MAPU KAO U LISTI
