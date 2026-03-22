@@ -106,29 +106,23 @@ public class ZaduzenjeService {
     }
 
     public Zaduzenje updateZaduzenje(String jmb, Integer resursId, Zaduzenje dto) throws NotFoundException {
-        ZaduzenjeId id = new ZaduzenjeId();
-        id.setPoslovodjaJMB(jmb);
-        id.setIdResursa(resursId);
+        ZaduzenjeId id = new ZaduzenjeId(jmb, resursId); // Koristi konstruktor ako ga imaš
 
         ZaduzenjeEntity postojeci = zaduzenjeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Zaduženje nije pronađeno."));
 
-        // Ažuriranje polja
+        // Ažuriraj polja
         postojeci.setZaduzenaKolicina(dto.getZaduzenaKolicina());
-
-        // Osiguraj da razdužena količina ne bude null pri update-u
-        if (dto.getRazduzenaKolicina() != null) {
-            postojeci.setRazduzenaKolicina(dto.getRazduzenaKolicina());
-        }
-
+        postojeci.setRazduzenaKolicina(dto.getRazduzenaKolicina() != null ? dto.getRazduzenaKolicina() : BigDecimal.ZERO);
         postojeci.setDatumZaduzenja(dto.getDatumZaduzenja());
         postojeci.setDatumRazduzenja(dto.getDatumRazduzenja());
 
         ZaduzenjeEntity sacuvan = zaduzenjeRepository.save(postojeci);
 
+        // Vrati mapiran DTO da frontend odmah vidi promjenu
         Zaduzenje rezultat = modelMapper.map(sacuvan, Zaduzenje.class);
-        rezultat.setManager(sacuvan.getPoslovodjaJMB());
-        rezultat.setResursId(sacuvan.getIdResursa());
+        rezultat.setManager(jmb);
+        rezultat.setResursId(resursId);
         return rezultat;
     }
 }
