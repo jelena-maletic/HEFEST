@@ -9,7 +9,7 @@ import org.etfbl.backend.repository.ZaduzenjeRepository;
 import org.etfbl.backend.repository.PoslovodjaRepository;
 import org.etfbl.backend.repository.ResursRepository;
 import org.etfbl.backend.model.manytomanyid.ZaduzenjeId;
-
+import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +35,18 @@ public class ZaduzenjeService {
         this.resursRepository = resursRepository;
     }
 
+    // Pomoćna metoda za određivanje tipa resursa (da ne ponavljamo kod)
+    private String resolveResourceType(ResursEntity resurs) {
+        if (resurs == null) return "MATERIJAL";
+
+        // Hibernate.getClass() osigurava da dobijemo pravu klasu, a ne Proxy
+        String className = Hibernate.getClass(resurs).getSimpleName();
+
+        if (className.contains("Vozilo")) return "VOZILO";
+        if (className.contains("RadnaOprema")) return "OPREMA";
+        return "MATERIJAL";
+    }
+
     public List<Zaduzenje> getAllZaduzenje() {
         return zaduzenjeRepository.findAll().stream()
                 .map(entity -> {
@@ -44,16 +56,7 @@ public class ZaduzenjeService {
 
                     if (entity.getResurs() != null) {
                         dto.setResursNaziv(entity.getResurs().getNaziv());
-
-                        // Određivanje tipa resursa za frontend formu
-                        String simpleName = entity.getResurs().getClass().getSimpleName();
-                        if (simpleName.contains("Vozilo")) {
-                            dto.setResourceType("VOZILO");
-                        } else if (simpleName.contains("RadnaOprema")) {
-                            dto.setResourceType("OPREMA");
-                        } else {
-                            dto.setResourceType("MATERIJAL");
-                        }
+                        dto.setResourceType(resolveResourceType(entity.getResurs()));
                     }
 
                     if (entity.getPoslovodja() != null) {
@@ -85,30 +88,10 @@ public class ZaduzenjeService {
         rezultat.setManager(sacuvan.getPoslovodjaJMB());
         rezultat.setResursId(sacuvan.getIdResursa());
         rezultat.setResursNaziv(resurs.getNaziv());
+        rezultat.setResourceType(resolveResourceType(resurs));
         rezultat.setPoslovodjaImePrezime(poslovodja.getIme() + " " + poslovodja.getPrezime());
 
-        // Postavljanje tipa resursa da bi frontend znao koju šemu da koristi
-        String simpleName = resurs.getClass().getSimpleName();
-        if (simpleName.contains("Vozilo")) {
-            rezultat.setResourceType("VOZILO");
-        } else if (simpleName.contains("RadnaOprema")) {
-            rezultat.setResourceType("OPREMA");
-        } else {
-            rezultat.setResourceType("MATERIJAL");
-        }
-
         return rezultat;
-    }
-
-    public void obrisiZaduzenje(String jmb, Integer resursId) {
-        ZaduzenjeId id = new ZaduzenjeId();
-        id.setPoslovodjaJMB(jmb);
-        id.setIdResursa(resursId);
-
-        if (!zaduzenjeRepository.existsById(id)) {
-            throw new RuntimeException("Zaduženje ne postoji.");
-        }
-        zaduzenjeRepository.deleteById(id);
     }
 
     public Zaduzenje updateZaduzenje(String jmb, Integer resursId, Zaduzenje dto) throws NotFoundException {
@@ -128,18 +111,19 @@ public class ZaduzenjeService {
         rezultat.setManager(jmb);
         rezultat.setResursId(resursId);
 
-        // Ponovo setujemo resourceType iz postojećeg resursa
         if (sacuvan.getResurs() != null) {
-            String simpleName = sacuvan.getResurs().getClass().getSimpleName();
-            if (simpleName.contains("Vozilo")) {
-                rezultat.setResourceType("VOZILO");
-            } else if (simpleName.contains("RadnaOprema")) {
-                rezultat.setResourceType("OPREMA");
-            } else {
-                rezultat.setResourceType("MATERIJAL");
-            }
+            rezultat.setResourceType(resolveResourceType(sacuvan.getResurs()));
+            rezultat.setResursNaziv(sacuvan.getResurs().getNaziv());
         }
 
         return rezultat;
+    }
+
+    public void obrisiZaduzenje(String jmb, Integer resursId) {
+        ZaduzenjeId id = new ZaduzenjeId(jmb, resursId);
+        if (!zaduzenjeRepository.existsById(id)) {
+            throw new RuntimeException("Zaduženje ne postoji.");
+        }
+        zaduzenjeRepository.deleteById(id);
     }
 }
