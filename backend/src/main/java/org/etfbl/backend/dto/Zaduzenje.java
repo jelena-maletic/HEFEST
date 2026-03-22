@@ -1,21 +1,23 @@
 package org.etfbl.backend.dto;
 
 import lombok.Data;
-import lombok.Value;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-/**
- * DTO for {@link org.etfbl.backend.model.ZaduzenjeEntity}
- */
 @Data
 public class Zaduzenje implements Serializable {
-    Poslovodja poslovodja;
-    ResursNaziv resurs;
-    Instant datumZaduzenja;
-    Instant datumRazduzenja;
-    BigDecimal zaduzenaKolicina;
-    BigDecimal razduzenaKolicina;
+    // Polja koja odgovaraju frontu i tvom patternu
+    private String manager;      // JMB poslovodje
+    private Integer resursId;    // ID resursa
+    private String resourceType; // Tip (opciono, za front)
+
+    private Instant datumZaduzenja;
+    private Instant datumRazduzenja;
+    private BigDecimal zaduzenaKolicina;
+    private BigDecimal razduzenaKolicina;
+
+    // Polja za prikaz u tabeli (ako zatreba nazivi)
+    private String poslovodjaImePrezime;
+    private String resursNaziv;
 }
