@@ -240,7 +240,9 @@ export const createElement = async (tag, data) => {
                         id: `${t.manager}/${t.resursId}`,
                         title: t.zaduzenaKolicina + "x " + t.resursNaziv,
                         detail: "Datum zaduženja: " + t.datumZaduzenja,
-                        subline: "Zadužio: " + t.poslovodjaImePrezime
+                        subline: "Zadužio: " + t.poslovodjaImePrezime,
+
+                        resourceType: t.resourceType // Podatak koji smo dodali u DTO na backendu
                     };
                     Object.assign(temp, t);
                     return [temp];
