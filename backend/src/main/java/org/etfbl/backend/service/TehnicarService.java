@@ -27,5 +27,12 @@ public class TehnicarService {
     public List<Tehnicar> getAllOnlyTehnicari() {
         return tehnicarRepository.findAllOnlyTehnicari().stream().map(t -> modelMapper.map(t, Tehnicar.class )).toList();
     }
+
+    public List<Tehnicar> getTehnicariZaPoslovodju(String jmb) {
+        return tehnicarRepository.findTehnicariZaPoslovodju(jmb)
+                .stream()
+                .map(t -> modelMapper.map(t, Tehnicar.class))
+                .toList();
+    }
 }
 

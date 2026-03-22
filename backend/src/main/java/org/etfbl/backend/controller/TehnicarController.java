@@ -3,10 +3,8 @@ package org.etfbl.backend.controller;
 import org.etfbl.backend.dto.Magacioner;
 import org.etfbl.backend.dto.Tehnicar;
 import org.etfbl.backend.service.TehnicarService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,4 +28,8 @@ public class TehnicarController {
         return tehnicarService.getAllOnlyTehnicari();
     }
 
+    @GetMapping("/za-poslovodju/{jmb}")
+    public List<Tehnicar> getZaPoslovodju(@PathVariable String jmb) {
+        return tehnicarService.getTehnicariZaPoslovodju(jmb);
+    }
 }
