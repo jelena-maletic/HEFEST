@@ -236,16 +236,14 @@ export const createElement = async (tag, data) => {
             }
             case "zaduzenja": {
                 return dataArray.flatMap((t) => {
-                    const zaduzenja = [];
                     let temp = {
-                        title: t.zaduzenaKolicina + " " + t.resurs.naziv,
-                        detail: t.poslovodja.ime + " " + t.poslovodja.prezime,
-                        subline: "Datum zaduženja: " + t.datumZaduzenja
+                        id: `${t.manager}/${t.resursId}`,
+                        title: t.zaduzenaKolicina + "x " + t.resursNaziv,
+                        detail: "Datum zaduženja: " + t.datumZaduzenja,
+                        subline: "Zadužio: " + t.poslovodjaImePrezime
                     };
                     Object.assign(temp, t);
-
-                    zaduzenja.push(temp)
-                    return zaduzenja;
+                    return [temp];
                 });
             }
             case "projekti": {
