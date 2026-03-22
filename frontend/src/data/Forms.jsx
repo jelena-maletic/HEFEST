@@ -353,19 +353,19 @@ export const assignmentSchema = {
             ],
         },
         {
-            name: "resursId", // JEDINSTVENO POLJE ZA BACKEND
+            name: "resursId",
             label: "Odaberi stavku",
             type: "select",
             required: true,
-            // Ovo polje zavisi od 'resourceType'
             dependsOn: "resourceType",
-            // Mapa endpoint-a na osnovu vrednosti iz 'resourceType'
             endpoints: {
                 VOZILO: "http://localhost:8080/api/vozila",
                 OPREMA: "http://localhost:8080/api/radna-oprema",
                 MATERIJAL: "http://localhost:8080/api/materijal"
             },
             optionLabel: "naziv",
+            // PROVJERI OVO: Da li tvoj backend za Vozilo vraća "id" ili "idResursa"?
+            // Ako je u bazi idResursa, stavi ovdje "idResursa"
             optionValue: "id",
         },
         {

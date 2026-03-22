@@ -236,29 +236,30 @@ export const createElement = async (tag, data) => {
             }
             case "zaduzenja": {
                 return dataArray.flatMap((t) => {
-                    let temp = {
-                        // 'id' ostavljamo kao složeni ključ jer nam treba za deleteElement/updateElement URL
+                    let formValues = {
+                        // ID za URL (ostaje složen)
                         id: `${t.manager}/${t.resursId}`,
 
-                        title: t.zaduzenaKolicina + "x " + (t.resursNaziv || "Resurs"),
-                        detail: "Datum zaduženja: " + t.datumZaduzenja,
-                        subline: "Zadužio: " + t.poslovodjaImePrezime,
-
-                        // OVO SU KLJUČEVI ZA FORMU (iz assignmentSchema)
+                        // Podaci za formu
                         manager: t.manager,
                         resourceType: t.resourceType,
-                        // Prisiljavamo da bude broj ako backend šalje string,
-                        // jer Select često striktno poredi tipove
-                        resursId: t.resursId ? Number(t.resursId) : null,
+
+                        // KLJUČNO: Pretvaramo u String jer DTO resursa (Vozilo) koristi String id
+                        // Ovo omogućava Select-u da upari "7" sa stavkom iz /api/vozila
+                        resursId: t.resursId ? String(t.resursId) : null,
 
                         zaduzenaKolicina: t.zaduzenaKolicina,
                         razduzenaKolicina: t.razduzenaKolicina,
                         datumZaduzenja: t.datumZaduzenja,
-                        datumRazduzenja: t.datumRazduzenja
+                        datumRazduzenja: t.datumRazduzenja,
+
+                        // Podaci za listu/tabelu
+                        title: t.zaduzenaKolicina + "x " + (t.resursNaziv || "Nepoznat resurs"),
+                        detail: "Datum zaduženja: " + t.datumZaduzenja,
+                        subline: "Zadužio: " + (t.poslovodjaImePrezime || t.manager)
                     };
 
-                    // Spajamo sa originalnim objektom 't' da ne izgubimo ostala polja
-                    return [{ ...t, ...temp }];
+                    return [{ ...t, ...formValues }];
                 });
             }
             case "projekti": {
