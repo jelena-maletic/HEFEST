@@ -37,7 +37,7 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
                         onClickHandler={(e) => {
                             e.stopPropagation();
                             setIsHovered(false);
-                            setShowConfirm(true); // 🔥 otvori dialog
+                            setShowConfirm(true);
                         }}
                     />
                 </div>
@@ -112,14 +112,14 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
 
                         if (responseStatus >= 200 && responseStatus < 300) {
                             notify.success("Obrisano", "Element je uspješno uklonjen.");
-                            onSuccess && onSuccess(); // 🔥 refresh liste
+                            onSuccess && onSuccess();
                         }
 
                     } catch (error) {
                         console.error("Greška pri brisanju:", error);
                         notify.error("Greška", "Neuspješno brisanje elementa.");
                     } finally {
-                        setShowConfirm(false); // 🔥 zatvori dialog
+                        setShowConfirm(false);
                     }
                 }}
             />

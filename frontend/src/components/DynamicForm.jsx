@@ -3,6 +3,7 @@ import { Form, Input, Button, Select, DatePicker, InputNumber, Card } from "antd
 import axios from "axios";
 import dayjs from "dayjs";
 import './DynamicForm.css';
+import {getJmb} from "../auth/auth.js";
 
 const { Option } = Select;
 
@@ -18,7 +19,6 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
     const [form] = Form.useForm();
     const [dynamicOptions, setDynamicOptions] = useState({});
 
-    // 1. Inicijalizacija vrednosti
     useEffect(() => {
         if (initialValues && schema?.fields) {
             const formattedValues = { ...initialValues };
@@ -33,24 +33,39 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
         }
     }, [initialValues, schema, form]);
 
-    // 2. Učitavanje običnih API opcija
     useEffect(() => {
         if (!schema?.fields) return;
+
         schema.fields.forEach((field) => {
             if (field.type === "select" && field.apiEndpoint) {
-                axios.get(field.apiEndpoint)
+                let finalUrl = field.apiEndpoint;
+
+                if (typeof finalUrl === 'string' && finalUrl.includes(":jmb")) {
+                    const trenutniJmb = getJmb();
+
+                    if (!trenutniJmb) {
+                        console.warn(`Preskačem učitavanje za ${field.name} jer JMB nije dostupan.`);
+                        return;
+                    }
+
+                    finalUrl = finalUrl.replace(":jmb", trenutniJmb);
+                }
+
+                axios.get(finalUrl)
                     .then((res) => {
                         setDynamicOptions((prev) => ({
                             ...prev,
                             [field.name]: Array.isArray(res.data) ? res.data : [],
                         }));
                     })
-                    .catch((err) => console.error(`Greška:`, err));
+                    .catch((err) => {
+                        console.error(`Greška pri učitavanju opcija za polje "${field.name}":`, err);
+                    });
             }
         });
-    }, [schema]);
 
-    // 3. LOGIKA ZA ZAVISNA POLJA (npr. Tip resursa -> Stavka)
+    }, [schema, getJmb()]);
+
     const resourceType = Form.useWatch('resourceType', form);
 
     useEffect(() => {
@@ -106,12 +121,10 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
                     onClose?.();
                 }}
             >
-                {/* Ovdje koristimo shouldUpdate da bi forma reagovala na promjenu resourceType */}
                 <Form.Item noStyle shouldUpdate={(prev, curr) => prev.resourceType !== curr.resourceType}>
                     {() => (
                         <>
                             {schema.fields.map((field) => {
-                                // Ako polje zavisi od resourceType, a on nije izabran -> sakrij polje
                                 if (field.dependsOn && !form.getFieldValue(field.dependsOn)) {
                                     return null;
                                 }

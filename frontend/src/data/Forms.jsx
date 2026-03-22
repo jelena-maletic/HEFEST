@@ -1,3 +1,5 @@
+import {getJmb} from "../auth/auth.js";
+
 export const projectSchema = {
     submitLabel: "Potvrdi",
     layout: "vertical",
@@ -396,5 +398,36 @@ export const assignmentSchema = {
             min: 0,
             span: 12,
         },
+    ],
+};
+
+export const dailyTaskSchema = {
+    submitLabel: "Kreiraj zadatak",
+    layout: "vertical",
+    fields: [
+        {
+            name: "opis",
+            label: "Opis zadatka",
+            type: "textarea",
+            required: true,
+            span: 24,
+        },
+        {
+            name: "tehnicarJmb",
+            label: "Tehničar",
+            type: "select",
+            required: true,
+            span: 12,
+            apiEndpoint: `http://localhost:8080/api/tehnicari/za-poslovodju/:jmb`,
+            optionLabel: "ime",
+            optionValue: "jmb",
+        },
+        {
+            name: "datum",
+            label: "Datum",
+            type: "date",
+            required: true,
+            span: 12,
+        }
     ],
 };

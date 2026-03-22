@@ -79,10 +79,16 @@
   ],
   "poslovodja": [
     {
-      "label": "Dnevni zadaci",
+      "label": "Moji dnevni zadaci",
       "icon": "tasks",
       "iconHover": "tasks-inverted",
       "tag": "tasks"
+    },
+    {
+      "label": "Upravljanje zadacima",
+      "icon": "tasks",
+      "iconHover": "tasks-inverted",
+      "tag": "manage-tasks"
     },
     {
       "label": "Kreiranje izvještaja",

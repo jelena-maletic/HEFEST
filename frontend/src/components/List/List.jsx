@@ -56,7 +56,7 @@ export function List({
     useEffect(() => {
         const getData = async () => {
             const data = await fetchData(tag, filterByPoslovodja);
-            setListData(data || []); // Update state with the actual array
+            setListData(data || []);
         };
 
         getData();

@@ -36,7 +36,7 @@ export function Dashboard({sidebarContents, role}) {
     const TAG_MAP = {
         "projekti": "PROJECT",
         "zaposleni": "EMPLOYEE",
-        "tehnicari": "EMPLOYEE", // Koristimo isti maper za sve tipove zaposlenih
+        "tehnicari": "EMPLOYEE",
         "poslovodje": "EMPLOYEE",
         "magacioneri": "EMPLOYEE",
         "knjigovodje": "EMPLOYEE",
@@ -44,7 +44,8 @@ export function Dashboard({sidebarContents, role}) {
         "vozila": "VEHICLE",
         "radna-oprema": "TOOL",
         "materijal": "MATERIAL",
-        "dnevni_izvjestaji": "REPORT"
+        "dnevni_izvjestaji": "REPORT",
+        "dnevni_zadaci": "TASK"
     };
     /*const handleOpenDetails = (rawData, tag) => {
         const type = TAG_MAP[tag];
@@ -61,7 +62,7 @@ export function Dashboard({sidebarContents, role}) {
         const type = TAG_MAP[tag];
         if (!type) return;
 
-        setCurrentTag(tag); // Dodajemo ovo da zapamtimo tag za brisanje/edit
+        setCurrentTag(tag);
         try {
             const formatted = await formatEntityDetails(rawData, type, role);
             setDetailData(formatted.items);
@@ -149,7 +150,7 @@ export function Dashboard({sidebarContents, role}) {
                             listTitle={screenTitle}
                             screenState="user"
                             tag="tehnicari/only"
-                            onClick={(data) => handleOpenDetails(data, "tehnicari")} // DODAJ OVO
+                            onClick={(data) => handleOpenDetails(data, "tehnicari")}
                         />
                     )}
                     {activeScreen === "report-overview-manager" && <div className={"report-lists"}>
@@ -158,6 +159,26 @@ export function Dashboard({sidebarContents, role}) {
                                                               </div>}
                     {activeScreen === "projects" && <List isEditable={true} listTitle={screenTitle} screenState="projects" onClick={(data) => handleOpenDetails(data, "projekti")} tag="projekti"/>}
                     {activeScreen === "assigned-projects" && <List isEditable={false} listTitle={screenTitle} screenState="projects" onClick={(data) => handleOpenDetails(data, "projekti")} tag="projekti" filterByPoslovodja={true}/>}
+
+                    {activeScreen === "tasks" && (
+                        <List
+                            isEditable={false}
+                            listTitle="Moji dnevni zadaci"
+                            screenState="tasks"
+                            tag="dnevni_zadaci"
+                            onClick={(data) => handleOpenDetails(data, "dnevni_zadaci")}
+                        />
+                    )}
+
+                    {activeScreen === "manage-tasks" && (
+                        <List
+                            isEditable={true}
+                            listTitle="Upravljanje zadacima"
+                            screenState="manage_tasks"
+                            tag="dnevni_zadaci"
+                            onClick={(data) => handleOpenDetails(data, "dnevni_zadaci")}
+                        />
+                    )}
                     {activeScreen === "employees" && (
                         <List
                             isEditable={false}
@@ -192,12 +213,12 @@ export function Dashboard({sidebarContents, role}) {
                             onEdit={() => setIsEditFormVisible(true)}
                             onDelete={async () => {
                                 try {
-                                    // Pozivamo istu funkciju kao u ListElement
+
                                     const responseStatus = await deleteElement(currentTag, rawEntityData.id);
 
                                     if (responseStatus >= 200 && responseStatus < 300) {
                                         notify.success("Obrisano", "Element je uspješno uklonjen.");
-                                        setIsDetailVisible(false); // Zatvaramo detalje nakon brisanja
+                                        setIsDetailVisible(false);
                                     }
                                 } catch (error) {
                                     console.error("Greška pri brisanju:", error);
@@ -214,9 +235,9 @@ export function Dashboard({sidebarContents, role}) {
                 <CenteredOverlay className="form-overlay" isVisible={isEditFormVisible} onClose={() => setIsEditFormVisible(false)}>
                     <DynamicForm
                         className="form"
-                        schema={schemaMap[currentTag]} // KORISTIMO ISTU MAPU KAO U LISTI
+                        schema={schemaMap[currentTag]}
                         onClose={() => setIsEditFormVisible(false)}
-                        initialValues={rawEntityData} // Popunjava formu trenutnim podacima
+                        initialValues={rawEntityData}
                         onSubmit={async (formData) => {
                             try {
                                 await updateElement(currentTag, rawEntityData.id, formData);

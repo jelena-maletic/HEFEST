@@ -14,12 +14,9 @@ export const fetchProjects = async () => {
     }
 }
 
-// apiHelpers.js
-
 export const createElement = async (tag, data) => {
-    const ulogovaniJmb = getJmb(); // Dobavljamo JMB iz sesije/localstorage-a
+    const ulogovaniJmb = getJmb();
 
-    // Kreiramo finalni payload koji ide ka Javi
     const payload = {
         ...data,
         ulogovaniJmb: ulogovaniJmb
@@ -28,10 +25,10 @@ export const createElement = async (tag, data) => {
     try {
         // Šaljemo na URL npr. "api/projekti" ili "api/zaposleni"
         const response = await axios.post(`${API_BASE}/${tag}`, payload);
-        return response.status; // Vraćamo kreirani objekat sa servera
+        return response.status;
     } catch (error) {
         console.error(`Greška pri kreiranju elementa na tagu ${tag}:`, error);
-        throw error; // Prosleđujemo grešku dalje da je komponenta obradi
+        throw error;
     }
 };
 
@@ -68,6 +65,16 @@ export const createElement = async (tag, data) => {
                 t.manager === ulogovaniJmb
             );
         }
+
+        if (tag === "dnevni_zadaci" && filterPoslovodja) {
+            const ulogovaniJmb = getJmb();
+            dataArray = dataArray.filter(t =>
+                filterPoslovodja === "user"
+                    ? t.tehnicar?.jmb === ulogovaniJmb
+                    : t.poslovodja?.jmb === ulogovaniJmb
+            );
+        }
+
 
         switch (tag) {
             case "radna-oprema": {
@@ -139,6 +146,30 @@ export const createElement = async (tag, data) => {
                     zaposleni.push(temp);
                     return zaposleni;
                 })
+            }
+
+            case "dnevni_zadaci":
+             {
+                return dataArray.flatMap((t) => {
+                    const zadaci = [];
+
+                    let temp = {
+                        title: t.opis,
+                        detail: "Datum: " + t.datum,
+
+                        subline: tag === "dnevni_zadaci"
+                            ? "Tehničar: " + (t.tehnicar?.ime + " " + t.tehnicar?.prezime)
+                            : "Poslovodja: " + (t.poslovodja?.ime + " " + t.poslovodja?.prezime),
+
+                        status: t.zavrsen ? "Završen" : "U toku",
+                        statusColor: t.zavrsen ? "green" : "orange"
+                    };
+
+                    Object.assign(temp, t);
+
+                    zadaci.push(temp);
+                    return zadaci;
+                });
             }
 
             case "dnevni_izvjestaji": {
