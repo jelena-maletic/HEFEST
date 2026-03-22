@@ -237,15 +237,28 @@ export const createElement = async (tag, data) => {
             case "zaduzenja": {
                 return dataArray.flatMap((t) => {
                     let temp = {
+                        // 'id' ostavljamo kao složeni ključ jer nam treba za deleteElement/updateElement URL
                         id: `${t.manager}/${t.resursId}`,
-                        title: t.zaduzenaKolicina + "x " + t.resursNaziv,
+
+                        title: t.zaduzenaKolicina + "x " + (t.resursNaziv || "Resurs"),
                         detail: "Datum zaduženja: " + t.datumZaduzenja,
                         subline: "Zadužio: " + t.poslovodjaImePrezime,
 
-                        resourceType: t.resourceType // Podatak koji smo dodali u DTO na backendu
+                        // OVO SU KLJUČEVI ZA FORMU (iz assignmentSchema)
+                        manager: t.manager,
+                        resourceType: t.resourceType,
+                        // Prisiljavamo da bude broj ako backend šalje string,
+                        // jer Select često striktno poredi tipove
+                        resursId: t.resursId ? Number(t.resursId) : null,
+
+                        zaduzenaKolicina: t.zaduzenaKolicina,
+                        razduzenaKolicina: t.razduzenaKolicina,
+                        datumZaduzenja: t.datumZaduzenja,
+                        datumRazduzenja: t.datumRazduzenja
                     };
-                    Object.assign(temp, t);
-                    return [temp];
+
+                    // Spajamo sa originalnim objektom 't' da ne izgubimo ostala polja
+                    return [{ ...t, ...temp }];
                 });
             }
             case "projekti": {
