@@ -17,4 +17,5 @@ public class DnevniZadatak implements Serializable {
     DnevniIzvjestaj dnevniIzvjestaj;
     Poslovodja poslovodja;
     Tehnicar tehnicar;
+    Integer idDnevnogZadatka;
 }
