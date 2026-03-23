@@ -23,8 +23,8 @@ public class DnevniZadatakEntity {
     @Column(name = "Datum")
     private LocalDate datum;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "Dnevni_Izvjestaj_IdIzvjestaja", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "Dnevni_Izvjestaj_IdIzvjestaja", nullable = true)
     private DnevniIzvjestajEntity dnevniIzvjestaj;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
