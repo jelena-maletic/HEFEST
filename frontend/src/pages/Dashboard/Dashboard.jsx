@@ -93,10 +93,8 @@ export function Dashboard({sidebarContents, role}) {
         console.log(activeScreen, screenTitle);
     };
 
-    // Unutar Dashboard komponente
     const [selectedEmployeeTag, setSelectedEmployeeTag] = useState("zaposleni");
 
-// Opcije koje odgovaraju tvojim endpointima/tagovima u apiHelper-u
     const employeeOptions = [
         { value: "zaposleni", label: "Svi zaposleni" },
         { value: "knjigovodje", label: "Knjigovođe" },
@@ -143,6 +141,8 @@ export function Dashboard({sidebarContents, role}) {
                         <List isEditable={true} listTitle={screenTitle} screenState="material" tag="materijal"
                               onClick={(data) => handleOpenDetails(data, "materijal")} />}
                     {activeScreen === "taken-resources" && <List isEditable={true} listTitle={screenTitle} screenState="taken-resources" tag="zaduzenja" />}
+                    {activeScreen === "taken-resources-manager" && <List isEditable={false} listTitle={screenTitle} screenState="taken-resources" onClick={(data) => handleOpenDetails(data, "zaduzenja")} tag="zaduzenja" filterByPoslovodja={true}/>}
+
                     {activeScreen === "request-overview" && <List isEditable={false} listTitle={screenTitle} screenState="request-overview" tag="zahtjevi" />}
                     {activeScreen === "technicians" && (
                         <List

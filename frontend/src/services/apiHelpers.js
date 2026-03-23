@@ -75,6 +75,13 @@ export const createElement = async (tag, data) => {
             );
         }
 
+        if (tag === "zaduzenja" && filterPoslovodja) {
+            const ulogovaniJmb = getJmb();
+            dataArray = dataArray.filter(t =>
+                t.manager === ulogovaniJmb
+            );
+        }
+
 
         switch (tag) {
             case "radna-oprema": {

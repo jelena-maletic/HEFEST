@@ -103,6 +103,12 @@
       "tag": "map"
     },
     {
+      "label": "Zaduženi resursi",
+      "icon": "taken-resources",
+      "iconHover": "taken-resources-inverted",
+      "tag": "taken-resources-manager"
+    },
+    {
       "label": "Kreiranje zahtjeva za resursima",
       "icon": "new-request",
       "iconHover": "new-request-inverted",
