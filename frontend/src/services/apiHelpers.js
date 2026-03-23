@@ -155,27 +155,21 @@ export const createElement = async (tag, data) => {
                 })
             }
 
-            case "dnevni_zadaci":
-             {
-                return dataArray.flatMap((t) => {
-                    const zadaci = [];
-
+            case "dnevni_zadaci": {
+                return dataArray.map((t) => {
                     let temp = {
+                        id: t.idDnevnogZadatka,
                         title: t.opis,
                         detail: "Datum: " + t.datum,
 
-                        subline: tag === "dnevni_zadaci"
-                            ? "Tehničar: " + (t.tehnicar?.ime + " " + t.tehnicar?.prezime)
-                            : "Poslovodja: " + (t.poslovodja?.ime + " " + t.poslovodja?.prezime),
+                        tehnicarJmb: t.tehnicar ? t.tehnicar.jmb : null,
 
-                        status: t.zavrsen ? "Završen" : "U toku",
-                        statusColor: t.zavrsen ? "green" : "orange"
+                        subline: t.tehnicar
+                            ? `Tehničar: ${t.tehnicar.ime} ${t.tehnicar.prezime}`
+                            : "Tehničar: Nije dodijeljen",
+                        status: t.zavrsen ? "Završen" : "U toku"
                     };
-
-                    Object.assign(temp, t);
-
-                    zadaci.push(temp);
-                    return zadaci;
+                    return { ...t, ...temp };
                 });
             }
 
