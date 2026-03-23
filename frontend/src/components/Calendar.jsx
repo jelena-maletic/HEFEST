@@ -79,9 +79,9 @@ function Calendar() {
 
     return (
         <div className="calendar-container">
-            <div className={"button-container"}>
-                <SmallButton className={"add-button"} type={"add"}/>
-            </div>
+            {/*<div className={"button-container"}>*/}
+            {/*    <SmallButton className={"add-button"} type={"add"}/>*/}
+            {/*</div>*/}
 
             <FullCalendar
                 plugins={[dayGridPlugin]}
