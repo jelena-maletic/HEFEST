@@ -10,7 +10,6 @@ import org.etfbl.backend.model.DnevniZadatakRequest;
 import org.etfbl.backend.repository.DnevniZadatakRepository;
 import org.etfbl.backend.repository.PoslovodjaRepository;
 import org.etfbl.backend.repository.TehnicarRepository;
-import org.etfbl.backend.repository.UtroseniMaterijalRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -25,18 +24,22 @@ public class DnevniZadatakService {
     private final DnevniZadatakRepository dnevniZadatakRepository;
     private final ModelMapper modelMapper;
 
-    public DnevniZadatakService(PoslovodjaRepository poslovodjaRepository, TehnicarRepository tehnicarRepository, DnevniZadatakRepository dnevniZadatakRepository, ModelMapper modelMapper) {
+    public DnevniZadatakService(PoslovodjaRepository poslovodjaRepository,
+                                TehnicarRepository tehnicarRepository,
+                                DnevniZadatakRepository dnevniZadatakRepository,
+                                ModelMapper modelMapper) {
         this.poslovodjaRepository = poslovodjaRepository;
         this.tehnicarRepository = tehnicarRepository;
         this.dnevniZadatakRepository = dnevniZadatakRepository;
         this.modelMapper = modelMapper;
     }
 
-
     public List<DnevniZadatak> getAll() {
         return dnevniZadatakRepository.findAll().stream().map(entity -> {
-
             DnevniZadatak dto = modelMapper.map(entity, DnevniZadatak.class);
+
+            // RUČNO MAPIRANJE ID-a (Entity.id -> DTO.idDnevnogZadatka)
+            dto.setIdDnevnogZadatka(entity.getId());
 
             if (entity.getDnevniIzvjestaj() != null) {
                 dto.setDnevniIzvjestaj(modelMapper.map(entity.getDnevniIzvjestaj(), DnevniIzvjestaj.class));
@@ -51,7 +54,7 @@ public class DnevniZadatakService {
             }
 
             return dto;
-        }).toList();
+        }).collect(Collectors.toList());
     }
 
     public DnevniZadatak create(DnevniZadatakRequest request) {
@@ -73,7 +76,9 @@ public class DnevniZadatakService {
 
         DnevniZadatakEntity saved = dnevniZadatakRepository.save(entity);
 
-        return modelMapper.map(saved, DnevniZadatak.class);
+        DnevniZadatak dto = modelMapper.map(saved, DnevniZadatak.class);
+        dto.setIdDnevnogZadatka(saved.getId()); // Mapiranje ID-a nakon snimanja
+        return dto;
     }
 
     public void delete(Integer id) {
@@ -90,7 +95,9 @@ public class DnevniZadatakService {
         entity.setZavrsen(zavrsen);
         DnevniZadatakEntity updated = dnevniZadatakRepository.save(entity);
 
-        return modelMapper.map(updated, DnevniZadatak.class);
+        DnevniZadatak dto = modelMapper.map(updated, DnevniZadatak.class);
+        dto.setIdDnevnogZadatka(updated.getId());
+        return dto;
     }
 
     public DnevniZadatak updateZadatak(Integer id, DnevniZadatakRequest request) {
@@ -105,7 +112,24 @@ public class DnevniZadatakService {
         entity.setTehnicar(tehnicar);
 
         DnevniZadatakEntity saved = dnevniZadatakRepository.save(entity);
-        return modelMapper.map(saved, DnevniZadatak.class);
+
+        DnevniZadatak dto = modelMapper.map(saved, DnevniZadatak.class);
+        dto.setIdDnevnogZadatka(saved.getId());
+        return dto;
     }
 
+    public DnevniZadatak getById(Integer id) {
+        DnevniZadatakEntity entity = dnevniZadatakRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Zadatak sa ID " + id + " nije pronađen"));
+
+        DnevniZadatak dto = modelMapper.map(entity, DnevniZadatak.class);
+        dto.setIdDnevnogZadatka(entity.getId()); // Ručno setujemo ID da ga frontend vidi
+
+        // Ako treba mapirati i ostale objekte (izvještaj, tehničar...) kao u getAll():
+        if (entity.getTehnicar() != null) {
+            dto.setTehnicar(modelMapper.map(entity.getTehnicar(), org.etfbl.backend.dto.Tehnicar.class));
+        }
+
+        return dto;
+    }
 }

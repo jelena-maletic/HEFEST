@@ -2,6 +2,7 @@ package org.etfbl.backend.controller;
 
 import org.etfbl.backend.dto.DnevniZadatak;
 import org.etfbl.backend.dto.UtroseniMaterijal;
+import org.etfbl.backend.model.DnevniZadatakEntity;
 import org.etfbl.backend.model.DnevniZadatakRequest;
 import org.etfbl.backend.service.DnevniIzvjestajService;
 import org.etfbl.backend.service.DnevniZadatakService;
@@ -48,5 +49,11 @@ public class DnevniZadatakController {
             @PathVariable Integer id,
             @RequestBody DnevniZadatakRequest request) {
         return ResponseEntity.ok(dnevniZadatakService.updateZadatak(id, request));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<DnevniZadatak> getById(@PathVariable Integer id) {
+        // Controller samo zove Service, on ne zna za Repository!
+        return ResponseEntity.ok(dnevniZadatakService.getById(id));
     }
 }
