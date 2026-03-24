@@ -147,12 +147,20 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
                                     return null;
                                 }
 
+                                const schemaRules = field.rules || [];
+
+                                // Dodajemo required rule na početak niza ako je polje označeno kao obavezno
+                                const finalRules = [
+                                    { required: field.required, message: field.requiredMessage || "Obavezno polje" },
+                                    ...schemaRules
+                                ];
+
                                 return (
                                     <Form.Item
                                         key={field.name}
                                         name={field.name}
                                         label={field.label}
-                                        rules={[{ required: field.required, message: field.requiredMessage || "Obavezno polje" }]}
+                                        rules={finalRules}
                                     >
                                         {renderField(field)}
                                     </Form.Item>

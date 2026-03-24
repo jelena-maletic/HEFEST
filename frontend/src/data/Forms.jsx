@@ -306,7 +306,11 @@ export const changePasswordSchema = {
             span: 24,
             rules: [
                 { min: 6, message: "Lozinka mora imati barem 6 karaktera!" },
-                { max: 20, message: "Lozinka ne može biti duža od 20 karaktera!" }
+                { max: 20, message: "Lozinka ne može biti duža od 20 karaktera!" },
+                {
+                    pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
+                    message: "Lozinka mora sadržati bar jedno veliko slovo i jedan broj!"
+                }
             ]
         },
         {
