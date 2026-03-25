@@ -10,6 +10,9 @@ export const projectSchema = {
             type: "input",
             required: true,
             span: 12,
+            rules: [
+                { max: 100, message: "Naziv ne smije biti duži od 100 karaktera" }
+            ]
         },
         {
             name: "klijent",
@@ -77,6 +80,17 @@ export const projectSchema = {
             type: "date",
             required: false,
             span: 8,
+            rules: [
+                ({ getFieldValue }) => ({
+                    validator(_, value) {
+                        const pocetak = getFieldValue('pocetakRada');
+                        if (!value || !pocetak || value.isAfter(pocetak)) {
+                            return Promise.resolve();
+                        }
+                        return Promise.reject(new Error('Kraj radova mora biti nakon početka!'));
+                    },
+                }),
+            ],
         },
 
         {
@@ -127,6 +141,12 @@ export const vehicleSchema = {
             type: "input",
             required: true,
             span: 12,
+            rules: [
+                {
+                    pattern: /^[A-EJKMOTV]\d{2}-[A-EJKMOTV]-\d{3}$/,
+                    message: "Format mora biti npr. K12-M-345"
+                }
+            ]
         },
         {
             name: "tipVozila",
@@ -181,6 +201,17 @@ export const vehicleSchema = {
             type: "date",
             required: false,
             span: 12,
+            rules: [
+                ({ getFieldValue }) => ({
+                    validator(_, value) {
+                        const pocetak = getFieldValue('datumRegistracije');
+                        if (!value || !pocetak || value.isAfter(pocetak)) {
+                            return Promise.resolve();
+                        }
+                        return Promise.reject(new Error('Datum isteka mora biti nakon datuma registracije!'));
+                    },
+                }),
+            ],
         },
     ],
 };
@@ -346,7 +377,7 @@ export const assignmentSchema = {
             optionValue: "jmb",
         },
         {
-            name: "resourceType", // PRVO OVO BIRAMO
+            name: "resourceType",
             label: "Tip resursa",
             type: "select",
             required: true,
@@ -368,8 +399,6 @@ export const assignmentSchema = {
                 MATERIJAL: "http://localhost:8080/api/materijal"
             },
             optionLabel: "naziv",
-            // PROVJERI OVO: Da li tvoj backend za Vozilo vraća "id" ili "idResursa"?
-            // Ako je u bazi idResursa, stavi ovdje "idResursa"
             optionValue: "id",
         },
         {
