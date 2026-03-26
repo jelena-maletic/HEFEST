@@ -41,7 +41,7 @@ export const createElement = async (tag, data) => {
         return response.status;
     };
 
-    export const fetchData = async (tag, filterPoslovodja = null) => {
+    export const fetchData = async (tag, filterPoslovodja = null, filterTehnicar=null) => {
         let response;
         try {
             response = await api.service(false).get(`/${tag}`);
@@ -68,9 +68,15 @@ export const createElement = async (tag, data) => {
         if (tag === "dnevni_zadaci" && filterPoslovodja) {
             const ulogovaniJmb = getJmb();
             dataArray = dataArray.filter(t =>
-                filterPoslovodja === "user"
-                    ? t.tehnicar?.jmb === ulogovaniJmb
-                    : t.poslovodja?.jmb === ulogovaniJmb
+                    t.poslovodja.jmb === ulogovaniJmb
+            );
+        }
+
+        if (tag === "dnevni_zadaci" && filterTehnicar) {
+            const ulogovaniJmb = getJmb();
+            dataArray = dataArray.filter(t =>
+                     t.tehnicar.jmb === ulogovaniJmb
+
             );
         }
 

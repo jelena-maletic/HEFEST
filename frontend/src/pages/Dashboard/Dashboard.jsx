@@ -166,7 +166,7 @@ export function Dashboard({sidebarContents, role}) {
                             listTitle="Moji dnevni zadaci"
                             screenState="tasks"
                             tag="dnevni_zadaci"
-                            filterByPoslovodja={true} /*filterByTehnicar treba staviti i napraviti*/
+                            filterByTehnicar={true} /*filterByTehnicar treba staviti i napraviti*/
                             onClick={(data) => handleOpenDetails(data, "dnevni_zadaci")}
                         />
                     )}

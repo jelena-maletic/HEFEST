@@ -19,7 +19,8 @@ export function List({
                          isEditable,
                          dividerWidth = "60%",
                          tag,
-                         filterByPoslovodja
+                         filterByPoslovodja,
+                        filterByTehnicar
                      }) {
 
     const notify = useNotification();
@@ -29,7 +30,7 @@ export function List({
     const selectedSchema = schemaMap[tag];
 
     const reloadData = async () => {
-        const data = await fetchData(tag, filterByPoslovodja);
+        const data = await fetchData(tag, filterByPoslovodja, filterByTehnicar);
         setListData(data || []);
     };
 
@@ -55,7 +56,7 @@ export function List({
 
     useEffect(() => {
         const getData = async () => {
-            const data = await fetchData(tag, filterByPoslovodja);
+            const data = await fetchData(tag, filterByPoslovodja, filterByTehnicar);
             setListData(data || []);
         };
 
