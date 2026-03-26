@@ -23,7 +23,6 @@ export const createElement = async (tag, data) => {
     };
 
     try {
-        // Šaljemo na URL npr. "api/projekti" ili "api/zaposleni"
         const response = await axios.post(`${API_BASE}/${tag}`, payload);
         return response.status;
     } catch (error) {
@@ -219,7 +218,6 @@ export const createElement = async (tag, data) => {
                 });
             }
 
-
             case "zahtjevi": {
                 return dataArray.flatMap((t) => {
                     const zahtjevi = [];
@@ -237,15 +235,11 @@ export const createElement = async (tag, data) => {
             case "zaduzenja": {
                 return dataArray.flatMap((t) => {
                     let formValues = {
-                        // ID za URL (ostaje složen)
                         id: `${t.manager}/${t.resursId}`,
 
-                        // Podaci za formu
                         manager: t.manager,
                         resourceType: t.resourceType,
 
-                        // KLJUČNO: Pretvaramo u String jer DTO resursa (Vozilo) koristi String id
-                        // Ovo omogućava Select-u da upari "7" sa stavkom iz /api/vozila
                         resursId: t.resursId ? String(t.resursId) : null,
 
                         zaduzenaKolicina: t.zaduzenaKolicina,
@@ -253,7 +247,6 @@ export const createElement = async (tag, data) => {
                         datumZaduzenja: t.datumZaduzenja,
                         datumRazduzenja: t.datumRazduzenja,
 
-                        // Podaci za listu/tabelu
                         title: t.zaduzenaKolicina + "x " + (t.resursNaziv || "Nepoznat resurs"),
                         detail: "Datum zaduženja: " + t.datumZaduzenja,
                         subline: "Zadužio: " + (t.poslovodjaImePrezime || t.manager)
@@ -282,11 +275,23 @@ export const createElement = async (tag, data) => {
 export const getNazivPoJmb = async (jmb) => {
     if (!jmb) return "Nije dodijeljen";
     try {
-        // Pozivamo tvoj novi endpoint u KorisnikController-u
         const response = await api.service(false).get(`/korisnici/${jmb}`);
-        return response.data; // Vraća string "Ime Prezime"
+        return response.data;
     } catch (error) {
         console.error("Greška pri dohvatanju imena za JMB: " + jmb, error);
-        return jmb; // Ako pukne, bar prikaži JMB
+        return jmb;
+    }
+};
+
+
+export const updateZadatakStatus = async (id, isZavrsen) => {
+    try {
+        const response = await axios.patch(`${API_BASE}/dnevni_zadaci/${id}/status`, null, {
+            params: { zavrsen: isZavrsen }
+        });
+        return response.status;
+    } catch (error) {
+        console.error("Greška pri ažuriranju statusa zadatka:", error);
+        throw error;
     }
 };

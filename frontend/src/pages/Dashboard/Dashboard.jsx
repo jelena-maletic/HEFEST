@@ -166,6 +166,7 @@ export function Dashboard({sidebarContents, role}) {
                             listTitle="Moji dnevni zadaci"
                             screenState="tasks"
                             tag="dnevni_zadaci"
+                            filterByPoslovodja={true} /*filterByTehnicar treba staviti i napraviti*/
                             onClick={(data) => handleOpenDetails(data, "dnevni_zadaci")}
                         />
                     )}
@@ -176,6 +177,7 @@ export function Dashboard({sidebarContents, role}) {
                             listTitle="Upravljanje zadacima"
                             screenState="manage_tasks"
                             tag="dnevni_zadaci"
+                            filterByPoslovodja={true}
                             onClick={(data) => handleOpenDetails(data, "dnevni_zadaci")}
                         />
                     )}

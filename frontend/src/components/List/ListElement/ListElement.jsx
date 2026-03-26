@@ -1,14 +1,25 @@
 import './ListElement.css';
-import React, { useState } from 'react';
-import { SmallButton } from "../../SmallButton.jsx";
-import { loadAssets } from "../../../utils/dataHelpers.js";
+import React, {useState} from 'react';
+import {SmallButton} from "../../SmallButton.jsx";
+import {loadAssets} from "../../../utils/dataHelpers.js";
 import {deleteElement, updateElement} from "../../../services/apiHelpers.js";
 import CenteredOverlay from "../../CenteredOverlay/CenteredOverlay.jsx";
 import DynamicForm from "../../DynamicForm.jsx";
-import { useNotification } from "../../NotificationContext.jsx";
+import {useNotification} from "../../NotificationContext.jsx";
 import ConfirmationDialog from "../../ConfirmationDialog.jsx";
+import {updateZadatakStatus} from "../../../services/apiHelpers.js";
+import {Checkbox} from 'antd';
 
-export function ListElement({ screenState, listElementData, onClickFunc, isEditable, className, tag, selectedSchema, onSuccess }) {
+export function ListElement({
+                                screenState,
+                                listElementData,
+                                onClickFunc,
+                                isEditable,
+                                className,
+                                tag,
+                                selectedSchema,
+                                onSuccess
+                            }) {
     const [isHovered, setIsHovered] = useState(false);
     const [updateForm, setUpdateForm] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
@@ -46,43 +57,71 @@ export function ListElement({ screenState, listElementData, onClickFunc, isEdita
         return null;
     };
 
+    const handleStatusChange = async (e) => {
+        const noviStatus = e.target.checked;
+
+        try {
+            await updateZadatakStatus(listElementData.id, noviStatus);
+
+            notify.success("Status ažuriran", `Zadatak je označen kao ${noviStatus ? 'završen' : 'u toku'}.`);
+
+            if (onSuccess) onSuccess();
+        } catch (error) {
+            console.error("Greška pri ažuriranju statusa:", error);
+            notify.error("Greška", "Nije moguće ažurirati status zadatka.");
+        }
+    };
+
     var image = isHovered ? images[`${screenState}-inverted`] : images[`${screenState}`];
+
+    const isCompleted = tag === "dnevni_zadaci" && listElementData.zavrsen;
 
     return (
         <>
-        <div
-            className={`list-element ${className || ''} ${isHovered ? 'hovered' : ''}`}
-            onClick={() => onClickFunc(listElementData)}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            style={{ cursor: 'pointer' }}
-        >
-            <img
-                className="list-image"
-                alt="List Icon"
-                src={image}
-            />
+            <div
 
-            <div className="list-element-info">
+                className={`list-element ${className || ''} ${isHovered ? 'hovered' : ''} ${isCompleted ? 'completed' : ''}`}
+                onClick={() => onClickFunc(listElementData)}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+            >
+                <div className="list-image-wrapper">
+                    <img
+
+                        className={`list-image ${tag === "dnevni_zadaci" ? 'interactive-icon' : ''}`}
+                        alt="List Icon"
+                        src={image}
+                        onClick={(e) => {
+                            if (tag === "dnevni_zadaci") {
+                                e.stopPropagation();
+                                handleStatusChange({target: {checked: !listElementData.zavrsen}});
+                            }
+                        }}
+
+                        title={tag === "dnevni_zadaci" ? (isCompleted ? "Vrati u tok" : "Označi kao završeno") : ""}
+                    />
+                </div>
+
+                <div className="list-element-info">
                 <span className="list-element-title">
-                    {listElementData.title || "Bez naslova"}
-                </span>
-                <span className="list-element-detail">
-                    {listElementData.detail}
-                </span>
-                <span className="list-element-subline">
-                    {listElementData.subline}
-                </span>
-            </div>
+                {listElementData.title || "Bez naslova"}
+        </span>
+                    <span className="list-element-detail">
+            {listElementData.detail}
+        </span>
+                    <span className="list-element-subline">
+            {listElementData.subline}
+        </span>
+                </div>
 
-            {renderActionButtons(isEditable)}
-        </div>
+                {renderActionButtons(isEditable)}
+            </div>
             {updateForm && (
                 <CenteredOverlay className="form-overlay" isVisible={updateForm} onClose={() => setUpdateForm(false)}>
                     <DynamicForm className="form"
-                        schema={selectedSchema}
-                        onClose={() => setUpdateForm(false)}
-                        initialValues={listElementData}
+                                 schema={selectedSchema}
+                                 onClose={() => setUpdateForm(false)}
+                                 initialValues={listElementData}
                                  onSubmit={async (formData) => {
                                      try {
                                          const response = await updateElement(tag, listElementData.id, formData);

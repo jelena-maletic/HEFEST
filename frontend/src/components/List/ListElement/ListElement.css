@@ -166,3 +166,40 @@
 .form-overlay .centered-centered-overlay-backdrop{
     width: 35em;
 }
+
+.interactive-icon {
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.interactive-icon:hover {
+    transform: scale(1.05);
+    opacity: 0.8;
+}
+
+.list-element.completed {
+    background-color: #f4f7f4 !important;
+
+    border-left: 6px solid #8FBC8F;
+
+    opacity: 0.9;
+    transition: all 0.3s ease;
+}
+
+.list-element.completed .list-element-title {
+    text-decoration: line-through;
+    color: #a8a8a8;
+}
+
+.list-element.completed .list-element-detail,
+.list-element.completed .list-element-subline {
+    color: #b0b0b0;
+}
+
+.list-element.completed .list-image {
+    opacity: 0.5;
+}
+
+.list-element.completed .interactive-icon:hover {
+    opacity: 1;
+}
