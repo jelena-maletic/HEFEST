@@ -1,6 +1,7 @@
 import {getJmb} from "../auth/auth.js";
 
 export const projectSchema = {
+    title:"Podaci o projektu",
     submitLabel: "Potvrdi",
     layout: "vertical",
     fields: [
@@ -125,6 +126,7 @@ export const projectSchema = {
 };
 
 export const vehicleSchema = {
+    title:"Podaci o vozilu",
     submitLabel: "Sačuvaj vozilo",
     layout: "vertical",
     fields: [
@@ -217,6 +219,7 @@ export const vehicleSchema = {
 };
 
 export const equipmentSchema = {
+    title:"Podaci o opremi",
     submitLabel: "Sačuvaj opremu",
     layout: "vertical",
     fields: [
@@ -258,6 +261,7 @@ export const equipmentSchema = {
 };
 
 export const materialSchema = {
+    title:"Podaci o materijalu",
     submitLabel: "Sačuvaj materijal",
     layout: "vertical",
     fields: [
@@ -435,6 +439,7 @@ export const assignmentSchema = {
 };
 
 export const dailyTaskSchema = {
+    title:"Podaci o dnevnom zadatku",
     submitLabel: "Kreiraj zadatak",
     layout: "vertical",
     fields: [
