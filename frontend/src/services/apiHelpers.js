@@ -166,6 +166,8 @@ export const createElement = async (tag, data) => {
                     let temp = {
                         id: t.idDnevnogZadatka,
 
+                        tehnicarJmb: t.tehnicar ? String(t.tehnicar.ime + " " + t.tehnicar.prezime) : null,
+
                         title: t.opis,
                         detail: "Datum: " + t.datum,
                         subline: "Tehničar: " + (t.tehnicar?.ime + " " + t.tehnicar?.prezime),

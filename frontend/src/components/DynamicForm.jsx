@@ -59,12 +59,11 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
                             [field.name]: Array.isArray(res.data) ? res.data : [],
                         }));
                     })
-                    .catch((err) => console.error(`Greška: ${field.name}`, err));
+                    .catch((err) => console.error(`Greška pri učitavanju opcija za: ${field.name}`, err));
             }
         });
     }, [schema]);
 
-    // Prati promjenu resourceType polja
     const resourceType = Form.useWatch('resourceType', form);
 
     // 3. Učitavanje ZAVISNIH opcija (Vozila, Oprema, Materijal)
@@ -82,12 +81,9 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
                         [dependentField.name]: options
                     }));
 
-                    // FIX: Ako editujemo postojeći zapis, ne smijemo pregaziti vrijednost sa undefined
-                    // Vraćamo vrijednost iz initialValues ako postoji, inače resetujemo
                     if (initialValues && initialValues[dependentField.name]) {
                         form.setFieldValue(dependentField.name, String(initialValues[dependentField.name]));
                     } else if (!initialValues) {
-                        // Samo ako je kreiranje novog, resetuj polje pri promjeni tipa
                         form.setFieldValue(dependentField.name, undefined);
                     }
                 })
@@ -99,26 +95,47 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
 
     const renderField = (field) => {
         if (field.type === "select") {
-            const options = field.options || dynamicOptions[field.name] || [];
+            const options = dynamicOptions[field.name] || field.options || [];
+
             return (
-                <Select mode={field.mode} placeholder={field.placeholder} allowClear showSearch optionFilterProp="children">
+                <Select
+                    mode={field.mode}
+                    placeholder={field.placeholder}
+                    allowClear
+                    showSearch
+                    optionFilterProp="children" // Pretraga po labeli (imenu)
+                >
                     {options.map((option, index) => {
-                        const label = option.label ||
-                            `${option[field.optionLabel] || option.ime || option.naziv || ''} ${option.prezime || ''}`.trim() ||
-                            `Opcija ${index}`;
+                        // LOGIKA ZA PRIKAZ (Label):
+                        // 1. Ako postoje ime i prezime, spoji ih
+                        // 2. Ako postoji naziv (za vozila/opremu), koristi njega
+                        // 3. Inače koristi polje definisano u šemi ili label/index
+                        let label = "";
+                        if (option.ime && option.prezime) {
+                            label = `${option.ime} ${option.prezime}`;
+                        } else if (option.naziv) {
+                            label = option.naziv;
+                        } else if (field.optionLabel && option[field.optionLabel]) {
+                            label = option[field.optionLabel];
+                        } else {
+                            label = option.label || `Opcija ${index}`;
+                        }
 
-                        // Forsiramo String nad vrijednošću da se poklopi sa formom
-                        const rawValue = field.optionValue && option[field.optionValue] !== undefined
-                            ? option[field.optionValue]
-                            : option.value !== undefined ? option.value : (option.jmb ?? option.id ?? index);
-
+                        // LOGIKA ZA VRIJEDNOST (Value):
+                        // Uzimamo JMB ili ID i pretvaramo u String radi preciznog uparivanja
+                        const rawValue = option.jmb || option.id || option.value || index;
                         const value = String(rawValue);
 
-                        return <Option key={value} value={value}>{label}</Option>;
+                        return (
+                            <Option key={value} value={value}>
+                                {label}
+                            </Option>
+                        );
                     })}
                 </Select>
             );
         }
+
         if (field.type === "password") return <Input.Password placeholder={field.placeholder} />;
         if (field.type === "date") return <DatePicker style={{ width: "100%" }} />;
         if (field.type === "number") return <InputNumber style={{ width: "100%" }} min={field.min} />;
@@ -142,7 +159,6 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
                     {() => (
                         <>
                             {schema.fields.map((field) => {
-                                // Sakrij zavisno polje ako "roditelj" nije odabran
                                 if (field.dependsOn && !form.getFieldValue(field.dependsOn)) {
                                     return null;
                                 }
