@@ -317,6 +317,25 @@ export const materialSchema = {
         },
     ],
 };
+
+export const requestSchema = {
+    submitLabel: "Pošalji zahtjev",
+    layout: "vertical",
+    fields: [
+        {
+            name: 'opis',
+            label: 'Opis zahtjeva',
+            type: "textarea",
+            required: true,
+            span: 24,
+            props: {
+                rows: 4,
+                placeholder: "Unesite detaljan opis zahtjeva..."
+            }
+        },
+    ],
+};
+
 export const changePasswordSchema = {
     title: "Promjena lozinke",
     submitLabel: "Promijeni lozinku",
