@@ -121,8 +121,21 @@ export function List({
 
                             //var response = await createElement(tag, data);
                             //console.log("Podaci iz forme koji idu:", response);
+                            let finalData = { ...data };
+
+                            // Ako je tag "moji_dnevni_zadaci", ručno dodajemo JMB ulogovanog korisnika
+                            if (tag === "moji_dnevni_zadaci") {
+                                // Preuzmi JMB iz sessionStorage (provjeri tačan naziv ključa koji koristiš pri login-u)
+                                const loggedInJmb = sessionStorage.getItem("jmb");
+                                finalData.tehnicarJmb = loggedInJmb;
+
+                                // Takođe, pošto backend vjerovatno očekuje 'ulogovaniJmb' (vidim u tvom Java kodu),
+                                // dodaj i to ako je potrebno za tvoj API request
+                                finalData.ulogovaniJmb = loggedInJmb;
+                            }
                             try {
-                                const responseStatus = await createElement(tag, data);
+                                const apiTag = tag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : tag;
+                                const responseStatus = await createElement(apiTag, finalData);
                                 console.log("Response status:", responseStatus);
 
                                 if (responseStatus >= 200 && responseStatus < 300) {

@@ -75,7 +75,7 @@ function Login({roleHandle}) {
     return (
         <div className="login-container">
             <img src={hefestLogo} alt="Hefest logo" className="logo-icon" />
-            <h2 className="title">Sign in</h2>
+            <h2 className="title">Dobrodošli!</h2>
 
             <img src={loginIcon} alt="User icon" className="login-icon" />
 
@@ -84,7 +84,7 @@ function Login({roleHandle}) {
                     <img src={usernameIcon} alt="User" className="input-icon" />
                     <input
                         type="text"
-                        placeholder="Username"
+                        placeholder="Korisničko ime"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         onDrop={(e) => e.preventDefault()}
@@ -96,7 +96,7 @@ function Login({roleHandle}) {
                     <img src={lockIcon} alt="Lock" className="input-icon" />
                     <input
                         type={showPassword ? "text" : "password"}
-                        placeholder="Password"
+                        placeholder="Lozinka"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         onDrop={(e) => e.preventDefault()}
@@ -112,7 +112,7 @@ function Login({roleHandle}) {
 
                 {error && <p className="error-message">{`${error}`}</p>}
 
-                <button className="login-button" type="submit">Log in</button>
+                <button className="login-button" type="submit">Prijavi se</button>
             </form>
         </div>
     );

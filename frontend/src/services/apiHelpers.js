@@ -32,19 +32,42 @@ export const createElement = async (tag, data) => {
 };
 
     export const deleteElement = async (tag, id) => {
-        const response = await axios.delete(`${API_BASE}/${tag}/${id}`);
+        const apiTag = tag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : tag;
+        const response = await axios.delete(`${API_BASE}/${apiTag}/${id}`);
         return response.status;
     };
 
-    export const updateElement = async (tag, id, data) => {
-        const response = await axios.put(`${API_BASE}/${tag}/${id}`, data);
+export const updateElement = async (tag, id, data) => {
+    // 1. Mapiranje rute (oba idu na isti endpoint na backendu)
+    const apiRoute = tag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : tag;
+
+    let finalData = { ...data };
+
+    // 2. Logika za JMB: Samo ako je ORIGINALNI tag "moji_dnevni_zadaci"
+    if (tag === "moji_dnevni_zadaci") {
+        const ulogovaniJmb = getJmb();
+        finalData.tehnicarJmb = ulogovaniJmb;
+        finalData.ulogovaniJmb = ulogovaniJmb;
+        console.log("Dodijeljen sopstveni JMB za update:", finalData.tehnicarJmb);
+    }
+
+    try {
+        // 3. KORISTI api.service(false) umjesto običnog axios-a
+        // false vjerovatno znači da ne koristiš "multipart/form-data" već običan JSON
+        const response = await api.service(false).put(`/${apiRoute}/${id}`, finalData);
+
         return response.status;
-    };
+    } catch (error) {
+        console.error(`Greška pri ažuriranju taga ${tag}:`, error);
+        throw error;
+    }
+};
 
     export const fetchData = async (tag, filterPoslovodja = null, filterTehnicar=null) => {
         let response;
+        const apiTag = tag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : tag;
         try {
-            response = await api.service(false).get(`/${tag}`);
+            response = await api.service(false).get(`/${apiTag}`);
         } catch (error) {
             console.error("Greška pri dohvatanju podataka: " + error);
             return [];
@@ -56,6 +79,18 @@ export const createElement = async (tag, data) => {
         }
 
         let dataArray = Array.isArray(response.data) ? response.data : [response.data]
+
+        const isZadatakTag = (tag === "dnevni_zadaci" || tag === "moji_dnevni_zadaci");
+
+        if (isZadatakTag && filterPoslovodja) {
+            const ulogovaniJmb = getJmb();
+            dataArray = dataArray.filter(t => t.poslovodja?.jmb === ulogovaniJmb);
+        }
+
+        if (isZadatakTag && filterTehnicar) {
+            const ulogovaniJmb = getJmb();
+            dataArray = dataArray.filter(t => t.tehnicar?.jmb === ulogovaniJmb);
+        }
 
         if (tag === "projekti" && filterPoslovodja) {
             const ulogovaniJmb = getJmb();
@@ -160,6 +195,7 @@ export const createElement = async (tag, data) => {
                 })
             }
 
+            case "moji_dnevni_zadaci":
             case "dnevni_zadaci":
             {
                 return dataArray.flatMap((t) => {

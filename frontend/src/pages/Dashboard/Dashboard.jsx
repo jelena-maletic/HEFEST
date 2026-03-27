@@ -162,11 +162,11 @@ export function Dashboard({sidebarContents, role}) {
 
                     {activeScreen === "tasks" && (
                         <List
-                            isEditable={false}
+                            isEditable={true}
                             listTitle="Moji dnevni zadaci"
                             screenState="tasks"
-                            tag="dnevni_zadaci"
-                            filterByTehnicar={true} /*filterByTehnicar treba staviti i napraviti*/
+                            tag="moji_dnevni_zadaci"
+                            filterByTehnicar={true}
                             onClick={(data) => handleOpenDetails(data, "dnevni_zadaci")}
                         />
                     )}
@@ -216,7 +216,8 @@ export function Dashboard({sidebarContents, role}) {
                             onDelete={async () => {
                                 try {
 
-                                    const responseStatus = await deleteElement(currentTag, rawEntityData.id);
+                                    const apiTag = currentTag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : currentTag;
+                                    const responseStatus = await deleteElement(apiTag, rawEntityData.id);
 
                                     if (responseStatus >= 200 && responseStatus < 300) {
                                         notify.success("Obrisano", "Element je uspješno uklonjen.");
@@ -242,7 +243,9 @@ export function Dashboard({sidebarContents, role}) {
                         initialValues={rawEntityData}
                         onSubmit={async (formData) => {
                             try {
-                                await updateElement(currentTag, rawEntityData.id, formData);
+                                /*const apiTag = currentTag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : currentTag;*/
+                                console.log(rawEntityData.id);
+                                await updateElement(tag, rawEntityData.id, formData);
                                 notify.success("Izmijenjeno", "Podaci su uspješno ažurirani.");
                                 setIsEditFormVisible(false);
                                 setIsDetailVisible(false); // Zatvori i detalje da se osvježi lista

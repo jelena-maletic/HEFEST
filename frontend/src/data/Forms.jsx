@@ -464,3 +464,23 @@ export const dailyTaskSchema = {
         }
     ],
 };
+export const myDailyTaskSchema = {
+    submitLabel: "Kreiraj moj zadatak",
+    layout: "vertical",
+    fields: [
+        {
+            name: "opis",
+            label: "Opis zadatka",
+            type: "textarea",
+            required: true,
+            span: 24,
+        },
+        {
+            name: "datum",
+            label: "Datum",
+            type: "date",
+            required: true,
+            span: 12,
+        }
+    ],
+};
