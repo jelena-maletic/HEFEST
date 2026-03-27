@@ -216,8 +216,8 @@ export const createElement = async (tag, data) => {
                     const tehnicari = [];
                     let temp = {
                         title: t.ime + " " + t.prezime,
-                        detail: t.idProjekta,
-                        subline: t.detalji
+                        detail: t.brojTelefona,
+                        subline: t.email
                     };
                     Object.assign(temp, t);
 
