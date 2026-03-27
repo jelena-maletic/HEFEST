@@ -101,6 +101,7 @@ public class DnevniZadatakService {
     }
 
     public DnevniZadatak updateZadatak(Integer id, DnevniZadatakRequest request) {
+        System.out.println("PROVJERAAAAA IDDD "+id);
         DnevniZadatakEntity entity = dnevniZadatakRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Zadatak nije pronađen"));
 
@@ -114,6 +115,7 @@ public class DnevniZadatakService {
         DnevniZadatakEntity saved = dnevniZadatakRepository.save(entity);
 
         DnevniZadatak dto = modelMapper.map(saved, DnevniZadatak.class);
+        System.out.println("PROVJERAAAAA IDDD MALO TO IZRAZENIJE "+saved.getId());
         dto.setIdDnevnogZadatka(saved.getId());
         return dto;
     }
