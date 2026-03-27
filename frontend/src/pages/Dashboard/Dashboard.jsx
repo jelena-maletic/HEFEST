@@ -45,7 +45,9 @@ export function Dashboard({sidebarContents, role}) {
         "radna-oprema": "TOOL",
         "materijal": "MATERIAL",
         "dnevni_izvjestaji": "REPORT",
-        "dnevni_zadaci": "TASK"
+        "dnevni_zadaci": "TASK",
+        "zahtjevi": "REQUEST",
+        "new-request": "REQUEST"
     };
     /*const handleOpenDetails = (rawData, tag) => {
         const type = TAG_MAP[tag];
@@ -197,6 +199,15 @@ export function Dashboard({sidebarContents, role}) {
                             screenState="user"
                             tag={selectedEmployeeTag}
                             onClick={(data) => handleOpenDetails(data, selectedEmployeeTag)}
+                        />
+                    )}
+                    {activeScreen === "new-request" && (
+                        <List
+                            isEditable={true}
+                            listTitle={screenTitle}
+                            screenState="request-overview"
+                            tag="zahtjevi"
+                            onClick={(data) => handleOpenDetails(data, "zahtjevi")}
                         />
                     )}
                 </main>

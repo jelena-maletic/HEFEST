@@ -202,6 +202,8 @@ export const updateElement = async (tag, id, data) => {
                     let temp = {
                         id: t.idDnevnogZadatka,
 
+                        tehnicarJmb: t.tehnicar ? String(t.tehnicar.ime + " " + t.tehnicar.prezime) : null,
+
                         title: t.opis,
                         detail: "Datum: " + t.datum,
                         subline: "Tehničar: " + (t.tehnicar?.ime + " " + t.tehnicar?.prezime),
@@ -250,8 +252,8 @@ export const updateElement = async (tag, id, data) => {
                     const tehnicari = [];
                     let temp = {
                         title: t.ime + " " + t.prezime,
-                        detail: t.idProjekta,
-                        subline: t.detalji
+                        detail: t.brojTelefona,
+                        subline: t.email
                     };
                     Object.assign(temp, t);
 
