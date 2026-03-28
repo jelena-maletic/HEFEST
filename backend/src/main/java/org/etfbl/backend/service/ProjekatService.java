@@ -35,18 +35,7 @@ public class ProjekatService {
     public List<Projekat> getAllProjekti() {
         return projekatRepository.findAll().stream()
                 .filter(p -> !p.getObrisan())
-                .map(projekatEntity -> {
-                    Projekat dto = modelMapper.map(projekatEntity, Projekat.class);
-                    Integer id = projekatEntity.getIdProjekta();
-
-                    String managerJmb = poslovodjaUpravljaProjektomRepository.findPoslovodjaJmbByIdProjekta(id);
-                    dto.setPoslovodja(managerJmb);
-                    List<String> tehnicari = tehnicarNaProjektuRepository.findTehnicarJMBByIdProjekta(id);
-                    dto.setTimTehnicara(tehnicari);
-
-
-                    return dto;
-                })
+                .map(this::mapToDto) // Koristimo pomoćnu metodu
                 .toList();
     }
 
@@ -100,10 +89,24 @@ public class ProjekatService {
 
     public Projekat getProjekatById(Integer id) throws NotFoundException {
         ProjekatEntity entity = projekatRepository.findById(id)
+                .filter(p -> !p.getObrisan())
                 .orElseThrow(() -> new NotFoundException("Projekat sa id-om " + id + " nije pronađen."));
 
-        return modelMapper.map(entity, Projekat.class);
-    }//ne dohvati poslovodju i tehnicare dobro (TODO)
+        return mapToDto(entity);
+    }
+
+    private Projekat mapToDto(ProjekatEntity entity) {
+        Projekat dto = modelMapper.map(entity, Projekat.class);
+        Integer id = entity.getIdProjekta();
+
+        String managerJmb = poslovodjaUpravljaProjektomRepository.findPoslovodjaJmbByIdProjekta(id);
+        dto.setPoslovodja(managerJmb);
+
+        List<String> tehnicari = tehnicarNaProjektuRepository.findTehnicarJMBByIdProjekta(id);
+        dto.setTimTehnicara(tehnicari);
+
+        return dto;
+    }
 
     public void obrisiProjekat(Integer id) {
         if (!projekatRepository.existsById(id)) {
