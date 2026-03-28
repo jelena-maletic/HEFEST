@@ -107,7 +107,6 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
         if (field.type === "location") {
             return (
                 <LocationPicker
-
                     initialValue={form.getFieldValue(field.name)}
                     onLocationSelected={(coords) => {
                         form.setFieldsValue({ [field.name]: coords });
