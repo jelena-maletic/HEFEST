@@ -14,8 +14,8 @@ import {deleteElement, getTehnicarData, updateElement, updateTehnicarAktivnost} 
 import { useNotification } from "../../components/NotificationContext.jsx";
 import DynamicForm from "../../components/DynamicForm.jsx";
 import { schemaMap } from "../../data/SchemaMap.jsx";
-import {data} from "react-router-dom";
 import { useEffect } from "react";
+import { reverseGeocode } from "../../utils/reverseGeocode.js";
 
 
 export function Dashboard({sidebarContents, role}) {
@@ -82,14 +82,30 @@ export function Dashboard({sidebarContents, role}) {
         if (!type) return;
 
         setCurrentTag(tag);
+
+        // Kopiramo rawData da ne bismo mutirali originalni objekt iz liste
+        let enrichedData = { ...rawData };
+
         try {
-            const formatted = await formatEntityDetails(rawData, type, role);
+            // AKO JE PROJEKAT: Pretvaramo koordinate u adresu
+            if (type === 'PROJECT' && rawData.lokacija) {
+                // Pozivamo tvoju funkciju iz utils
+                const stvarnaAdresa = await reverseGeocode(rawData.lokacija);
+                // Dodajemo novo polje koje će mapper prepoznati
+                enrichedData.lokacijaNaziv = stvarnaAdresa;
+            }
+
+            // Formatiramo podatke (sada enrichedData ima lokacijaNaziv, managerIme, itd.)
+            const formatted = await formatEntityDetails(enrichedData, type, role);
+
+            // Punimo state-ove za prikaz
             setDetailData(formatted.items);
-            setRawEntityData(rawData);
+            setRawEntityData(enrichedData); // Čuvamo obogaćene podatke (sa adresom)
             setEntityType(type);
             setIsDetailVisible(true);
         } catch (error) {
-            console.error("Greška pri formatiranju detalja:", error);
+            console.error("Greška pri otvaranju detalja:", error);
+            notify.error("Greška", "Neuspješno učitavanje detalja.");
         }
     };
 
@@ -97,12 +113,6 @@ export function Dashboard({sidebarContents, role}) {
         setIsDetailVisible(false);
         setDetailData(null);
     };
-
-    const handleEdit = () => {
-        console.log("Otvaram formu za uređivanje:", rawEntityData);
-        // Ovdje ćeš kasnije dodati navigaciju na formu ili novi modal
-    };
-
 
     const toggleStatus = async () => {
         const jmb = sessionStorage.getItem("jmb");

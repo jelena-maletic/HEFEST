@@ -1,5 +1,3 @@
-import {getJmb} from "../auth/auth.js";
-
 export const projectSchema = {
     title:"Podaci o projektu",
     submitLabel: "Potvrdi",
@@ -97,7 +95,7 @@ export const projectSchema = {
         {
             name: "lokacija",
             label: "Adresa / Lokacija radilišta",
-            type: "textarea",
+            type: "location",
             required: true,
             span: 24,
         },

@@ -1,5 +1,6 @@
 import { mappers } from '../data/mapper.jsx';
 import { getNazivPoJmb } from '../services/apiHelpers'; // Obavezno uvezi funkciju
+import {reverseGeocode} from './reverseGeocode.js';
 
 export const formatEntityDetails = async (entityData, entityType, userRole) => {
     const mapperConfig = mappers[entityType];
@@ -11,24 +12,25 @@ export const formatEntityDetails = async (entityData, entityType, userRole) => {
 
     const { title, mapper } = mapperConfig;
 
-    // --- LOGIKA ZA OBOGAĆIVANJE PODATAKA ---
-    // Ako je entitet projekat, pretvaramo JMB-ove u Imena i Prezimena
     if (entityType === 'PROJECT') {
-        // 1. Dohvatanje imena poslovođe (manager)
+        if (entityData.lokacija) {
+            entityData.lokacijaNaziv = await reverseGeocode(entityData.lokacija);
+        }
+
+
         if (entityData.manager) {
             entityData.managerIme = await getNazivPoJmb(entityData.manager);
         }
 
-        // 2. Dohvatanje imena tima tehničara (projectTeam)
+
         if (entityData.projectTeam && Array.isArray(entityData.projectTeam)) {
-            // Promise.all omogućava da se svi mrežni zahtjevi pokrenu istovremeno
+
             entityData.projectTeamImena = await Promise.all(
                 entityData.projectTeam.map(jmb => getNazivPoJmb(jmb))
             );
         }
     }
 
-    // Pozivamo maper koji sada u 'entityData' ima i nove atribute: managerIme i projectTeamImena
     const allItems = mapper(entityData, userRole);
 
     return {

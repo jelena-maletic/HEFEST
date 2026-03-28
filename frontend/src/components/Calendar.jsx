@@ -5,6 +5,7 @@ import "./Calendar.css";
 
 import {fetchProjects} from "../services/apiHelpers.js";
 import CenteredOverlay from "./CenteredOverlay/CenteredOverlay.jsx";
+import { reverseGeocode } from "../utils/reverseGeocode.js";
 
 function Calendar() {
     const [events, setEvents] = useState([]);
@@ -71,9 +72,25 @@ function Calendar() {
     }, []);
 
 
-    const handleEventClick = (info) => {
+
+    const handleEventClick = async (info) => {
         info.jsEvent.preventDefault();
-        setSelectedProject(info.event.extendedProps);
+
+
+        const projectData = { ...info.event.extendedProps };
+
+
+        if (projectData.lokacija && !projectData.lokacijaNaziv) {
+
+            setSelectedProject({ ...projectData, lokacijaNaziv: "Učitavanje lokacije..." });
+
+            const adresa = await reverseGeocode(projectData.lokacija);
+
+
+            setSelectedProject({ ...projectData, lokacijaNaziv: adresa });
+        } else {
+            setSelectedProject(projectData);
+        }
     };
 
     return (
@@ -81,11 +98,10 @@ function Calendar() {
             <FullCalendar
                 plugins={[dayGridPlugin]}
                 initialView="dayGridMonth"
-                // Umesto importa, definišemo lokalizaciju direktno:
                 locale={{
                     code: 'sr-latn',
                     week: {
-                        dow: 1, // Ponedeljak je prvi dan u nedelji
+                        dow: 1,
                         doy: 4,
                     },
                     buttonText: {
@@ -99,7 +115,6 @@ function Calendar() {
                     },
                     weekText: 'Sed',
                     allDayText: 'Cijeli dan',
-                    moreLinkText: (n) => '+ još ' + n,
                     noEventsText: 'Nema događaja za prikaz',
                     monthNames: ['Januar', 'Februar', 'Mart', 'April', 'Maj', 'Jun', 'Jul', 'Avgust', 'Septembar', 'Oktobar', 'Novembar', 'Decembar'],
                     monthNamesShort: ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Avg', 'Sep', 'Okt', 'Nov', 'Dec'],
@@ -121,7 +136,9 @@ function Calendar() {
                 <div className="modal-overlay">
                     <div className="modal fade-in">
                         <h3>Projekat: {selectedProject.naziv}</h3>
-                        <p><strong>Lokacija:</strong> {selectedProject.lokacija}</p>
+                        <p>
+                            <strong>Lokacija:</strong> {selectedProject.lokacijaNaziv || selectedProject.lokacija || "Nije definisana"}
+                        </p>
                         <p>
                             <strong>Početak:</strong> {
                             selectedProject.pocetakRada

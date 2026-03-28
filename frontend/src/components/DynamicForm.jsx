@@ -3,8 +3,8 @@ import { Form, Input, Button, Select, DatePicker, InputNumber, Card } from "antd
 import dayjs from "dayjs";
 import './DynamicForm.css';
 import { getJmb } from "../auth/auth.js";
-import api from "../auth/axiosInstance.js"; // OSIGURAJ DA JE PUTANJA TAČNA
-
+import api from "../auth/axiosInstance.js";
+import LocationPicker from "../components/LocationPicker/LocationPicker.jsx";
 const { Option } = Select;
 
 const componentMap = {
@@ -19,23 +19,23 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
     const [form] = Form.useForm();
     const [dynamicOptions, setDynamicOptions] = useState({});
 
-    // 1. Postavljanje inicijalnih vrijednosti i formatiranje podataka
+
     useEffect(() => {
         if (initialValues && schema?.fields) {
             const formattedValues = { ...initialValues };
             schema.fields.forEach(field => {
-                // Formatiranje datuma za DatePicker
+
                 if (field.type === 'date' && formattedValues[field.name]) {
                     formattedValues[field.name] = dayjs(formattedValues[field.name]);
                 }
 
-                // Rješavanje "value should be array" warninga za multiple select
+
                 if (field.type === 'select' && field.mode === 'multiple') {
                     formattedValues[field.name] = Array.isArray(formattedValues[field.name])
                         ? formattedValues[field.name].map(val => String(val))
                         : [];
                 }
-                // Pretvaranje običnog selecta u string radi lakšeg uparivanja
+
                 else if (field.type === 'select' && formattedValues[field.name] !== undefined && formattedValues[field.name] !== null) {
                     formattedValues[field.name] = String(formattedValues[field.name]);
                 }
@@ -46,7 +46,7 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
         }
     }, [initialValues, schema, form]);
 
-    // 2. Učitavanje nezavisnih Select opcija koristeći AUTHORIZED api.service
+
     useEffect(() => {
         if (!schema?.fields) return;
 
@@ -60,7 +60,7 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
                     finalUrl = finalUrl.replace(":jmb", trenutniJmb);
                 }
 
-                // Koristimo api.service da izbjegnemo 403 Forbidden
+
                 api.service(false).get(finalUrl)
                     .then((res) => {
                         setDynamicOptions((prev) => ({
@@ -75,7 +75,7 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
 
     const resourceType = Form.useWatch('resourceType', form);
 
-    // 3. Učitavanje ZAVISNIH opcija (Vozila, Oprema, Materijal)
+
     useEffect(() => {
         const dependentField = schema?.fields?.find(f => f.dependsOn === 'resourceType');
 
@@ -103,9 +103,22 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
     if (!schema || !schema.fields) return null;
 
     const renderField = (field) => {
+
+        if (field.type === "location") {
+            return (
+                <LocationPicker
+
+                    initialValue={form.getFieldValue(field.name)}
+                    onLocationSelected={(coords) => {
+                        form.setFieldsValue({ [field.name]: coords });
+                    }}
+                />
+            );
+        }
+
+
         if (field.type === "select") {
             const options = dynamicOptions[field.name] || field.options || [];
-
             return (
                 <Select
                     mode={field.mode}
@@ -139,6 +152,7 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
             );
         }
 
+
         if (field.type === "password") return <Input.Password placeholder={field.placeholder} />;
         if (field.type === "date") return <DatePicker style={{ width: "100%" }} />;
         if (field.type === "number") return <InputNumber style={{ width: "100%" }} min={field.min} />;
@@ -153,7 +167,7 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
                 form={form}
                 layout="vertical"
                 onFinish={(values) => {
-                    // Konverzija dayjs objekata u ISO stringove pre slanja na backend
+
                     const cleanedValues = { ...values };
                     schema.fields.forEach(f => {
                         if (f.type === 'date' && cleanedValues[f.name]) {

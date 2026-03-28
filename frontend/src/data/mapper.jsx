@@ -2,8 +2,17 @@ import React from 'react';
 import { Tag } from 'antd';
 import {formatDate, getStatusTagColor, getPriorityTagColor, calculateAgeFromJMBG} from '../utils/dataHelpers';
 import TimesheetViewer from '../components/TimesheetViewer/TimesheetViewer.jsx';
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+import greenPinIcon from "../assets/green-pin.svg";
+import {MapContainer, Marker, TileLayer} from "react-leaflet";
 
 
+const detailIcon = new L.Icon({
+    iconUrl: greenPinIcon,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+});
 const safeValue = (value, fallback = 'Nema informacija') => {
     if (value === null || value === undefined || value === "") return fallback;
     return value;
@@ -35,7 +44,74 @@ const mapProjectDetails = (data,role) => {
         { section: 'Osnovni Detalji', label: 'Prioritet', value: data.prioritet, key: 'prio',
             render: (v) => <Tag color={getPriorityTagColor(v)}>{v}</Tag> },
         { section: 'Osnovni Detalji', label: 'Klijent', value: data.klijent, key: 'klijent' },
-        { section: 'Osnovni Detalji', label: 'Lokacija', value: data.lokacija, key: 'lokacija' },
+        {
+            section: 'Osnovni Detalji',
+            label: 'Lokacija',
+            value: data.lokacijaNaziv || data.lokacija,
+            key: 'lokacija',
+            span: 3,
+            render: (textValue) => {
+                console.log("DEBUG LOKACIJA:", data.lokacija);
+                // 1. Izdvajanje koordinata (očekuje se "44.79..., 17.20...")
+                const rawLocation = data.lokacija;
+                let coords = null;
+
+                if (rawLocation && typeof rawLocation === 'string' && rawLocation.includes(',')) {
+                    // split(',') pravi niz ["44.79...", " 17.20..."]
+                    // trim() uklanja razmake, a Number() pretvara u čisti broj
+                    const parts = rawLocation.split(',').map(p => p.trim());
+                    const lat = Number(parts[0]);
+                    const lng = Number(parts[1]);
+
+                    // Provjera da li su oba broja ispravna (nisu NaN)
+                    if (!isNaN(lat) && !isNaN(lng)) {
+                        coords = [lat, lng];
+                    }
+                }
+
+                return (
+                    <div style={{ width: '100%' }}>
+                        {/* Prikaz adrese (npr. Banja Luka, Kralja Petra...) */}
+                        <div style={{ marginBottom: '10px', fontWeight: '500', color: 'rgba(0, 0, 0, 0.85)' }}>
+                            {textValue || "Lokacija nije definisana"}
+                        </div>
+
+                        {coords ? (
+                            <div style={{ height: '250px', width: '100%', borderRadius: '8px', border: '1px solid #d9d9d9', overflow: 'hidden' }}>
+                                <MapContainer
+                                    // key je obavezan da bi React "resetovao" mapu pri svakom novom otvaranju detalja
+                                    key={`map-${coords[0]}-${coords[1]}`}
+                                    center={coords}
+                                    zoom={15}
+                                    style={{ height: '100%', width: '100%' }}
+                                    scrollWheelZoom={false}
+                                >
+                                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                                    <Marker position={coords} icon={detailIcon} />
+                                </MapContainer>
+                            </div>
+                        ) : (
+                            <div style={{ padding: '8px', background: '#fff1f0', border: '1px solid #ffa39e', borderRadius: '4px', color: '#cf1322' }}>
+                                ⚠️ Format koordinata u bazi nije ispravan za prikaz mape.
+                            </div>
+                        )}
+
+                        {coords && (
+                            <div style={{ marginTop: '10px' }}>
+                                <a
+                                    href={`https://www.google.com/maps?q=${coords[0]},${coords[1]}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    style={{ fontSize: '13px', fontWeight: 'bold', color: '#1890ff' }}
+                                >
+                                    🗺️ Otvori navigaciju (Google Maps)
+                                </a>
+                            </div>
+                        )}
+                    </div>
+                );
+            }
+        },
         { section: 'Vremenski Okvir', label: 'Status', value: data.status, key: 'status',
             render: (v) => <Tag color={getStatusTagColor(v)}>{v}</Tag> },
         { section: 'Vremenski Okvir', label: 'Početak rada', value: formatDate(data.pocetakRada)|| "Nije počelo", key: 'start' },

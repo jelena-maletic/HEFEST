@@ -63,6 +63,7 @@ const EntityDetailCard = ({
         setShowConfirm(true);
     };
 
+
     const extraActions = (
         <Space className="card-actions">
             {canPerformActions && !binaryChoice && onEdit && <Button icon={<EditOutlined/>} onClick={onEdit}>Uredi</Button>}
