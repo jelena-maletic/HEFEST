@@ -28,12 +28,23 @@ const EntityDetailCard = ({
                               onEdit,
                               onDelete,
                           }) => {
+
+    const role = userRole?.toLowerCase();
+
+    const PERMISSIONS = {
+        'PROJECT': ['direktor'],
+        'VEHICLE': ['magacioner'],
+        'TOOL': ['magacioner'],
+        'MATERIAL': ['magacioner'],
+        'TASK': ['poslovodja'],
+
+    };
+
+    const canPerformActions = PERMISSIONS[entityType]?.includes(role);
+
     const [showConfirm, setShowConfirm] = useState(false);
     const IconComponent = IconMap[entityType] || IconMap.DEFAULT;
     const showTimeline = isProject;
-    const canPerformActions =
-        userRole?.toLowerCase() === 'direktor' &&
-        entityType === 'PROJECT';
 
     if (loading) {
         return (
