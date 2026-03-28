@@ -20,7 +20,8 @@ export function List({
                          dividerWidth = "60%",
                          tag,
                          filterByPoslovodja,
-                        filterByTehnicar
+                         filterByTehnicar,
+                         onSuccess
                      }) {
 
     const notify = useNotification();
@@ -35,6 +36,7 @@ export function List({
     };
 
     useEffect(() => {
+        if (onSuccess) onSuccess(reloadData);
         reloadData();
     }, [tag]);
 

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Select, DatePicker, InputNumber, Card } from "antd";
-import axios from "axios";
 import dayjs from "dayjs";
 import './DynamicForm.css';
 import { getJmb } from "../auth/auth.js";
+import api from "../auth/axiosInstance.js"; // OSIGURAJ DA JE PUTANJA TAČNA
 
 const { Option } = Select;
 
@@ -19,16 +19,24 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
     const [form] = Form.useForm();
     const [dynamicOptions, setDynamicOptions] = useState({});
 
-    // 1. Postavljanje inicijalnih vrijednosti i formatiranje datuma
+    // 1. Postavljanje inicijalnih vrijednosti i formatiranje podataka
     useEffect(() => {
         if (initialValues && schema?.fields) {
             const formattedValues = { ...initialValues };
             schema.fields.forEach(field => {
+                // Formatiranje datuma za DatePicker
                 if (field.type === 'date' && formattedValues[field.name]) {
                     formattedValues[field.name] = dayjs(formattedValues[field.name]);
                 }
-                // Osiguravamo da su ID-jevi stringovi radi lakšeg uparivanja u Select-u
-                if (field.type === 'select' && formattedValues[field.name]) {
+
+                // Rješavanje "value should be array" warninga za multiple select
+                if (field.type === 'select' && field.mode === 'multiple') {
+                    formattedValues[field.name] = Array.isArray(formattedValues[field.name])
+                        ? formattedValues[field.name].map(val => String(val))
+                        : [];
+                }
+                // Pretvaranje običnog selecta u string radi lakšeg uparivanja
+                else if (field.type === 'select' && formattedValues[field.name] !== undefined && formattedValues[field.name] !== null) {
                     formattedValues[field.name] = String(formattedValues[field.name]);
                 }
             });
@@ -38,7 +46,7 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
         }
     }, [initialValues, schema, form]);
 
-    // 2. Učitavanje nezavisnih Select opcija (oni koji imaju direktan apiEndpoint)
+    // 2. Učitavanje nezavisnih Select opcija koristeći AUTHORIZED api.service
     useEffect(() => {
         if (!schema?.fields) return;
 
@@ -52,7 +60,8 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
                     finalUrl = finalUrl.replace(":jmb", trenutniJmb);
                 }
 
-                axios.get(finalUrl)
+                // Koristimo api.service da izbjegnemo 403 Forbidden
+                api.service(false).get(finalUrl)
                     .then((res) => {
                         setDynamicOptions((prev) => ({
                             ...prev,
@@ -73,7 +82,7 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
         if (dependentField && resourceType && dependentField.endpoints) {
             const url = dependentField.endpoints[resourceType];
 
-            axios.get(url)
+            api.service(false).get(url)
                 .then(res => {
                     const options = Array.isArray(res.data) ? res.data : [];
                     setDynamicOptions(prev => ({
@@ -103,13 +112,9 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
                     placeholder={field.placeholder}
                     allowClear
                     showSearch
-                    optionFilterProp="children" // Pretraga po labeli (imenu)
+                    optionFilterProp="children"
                 >
                     {options.map((option, index) => {
-                        // LOGIKA ZA PRIKAZ (Label):
-                        // 1. Ako postoje ime i prezime, spoji ih
-                        // 2. Ako postoji naziv (za vozila/opremu), koristi njega
-                        // 3. Inače koristi polje definisano u šemi ili label/index
                         let label = "";
                         if (option.ime && option.prezime) {
                             label = `${option.ime} ${option.prezime}`;
@@ -121,8 +126,6 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
                             label = option.label || `Opcija ${index}`;
                         }
 
-                        // LOGIKA ZA VRIJEDNOST (Value):
-                        // Uzimamo JMB ili ID i pretvaramo u String radi preciznog uparivanja
                         const rawValue = option.jmb || option.id || option.value || index;
                         const value = String(rawValue);
 
@@ -150,7 +153,15 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
                 form={form}
                 layout="vertical"
                 onFinish={(values) => {
-                    onSubmit(values);
+                    // Konverzija dayjs objekata u ISO stringove pre slanja na backend
+                    const cleanedValues = { ...values };
+                    schema.fields.forEach(f => {
+                        if (f.type === 'date' && cleanedValues[f.name]) {
+                            cleanedValues[f.name] = cleanedValues[f.name].toISOString();
+                        }
+                    });
+
+                    onSubmit(cleanedValues);
                     form.resetFields();
                     onClose?.();
                 }}
@@ -163,12 +174,9 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
                                     return null;
                                 }
 
-                                const schemaRules = field.rules || [];
-
-                                // Dodajemo required rule na početak niza ako je polje označeno kao obavezno
                                 const finalRules = [
                                     { required: field.required, message: field.requiredMessage || "Obavezno polje" },
-                                    ...schemaRules
+                                    ...(field.rules || [])
                                 ];
 
                                 return (
