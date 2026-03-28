@@ -176,7 +176,7 @@ export function Dashboard({sidebarContents, role}) {
 
                     {activeScreen === "tasks" && (
                         <List
-                            isEditable={true}
+                            isEditable={ role === "poslovodja"}
                             listTitle="Moji dnevni zadaci"
                             screenState="tasks"
                             tag="moji_dnevni_zadaci"
@@ -188,7 +188,7 @@ export function Dashboard({sidebarContents, role}) {
 
                     {activeScreen === "manage-tasks" && (
                         <List
-                            isEditable={true}
+                            isEditable={role === "poslovodja"}
                             listTitle="Upravljanje zadacima"
                             screenState="manage_tasks"
                             tag="dnevni_zadaci"
