@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Card, Descriptions, Button, Space, Empty, Spin} from 'antd';
-import {InfoCircleOutlined, ToolOutlined, TeamOutlined, EditOutlined, DeleteOutlined} from '@ant-design/icons';
+import {InfoCircleOutlined, ToolOutlined, TeamOutlined, EditOutlined, DeleteOutlined, CheckOutlined, CloseOutlined} from '@ant-design/icons';
 import ProjectTimeline from '../ProjectTimeline/ProjectTimeline.jsx';
 import './EntityDetailCard.css';
 import projectIcon from '../../assets/projects.svg';
@@ -25,8 +25,10 @@ const EntityDetailCard = ({
                               isProject = false,
                               loading = false,
                               userRole,
-                              onEdit,
-                              onDelete,
+                              onEdit = null,
+                              onDelete = null,
+                              onConfirm = null,
+                              onDeny = null
                           }) => {
 
     const role = userRole?.toLowerCase();
@@ -37,10 +39,11 @@ const EntityDetailCard = ({
         'TOOL': ['magacioner'],
         'MATERIAL': ['magacioner'],
         'TASK': ['poslovodja'],
-
+        'REQUEST': ['magacioner'],
     };
 
     const canPerformActions = PERMISSIONS[entityType]?.includes(role);
+    const binaryChoice = canPerformActions && entityType === 'REQUEST';
 
     const [showConfirm, setShowConfirm] = useState(false);
     const IconComponent = IconMap[entityType] || IconMap.DEFAULT;
@@ -62,10 +65,12 @@ const EntityDetailCard = ({
 
     const extraActions = (
         <Space className="card-actions">
-            {canPerformActions && onEdit && <Button icon={<EditOutlined/>} onClick={onEdit}>Uredi</Button>}
-            {canPerformActions && onDelete && <Button danger icon={<DeleteOutlined/>} onClick={handleDeleteClick}>
+            {canPerformActions && !binaryChoice && onEdit && <Button icon={<EditOutlined/>} onClick={onEdit}>Uredi</Button>}
+            {canPerformActions && !binaryChoice && onDelete && <Button danger icon={<DeleteOutlined/>} onClick={handleDeleteClick}>
                 Obriši
             </Button>}
+            {binaryChoice && onConfirm && <Button icon={<CheckOutlined/>} onClick={onConfirm}> Potvrdi </Button>}
+            {binaryChoice && onDeny && <Button icon={<CloseOutlined/>} onClick={onDeny}> Odbij </Button>}
         </Space>
     );
 

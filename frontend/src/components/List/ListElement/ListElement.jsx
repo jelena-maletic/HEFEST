@@ -2,7 +2,7 @@ import './ListElement.css';
 import React, {useState} from 'react';
 import {SmallButton} from "../../SmallButton.jsx";
 import {loadAssets} from "../../../utils/dataHelpers.js";
-import {deleteElement, updateElement} from "../../../services/apiHelpers.js";
+import {deleteElement, updateElement, updateZahtjevStatus} from "../../../services/apiHelpers.js";
 import CenteredOverlay from "../../CenteredOverlay/CenteredOverlay.jsx";
 import DynamicForm from "../../DynamicForm.jsx";
 import {useNotification} from "../../NotificationContext.jsx";
@@ -14,6 +14,7 @@ export function ListElement({
                                 listElementData,
                                 onClickFunc,
                                 isEditable,
+                                binaryChoice,
                                 className,
                                 tag,
                                 selectedSchema,
@@ -26,7 +27,7 @@ export function ListElement({
     const images = loadAssets();
     const notify = useNotification();
 
-    const renderActionButtons = (editable) => {
+    const renderActionButtons = (editable, binaryChoice) => {
         if (editable === true) {
             return (
                 <div className="list-element-buttons">
@@ -52,6 +53,31 @@ export function ListElement({
                     />
                 </div>
             );
+
+        }
+        if(binaryChoice === true){
+            return(<div className="list-element-buttons">
+                <SmallButton
+                    className="nested-button"
+                    type="confirm"
+                    onClickHandler={(e) => {
+                        e.stopPropagation();
+                        console.log(listElementData);
+                        updateZahtjevStatus(listElementData.id, "odobren");
+                        onSuccess && onSuccess();
+                        }
+                    }
+                />
+                <SmallButton
+                    className="nested-button"
+                    type="deny"
+                    onClickHandler={(e) => {
+                        e.stopPropagation();
+                        updateZahtjevStatus(listElementData.id, "neodobren");
+                        onSuccess && onSuccess();
+                    }}
+                />
+            </div>)
         }
         return null;
     };
@@ -115,7 +141,7 @@ export function ListElement({
         </span>
                 </div>
 
-                {renderActionButtons(isEditable)}
+                {renderActionButtons(isEditable, binaryChoice)}
             </div>
             {updateForm && (
                 <CenteredOverlay className="form-overlay" isVisible={updateForm} onClose={() => setUpdateForm(false)}>

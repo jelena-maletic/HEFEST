@@ -68,7 +68,7 @@ export const updateElement = async (tag, id, data) => {
 
 
 
-    export const fetchData = async (tag, filterPoslovodja = null, filterTehnicar=null) => {
+    export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar= false) => {
         let response;
         const apiTag = tag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : tag;
         try {
@@ -266,7 +266,7 @@ export const updateElement = async (tag, id, data) => {
                 return dataArray.flatMap((t) => {
                     const zahtjevi = [];
                     let temp = {
-                        title: t.opis,
+                        title: t.poslovodja.ime + " " + t.poslovodja.prezime,
                         detail: "Datum slanja: " + t.datumSlanja,
                         subline: "Stanje zahtjeva: " + t.stanjeZahtjeva
                     };
@@ -334,4 +334,32 @@ export const updateZadatakStatus = async (id, isZavrsen) => {
         console.error("Greška pri ažuriranju statusa zadatka:", error);
         throw error;
     }
+
+};
+
+export const updateZahtjevStatus = async (id, status) => {
+    try{
+        const response = await axios.patch(`${API_BASE}/zahtjevi/${id}/stanjeZahtjeva`, {}, {
+            params: { stanjeZahtjeva: status }
+        });
+        return response.status;
+    }catch(error) {
+        console.error("Greska pri azuriranju stanja zahtjeva", error);
+        throw error;
+    }
+};
+
+export const getTehnicarData = async (jmb) => {
+    const response = await axios.get(`${API_BASE}/tehnicari/${jmb}`, {
+        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` }
+    });
+    return response.data; // Vraća cijeli objekat tehničara iz baze
+};
+
+export const updateTehnicarAktivnost = async (jmb, noviStatus) => {
+    const response = await axios.patch(`${API_BASE}/tehnicari/${jmb}/aktivnost`, null, {
+        params: { aktivan: noviStatus },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` }
+    });
+    return response.status;
 };
