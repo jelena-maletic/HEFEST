@@ -102,12 +102,16 @@ export function ListElement({
     const apiTag = tag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : tag;
     const isCompleted = apiTag === "dnevni_zadaci" && listElementData.zavrsen;
 
+    const isTehnicar = tag && tag.includes("tehnicari");
+    const isActiveTehnicar = isTehnicar && !!(listElementData.isAktivan || listElementData.aktivan);
 
+    console.log("Tag:", tag, "Podaci:", listElementData);
     return (
         <>
             <div
-
-                className={`list-element ${className || ''} ${isHovered ? 'hovered' : ''} ${isCompleted ? 'completed' : ''}`}
+                className={`list-element ${className || ''} ${isHovered ? 'hovered' : ''} 
+                        ${isCompleted ? 'completed' : ''} 
+                        ${isActiveTehnicar ? 'active-technician' : ''}`}
                 onClick={() => onClickFunc(listElementData)}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
