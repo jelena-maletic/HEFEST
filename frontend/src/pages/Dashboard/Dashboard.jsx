@@ -121,7 +121,7 @@ export function Dashboard({sidebarContents, role}) {
                       }}
                 >
 
-                    {activeScreen === "map" && <MapView />}
+                    {activeScreen === "map" && <MapView role={role}/>}
                     {activeScreen === "calendar" && <Calendar/>}
                     {/*{activeScreen === "employees" && <List isEditable={false} listTitle={screenTitle} screenState="user" tag="zaposleni" />}*/}
                     {activeScreen === "report-overview" && <div className={"report-lists"}>
