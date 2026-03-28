@@ -15,5 +15,5 @@ public class Tehnicar implements Serializable {
     String jmb;
     String email;
     String brojTelefona;
-
+    boolean aktivan;
 }
