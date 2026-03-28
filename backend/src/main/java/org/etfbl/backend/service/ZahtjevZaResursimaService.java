@@ -65,4 +65,17 @@ public class ZahtjevZaResursimaService {
                 .map(z -> modelMapper.map(z, ZahtjevZaResursima.class))
                 .toList();
     }
+
+    public ZahtjevZaResursima updateStanje(Integer id, StanjeZahtjeva stanjeZahtjeva) {
+        ZahtjevZaResursimaEntity entity = zahtjevZaResursimaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Zahtjev nije pronađen"));
+
+        entity.setStanjeZahtjeva(stanjeZahtjeva);
+        entity.setDatumObrade(Instant.now()); // Sets the processing time to 'now'
+
+        // Use saveAndFlush to catch database errors immediately during the call
+        ZahtjevZaResursimaEntity updated = zahtjevZaResursimaRepository.saveAndFlush(entity);
+
+        return modelMapper.map(updated, ZahtjevZaResursima.class);
+    }
 }

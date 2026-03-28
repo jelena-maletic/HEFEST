@@ -38,9 +38,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("*"));
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
         configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS", "PATCH"));
-        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "X-Requested-With"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -79,6 +79,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/zaposleni/**").permitAll()
                         .requestMatchers("/api/resursi/**").permitAll()
                         .requestMatchers("/api/korisnici/**").permitAll()
+                        .requestMatchers("/api/zahtjevi/**").permitAll()
                         .requestMatchers("/api/korisnici/change-password").authenticated()
                         .anyRequest().authenticated()
                 )
