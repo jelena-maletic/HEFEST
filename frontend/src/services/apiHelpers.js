@@ -3,6 +3,9 @@ import axios from "axios";
 import { getJmb } from "../auth/auth.js";
 const API_BASE = "http://localhost:8080/api";
 
+const formatValue = (value, unit = "") => (value !== null && value !== undefined && value !== "")
+    ? `${value}${unit}`
+    : "Nije dostupno";
 
 export const fetchProjects = async () => {
     try {
@@ -62,6 +65,8 @@ export const updateElement = async (tag, id, data) => {
         throw error;
     }
 };
+
+
 
     export const fetchData = async (tag, filterPoslovodja = null, filterTehnicar=null) => {
         let response;
@@ -143,18 +148,14 @@ export const updateElement = async (tag, id, data) => {
 
             case "vozila": {
                 return dataArray.flatMap((t) => {
-                    const vozila = [];
-
-                    let temp = {
-                        title: t.naziv + " - " + t.registarskiBroj,
-                        detail: t.tipVozila,
-                        subline: "Registracija važi od " + t.datumRegistracije + " do " + t.datumIstekaRegistracije
-                    }
-                    Object.assign(temp, t);
-
-                    vozila.push(temp);
-
-                    return vozila;
+                    const naziv = formatValue(t.naziv);
+                    const reg = formatValue(t.registarskiBroj);
+                    return [{
+                        ...t,
+                        title: `${naziv} - ${reg}`,
+                        detail: formatValue(t.tipVozila),
+                        subline: `Registracija: ${formatValue(t.datumRegistracije)} do ${formatValue(t.datumIstekaRegistracije)}`
+                    }];
                 });
             }
             case "materijal": {
@@ -181,18 +182,15 @@ export const updateElement = async (tag, id, data) => {
             case "tehnicari":
             case "zaposleni": {
                 return dataArray.flatMap((t) => {
-                    const zaposleni = [];
-
-                    let temp = {
-                        title: t.ime + " " + t.prezime,
-                        detail: t.brojTelefona,
-                        subline: t.email
-                    }
-                    Object.assign(temp, t);
-
-                    zaposleni.push(temp);
-                    return zaposleni;
-                })
+                    const ime = t.ime || "Nema imena";
+                    const prezime = t.prezime || "";
+                    return [{
+                        ...t,
+                        title: `${ime} ${prezime}`.trim() || "Nepoznat radnik",
+                        detail: formatValue(t.brojTelefona),
+                        subline: formatValue(t.email)
+                    }];
+                });
             }
 
             case "moji_dnevni_zadaci":
@@ -301,16 +299,12 @@ export const updateElement = async (tag, id, data) => {
             }
             case "projekti": {
                 return dataArray.flatMap((t) => {
-                    const projects = [];
-                    let temp = {
-                        title: t.naziv,
-                        detail: t.opis,
-                        subline: "Datum početka rada: " + t.pocetakRada
-                    };
-                    Object.assign(temp, t);
-
-                    projects.push(temp)
-                    return projects;
+                    return [{
+                        ...t,
+                        title: formatValue(t.naziv),
+                        detail: formatValue(t.opis),
+                        subline: `Početak rada: ${formatValue(t.pocetakRada)}`
+                    }];
                 });
             }
         }
