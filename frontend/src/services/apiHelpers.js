@@ -41,12 +41,12 @@ export const createElement = async (tag, data) => {
     };
 
 export const updateElement = async (tag, id, data) => {
-    // 1. Mapiranje rute (oba idu na isti endpoint na backendu)
+
     const apiRoute = tag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : tag;
 
     let finalData = { ...data };
 
-    // 2. Logika za JMB: Samo ako je ORIGINALNI tag "moji_dnevni_zadaci"
+
     if (tag === "moji_dnevni_zadaci") {
         const ulogovaniJmb = getJmb();
         finalData.tehnicarJmb = ulogovaniJmb;
@@ -55,8 +55,7 @@ export const updateElement = async (tag, id, data) => {
     }
 
     try {
-        // 3. KORISTI api.service(false) umjesto običnog axios-a
-        // false vjerovatno znači da ne koristiš "multipart/form-data" već običan JSON
+
         const response = await api.service(false).put(`/${apiRoute}/${id}`, finalData);
 
         return response.status;
@@ -66,7 +65,17 @@ export const updateElement = async (tag, id, data) => {
     }
 };
 
+export const getKorisnikPodaci = async (jmb) => {
+    if (!jmb) return null;
+    try {
 
+        const response = await api.service(false).get(`/korisnici/${jmb}`);
+        return response.data;
+    } catch (error) {
+        console.error("Greška pri dohvatanju podataka korisnika za JMB: " + jmb, error);
+        throw error;
+    }
+};
 
     export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar= false) => {
         let response;
