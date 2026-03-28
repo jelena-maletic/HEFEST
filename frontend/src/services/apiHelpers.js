@@ -348,3 +348,18 @@ export const updateZahtjevStatus = async (id, status) => {
         throw error;
     }
 };
+
+export const getTehnicarData = async (jmb) => {
+    const response = await axios.get(`${API_BASE}/tehnicari/${jmb}`, {
+        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` }
+    });
+    return response.data; // Vraća cijeli objekat tehničara iz baze
+};
+
+export const updateTehnicarAktivnost = async (jmb, noviStatus) => {
+    const response = await axios.patch(`${API_BASE}/tehnicari/${jmb}/aktivnost`, null, {
+        params: { aktivan: noviStatus },
+        headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` }
+    });
+    return response.status;
+};

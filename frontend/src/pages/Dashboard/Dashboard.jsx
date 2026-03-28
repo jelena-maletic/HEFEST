@@ -10,19 +10,18 @@ import { List } from "../../components/List/List.jsx";
 import CenteredOverlay from "../../components/CenteredOverlay/CenteredOverlay.jsx";
 import EntityDetailCard from "../../components/EntityDetailCard/EntityDetailCard.jsx";
 import { formatEntityDetails } from "../../utils/entityDetailFormatter.js";
-import { deleteElement, updateElement } from "../../services/apiHelpers.js";
+import {deleteElement, getTehnicarData, updateElement, updateTehnicarAktivnost} from "../../services/apiHelpers.js";
 import { useNotification } from "../../components/NotificationContext.jsx";
 import DynamicForm from "../../components/DynamicForm.jsx";
 import { schemaMap } from "../../data/SchemaMap.jsx";
 import {data} from "react-router-dom";
+import { useEffect } from "react";
 
 
 export function Dashboard({sidebarContents, role}) {
     const [isActive, setIsActive] = useState(false);
     const [activeScreen, setActiveScreen] = useState("home");
     const [screenTitle, setScreenTitle] = useState("home");
-
-
 
     const [isDetailVisible, setIsDetailVisible] = useState(false);
     const [detailData, setDetailData] = useState(null);
@@ -35,6 +34,21 @@ export function Dashboard({sidebarContents, role}) {
     const [isEditFormVisible, setIsEditFormVisible] = useState(false);
 
     const [refreshCurrentList, setRefreshCurrentList] = useState(null);
+
+    useEffect(() => {
+        const syncStatusWithBackend = async () => {
+            if (role === "tehnicar") {
+                try {
+                    const jmb = sessionStorage.getItem("jmb");
+                    const data = await getTehnicarData(jmb);
+                    setIsActive(data.aktivan);
+                } catch (err) {
+                    console.error("Neuspješno sinhronizovanje statusa:", err);
+                }
+            }
+        };
+        syncStatusWithBackend();
+    }, [role]);
 
     const TAG_MAP = {
         "projekti": "PROJECT",
@@ -90,7 +104,20 @@ export function Dashboard({sidebarContents, role}) {
     };
 
 
-    const toggleStatus = () => setIsActive(!isActive);
+    const toggleStatus = async () => {
+        const jmb = sessionStorage.getItem("jmb");
+        const noviStatus = !isActive;
+
+        try {
+            await updateTehnicarAktivnost(jmb, noviStatus);
+
+            setIsActive(noviStatus);
+            notify.success("Status ažuriran", `Sada ste ${noviStatus ? "aktivni" : "neaktivni"}.`);
+        } catch (error) {
+            console.error("Greška pri promjeni statusa:", error);
+            notify.error("Greška", "Nije moguće ažurirati status na serveru.");
+        }
+    };
 
     const handleScreen = (activeScreen, screenTitle) => {
         setActiveScreen(activeScreen);
@@ -241,7 +268,6 @@ export function Dashboard({sidebarContents, role}) {
                             onEdit={() => setIsEditFormVisible(true)}
                             onDelete={async () => {
                                 try {
-
                                     const apiTag = currentTag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : currentTag;
                                     const responseStatus = await deleteElement(apiTag, rawEntityData.id);
 
