@@ -266,7 +266,7 @@ export const updateElement = async (tag, id, data) => {
                 return dataArray.flatMap((t) => {
                     const zahtjevi = [];
                     let temp = {
-                        title: t.opis,
+                        title: t.poslovodja.ime + " " + t.poslovodja.prezime,
                         detail: "Datum slanja: " + t.datumSlanja,
                         subline: "Stanje zahtjeva: " + t.stanjeZahtjeva
                     };
