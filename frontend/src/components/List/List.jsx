@@ -17,6 +17,7 @@ export function List({
                          screenState,
                          onClick = noop,
                          isEditable,
+                         binaryChoice,
                          dividerWidth = "60%",
                          tag,
                          filterByPoslovodja,
@@ -100,9 +101,9 @@ export function List({
                         key={index}
                         screenState={screenState}
                         listElementData={data}
-                        //onClickFunc={() => onClick()}
                         onClickFunc={(clickedData) => onClick(clickedData)}
                         isEditable={isEditable}
+                        binaryChoice={binaryChoice}
                         className={viewState === "grid" ? "grid-element" : "list-element"}
                         tag = {tag}
                         selectedSchema={selectedSchema}

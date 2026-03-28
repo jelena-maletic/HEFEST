@@ -68,7 +68,7 @@ export const updateElement = async (tag, id, data) => {
 
 
 
-    export const fetchData = async (tag, filterPoslovodja = null, filterTehnicar=null) => {
+    export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar= false) => {
         let response;
         const apiTag = tag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : tag;
         try {
@@ -330,6 +330,19 @@ export const updateZadatakStatus = async (id, isZavrsen) => {
         return response.status;
     } catch (error) {
         console.error("Greška pri ažuriranju statusa zadatka:", error);
+        throw error;
+    }
+
+};
+
+export const updateZahtjevStatus = async (id, status) => {
+    try{
+        const response = await axios.patch(`${API_BASE}/zahtjevi/${id}/stanjeZahtjeva`, {}, {
+            params: { stanjeZahtjeva: status }
+        });
+        return response.status;
+    }catch(error) {
+        console.error("Greska pri azuriranju stanja zahtjeva", error);
         throw error;
     }
 };

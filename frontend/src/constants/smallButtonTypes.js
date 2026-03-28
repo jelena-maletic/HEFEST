@@ -3,5 +3,7 @@ export const BUTTON_TYPES = {
     EDIT: 'edit',
     DELETE: 'delete',
     GRID_VIEW: 'grid',
-    LIST_VIEW: 'list'
+    LIST_VIEW: 'list',
+    CONFIRM: 'confirm',
+    DENY: 'deny',
 };

@@ -14,6 +14,7 @@ import { deleteElement, updateElement } from "../../services/apiHelpers.js";
 import { useNotification } from "../../components/NotificationContext.jsx";
 import DynamicForm from "../../components/DynamicForm.jsx";
 import { schemaMap } from "../../data/SchemaMap.jsx";
+import {data} from "react-router-dom";
 
 
 export function Dashboard({sidebarContents, role}) {
@@ -145,7 +146,7 @@ export function Dashboard({sidebarContents, role}) {
                     {activeScreen === "taken-resources" && <List isEditable={true} listTitle={screenTitle} screenState="taken-resources" tag="zaduzenja" />}
                     {activeScreen === "taken-resources-manager" && <List isEditable={false} listTitle={screenTitle} screenState="taken-resources" onClick={(data) => handleOpenDetails(data, "zaduzenja")} tag="zaduzenja" filterByPoslovodja={true}/>}
 
-                    {activeScreen === "request-overview" && <List isEditable={false} listTitle={screenTitle} screenState="request-overview" tag="zahtjevi" />}
+                    {activeScreen === "request-overview" && <List isEditable={false} binaryChoice={true} listTitle={screenTitle} onClick={(data) => handleOpenDetails(data, "zahtjevi")} screenState="request-overview" tag="zahtjevi" />}
                     {activeScreen === "technicians" && (
                         <List
                             isEditable={false}
@@ -239,6 +240,8 @@ export function Dashboard({sidebarContents, role}) {
                                     notify.error("Greška", "Neuspješno brisanje elementa.");
                                 }
                             }}
+                            onConfirm={() => console.log(1)}
+                            onDeny={() => console.log(2)}
                         />
                     </div>
                 )}
