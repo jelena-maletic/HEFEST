@@ -100,7 +100,7 @@ function Calendar() {
                         <p><strong>Lokacija:</strong> {selectedProject.lokacija}</p>
                         <p><strong>Početak:</strong> {new Date(selectedProject.pocetakRada).toLocaleDateString("hr-HR")}</p>
                         <p><strong>Rok:</strong> {new Date(selectedProject.rok).toLocaleDateString("hr-HR")}</p>
-                        <p><strong>Završetak:</strong> {selectedProject.zavrsetakRada ? new Date(selectedProject.zavrsetakRada).toLocaleDateString("hr-HR") : "/"}</p>
+                        <p><strong>Završetak:</strong> {selectedProject.krajRada ? new Date(selectedProject.krajRada).toLocaleDateString("hr-HR") : "/"}</p>
 
                         <button className="close-btn" onClick={() => setSelectedProject(null)}>
                             Zatvori

@@ -200,11 +200,13 @@ export const updateElement = async (tag, id, data) => {
                     let temp = {
                         id: t.idDnevnogZadatka,
 
-                        tehnicarJmb: t.tehnicar ? String(t.tehnicar.ime + " " + t.tehnicar.prezime) : null,
+                        tehnicarJmb: t.tehnicar?.jmb || null,
+
+                        tehnicarPunoIme: t.tehnicar ? `${t.tehnicar.ime} ${t.tehnicar.prezime}` : "Nije dodijeljen",
 
                         title: t.opis,
                         detail: "Datum: " + t.datum,
-                        subline: "Tehničar: " + (t.tehnicar?.ime + " " + t.tehnicar?.prezime),
+                        subline: "Tehničar: " + (t.tehnicar ? `${t.tehnicar.ime} ${t.tehnicar.prezime}` : "Nije dodijeljen"),
                         status: t.zavrsen ? "Završen" : "U toku",
                         statusColor: t.zavrsen ? "green" : "orange"
                     };
@@ -264,7 +266,7 @@ export const updateElement = async (tag, id, data) => {
                 return dataArray.flatMap((t) => {
                     const zahtjevi = [];
                     let temp = {
-                        title: t.opis,
+                        title: t.poslovodja.ime + " " + t.poslovodja.prezime,
                         detail: "Datum slanja: " + t.datumSlanja,
                         subline: "Stanje zahtjeva: " + t.stanjeZahtjeva
                     };

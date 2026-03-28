@@ -34,6 +34,8 @@ export function Dashboard({sidebarContents, role}) {
 
     const [isEditFormVisible, setIsEditFormVisible] = useState(false);
 
+    const [refreshCurrentList, setRefreshCurrentList] = useState(null);
+
     const TAG_MAP = {
         "projekti": "PROJECT",
         "zaposleni": "EMPLOYEE",
@@ -106,6 +108,13 @@ export function Dashboard({sidebarContents, role}) {
         { value: "tehnicari", label: "Tehničari" }
     ];
 
+    const handleRegisterRefresh = (refreshFn) => {
+        setRefreshCurrentList((prevFn) => {
+            if (prevFn === refreshFn) return prevFn;
+            return refreshFn;
+        });
+    };
+
     return (
         <div className="app-container">
 
@@ -122,7 +131,7 @@ export function Dashboard({sidebarContents, role}) {
                       }}
                 >
 
-                    {activeScreen === "map" && <MapView />}
+                    {activeScreen === "map" && <MapView role={role}/>}
                     {activeScreen === "calendar" && <Calendar/>}
                     {/*{activeScreen === "employees" && <List isEditable={false} listTitle={screenTitle} screenState="user" tag="zaposleni" />}*/}
                     {activeScreen === "report-overview" && <div className={"report-lists"}>
@@ -132,16 +141,19 @@ export function Dashboard({sidebarContents, role}) {
                     {/* Radna oprema */}
                     {activeScreen === "tools" &&
                         <List isEditable={true} listTitle={screenTitle} screenState="tools" tag="radna-oprema"
+                              onSuccess={handleRegisterRefresh}
                               onClick={(data) => handleOpenDetails(data, "radna-oprema")} />}
 
                     {/* Vozila */}
                     {activeScreen === "vehicles" &&
                         <List isEditable={true} listTitle={screenTitle} screenState="truck" tag="vozila"
+                              onSuccess={handleRegisterRefresh}
                               onClick={(data) => handleOpenDetails(data, "vozila")} />}
 
                     {/* Materijal */}
                     {activeScreen === "materials" &&
                         <List isEditable={true} listTitle={screenTitle} screenState="material" tag="materijal"
+                              onSuccess={handleRegisterRefresh}
                               onClick={(data) => handleOpenDetails(data, "materijal")} />}
                     {activeScreen === "taken-resources" && <List isEditable={true} listTitle={screenTitle} screenState="taken-resources" tag="zaduzenja" />}
                     {activeScreen === "taken-resources-manager" && <List isEditable={false} listTitle={screenTitle} screenState="taken-resources" onClick={(data) => handleOpenDetails(data, "zaduzenja")} tag="zaduzenja" filterByPoslovodja={true}/>}
@@ -160,28 +172,30 @@ export function Dashboard({sidebarContents, role}) {
                                                                 <List isEditable={false} listTitle={"Dnevni " + screenTitle} screenState="report-overview" dividerWidth={"90%"} tag="dnevni_izvjestaji" />
                                                                  <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview" dividerWidth={"90%"} tag="sumarni_izvjestaji"/>
                                                               </div>}
-                    {activeScreen === "projects" && <List isEditable={true} listTitle={screenTitle} screenState="projects" onClick={(data) => handleOpenDetails(data, "projekti")} tag="projekti"/>}
+                    {activeScreen === "projects" && <List isEditable={true} listTitle={screenTitle} screenState="projects" onClick={(data) => handleOpenDetails(data, "projekti")} onSuccess={handleRegisterRefresh} tag="projekti"/>}
                     {activeScreen === "assigned-projects" && <List isEditable={false} listTitle={screenTitle} screenState="projects" onClick={(data) => handleOpenDetails(data, "projekti")} tag="projekti" filterByPoslovodja={true}/>}
 
                     {activeScreen === "tasks" && (
                         <List
-                            isEditable={true}
+                            isEditable={ role === "poslovodja"}
                             listTitle="Moji dnevni zadaci"
                             screenState="tasks"
                             tag="moji_dnevni_zadaci"
                             filterByTehnicar={true}
                             onClick={(data) => handleOpenDetails(data, "dnevni_zadaci")}
+                            onSuccess={handleRegisterRefresh}
                         />
                     )}
 
                     {activeScreen === "manage-tasks" && (
                         <List
-                            isEditable={true}
+                            isEditable={role === "poslovodja"}
                             listTitle="Upravljanje zadacima"
                             screenState="manage_tasks"
                             tag="dnevni_zadaci"
                             filterByPoslovodja={true}
                             onClick={(data) => handleOpenDetails(data, "dnevni_zadaci")}
+                            onSuccess={handleRegisterRefresh}
                         />
                     )}
                     {activeScreen === "employees" && (
@@ -233,6 +247,7 @@ export function Dashboard({sidebarContents, role}) {
 
                                     if (responseStatus >= 200 && responseStatus < 300) {
                                         notify.success("Obrisano", "Element je uspješno uklonjen.");
+                                        if (refreshCurrentList) refreshCurrentList();
                                         setIsDetailVisible(false);
                                     }
                                 } catch (error) {
@@ -261,6 +276,7 @@ export function Dashboard({sidebarContents, role}) {
                                 console.log(rawEntityData.id);
                                 await updateElement(apiTag, rawEntityData.id, formData);
                                 notify.success("Izmijenjeno", "Podaci su uspješno ažurirani.");
+                                if (refreshCurrentList) refreshCurrentList();
                                 setIsEditFormVisible(false);
                                 setIsDetailVisible(false);
                             } catch (error) {

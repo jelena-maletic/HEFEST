@@ -37,6 +37,7 @@ export function List({
     };
 
     useEffect(() => {
+        if (onSuccess) onSuccess(reloadData);
         reloadData();
     }, [tag]);
 

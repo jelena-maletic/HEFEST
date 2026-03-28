@@ -6,19 +6,23 @@ import "./MapView.css"
 import greenPinIcon from "../assets/green-pin.svg";
 import grayPinIcon from "../assets/gray-pin.svg";
 
-import {fetchProjects} from "../services/apiHelpers.js";
+import {fetchData} from "../services/apiHelpers.js";
 
-export default function MapView() {
+export default function MapView({role}) {
     const [projects, setProjects] = useState([]);
 
     useEffect(() => {
         const getProjects = async () => {
-            const data = await fetchProjects();
-            setProjects(data);
+            // Ako je korisnik POSLOVODJA, šaljemo true za filterPoslovodja
+            const isPoslovodja = role === "poslovodja";
+
+            // fetchData(tag, filterPoslovodja, filterTehnicar)
+            const data = await fetchData("projekti", isPoslovodja);
+            setProjects(data || []);
         };
 
         getProjects();
-    }, []);
+    }, [role]);
 
     const today = new Date();
 
