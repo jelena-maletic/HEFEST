@@ -20,6 +20,12 @@ public class MagacionerService {
         this.modelMapper = modelMapper;
     }
 
+    public Magacioner getByJmb(String jmb) {
+        return magacionerRepository.findById(jmb) // Pošto je JMB vjerovatno @Id u ZaposleniEntity
+                .map(m -> modelMapper.map(m, Magacioner.class))
+                .orElseThrow(() -> new RuntimeException("Magacioner sa JMB " + jmb + " nije pronađen"));
+    }
+
     public List<Magacioner> getAll() { return magacionerRepository.findAll().stream().map(m -> modelMapper.map(m, Magacioner.class )).toList();}
 }
 
