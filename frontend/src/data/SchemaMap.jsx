@@ -4,7 +4,8 @@ import {
     equipmentSchema,
     materialSchema,
     assignmentSchema,
-    dailyTaskSchema
+    dailyTaskSchema, myDailyTaskSchema,
+    requestSchema
 } from "./Forms.jsx";
 
 export const schemaMap = {
@@ -14,4 +15,6 @@ export const schemaMap = {
     "materijal": materialSchema,
     "zaduzenja": assignmentSchema,
     "dnevni_zadaci": dailyTaskSchema,
+    "moji_dnevni_zadaci":myDailyTaskSchema,
+    "zahtjevi":requestSchema,
 };

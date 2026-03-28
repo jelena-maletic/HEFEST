@@ -8,7 +8,6 @@ import DynamicForm from "../../DynamicForm.jsx";
 import {useNotification} from "../../NotificationContext.jsx";
 import ConfirmationDialog from "../../ConfirmationDialog.jsx";
 import {updateZadatakStatus} from "../../../services/apiHelpers.js";
-import {Checkbox} from 'antd';
 
 export function ListElement({
                                 screenState,
@@ -74,7 +73,9 @@ export function ListElement({
 
     var image = isHovered ? images[`${screenState}-inverted`] : images[`${screenState}`];
 
-    const isCompleted = tag === "dnevni_zadaci" && listElementData.zavrsen;
+    const apiTag = tag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : tag;
+    const isCompleted = apiTag === "dnevni_zadaci" && listElementData.zavrsen;
+
 
     return (
         <>
@@ -88,17 +89,17 @@ export function ListElement({
                 <div className="list-image-wrapper">
                     <img
 
-                        className={`list-image ${tag === "dnevni_zadaci" ? 'interactive-icon' : ''}`}
+                        className={`list-image ${apiTag === "dnevni_zadaci" ? 'interactive-icon' : ''}`}
                         alt="List Icon"
                         src={image}
                         onClick={(e) => {
-                            if (tag === "dnevni_zadaci") {
+                            if (apiTag === "dnevni_zadaci") {
                                 e.stopPropagation();
                                 handleStatusChange({target: {checked: !listElementData.zavrsen}});
                             }
                         }}
 
-                        title={tag === "dnevni_zadaci" ? (isCompleted ? "Vrati u tok" : "Označi kao završeno") : ""}
+                        title={apiTag === "dnevni_zadaci" ? (isCompleted ? "Vrati u tok" : "Označi kao završeno") : ""}
                     />
                 </div>
 
@@ -124,6 +125,7 @@ export function ListElement({
                                  initialValues={listElementData}
                                  onSubmit={async (formData) => {
                                      try {
+
                                          const response = await updateElement(tag, listElementData.id, formData);
 
                                          notify.success("Uspješno ažuriranje", "Podaci su uspješno izmijenjeni.");
@@ -147,7 +149,8 @@ export function ListElement({
                 onCancel={() => setShowConfirm(false)}
                 onConfirm={async () => {
                     try {
-                        const responseStatus = await deleteElement(tag, listElementData.id);
+                        const apiTag = tag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : tag;
+                        const responseStatus = await deleteElement(apiTag, listElementData.id);
 
                         if (responseStatus >= 200 && responseStatus < 300) {
                             notify.success("Obrisano", "Element je uspješno uklonjen.");
