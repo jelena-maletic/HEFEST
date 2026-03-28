@@ -5,7 +5,7 @@ import "./TopBar.css"
 import {useState} from "react";
 
 
-export function TopBar({role, activeScreen, screenTitle, screenHandle}) {
+export function TopBar({ activeScreen, screenTitle, screenHandle, userName}) {
 
     const [logoSrc, setLogoSrc] = useState(hefestLogo);
     return (
@@ -24,7 +24,7 @@ export function TopBar({role, activeScreen, screenTitle, screenHandle}) {
             </div>
 
             <div className="user-info">
-                <span>{role}</span>
+                <span>{userName}</span>
                 <img src={profileIcon} alt="Profil" />
             </div>
         </header>

@@ -501,6 +501,7 @@ export const dailyTaskSchema = {
     ],
 };
 export const myDailyTaskSchema = {
+    title: "Podaci o dnevnom zadatku",
     submitLabel: "Kreiraj moj zadatak",
     layout: "vertical",
     fields: [
