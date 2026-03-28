@@ -42,7 +42,7 @@ export function Sidebar({contents, screenHandle, activeHandle, active, userRole}
                 </nav>
 
                 <div className="bottom-section">
-                    {userRole === "tehnicar" && (
+                    {(userRole === "tehnicar" || userRole === "poslovodja") && (
                         <div className="status-toggle">
                             <label>
                                 <div className="status-label">
