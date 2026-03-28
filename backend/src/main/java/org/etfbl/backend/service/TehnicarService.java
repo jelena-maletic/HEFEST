@@ -34,5 +34,13 @@ public class TehnicarService {
                 .map(t -> modelMapper.map(t, Tehnicar.class))
                 .toList();
     }
+
+    public boolean updateAktivnost(String jmb, boolean noviStatus) {
+        return tehnicarRepository.findById(jmb).map(tehnicar -> {
+            tehnicar.setAktivan(noviStatus);
+            tehnicarRepository.save(tehnicar);
+            return true;
+        }).orElse(false);
+    }
 }
 

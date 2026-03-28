@@ -3,6 +3,7 @@ package org.etfbl.backend.controller;
 import org.etfbl.backend.dto.Magacioner;
 import org.etfbl.backend.dto.Tehnicar;
 import org.etfbl.backend.service.TehnicarService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,5 +32,19 @@ public class TehnicarController {
     @GetMapping("/za-poslovodju/{jmb}")
     public List<Tehnicar> getZaPoslovodju(@PathVariable String jmb) {
         return tehnicarService.getTehnicariZaPoslovodju(jmb);
+    }
+
+    @PatchMapping("/{jmb}/aktivnost")
+    public ResponseEntity<Void> promijeniAktivnost(
+            @PathVariable String jmb,
+            @RequestParam boolean aktivan) {
+
+        boolean uspijeh = tehnicarService.updateAktivnost(jmb, aktivan);
+
+        if (uspijeh) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
