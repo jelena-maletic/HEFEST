@@ -10,8 +10,6 @@ import { NotificationProvider, useNotification } from "../NotificationContext.js
 
 const noop = () => {};
 
-
-
 export function List({
                          listTitle,
                          screenState,
@@ -122,18 +120,11 @@ export function List({
                         onSubmit={async (data) => {
                             console.log("Podaci iz forme koji idu ka servisu:", data);
 
-                            //var response = await createElement(tag, data);
-                            //console.log("Podaci iz forme koji idu:", response);
                             let finalData = { ...data };
 
-                            // Ako je tag "moji_dnevni_zadaci", ručno dodajemo JMB ulogovanog korisnika
                             if (tag === "moji_dnevni_zadaci") {
-                                // Preuzmi JMB iz sessionStorage (provjeri tačan naziv ključa koji koristiš pri login-u)
                                 const loggedInJmb = sessionStorage.getItem("jmb");
                                 finalData.tehnicarJmb = loggedInJmb;
-
-                                // Takođe, pošto backend vjerovatno očekuje 'ulogovaniJmb' (vidim u tvom Java kodu),
-                                // dodaj i to ako je potrebno za tvoj API request
                                 finalData.ulogovaniJmb = loggedInJmb;
                             }
                             try {

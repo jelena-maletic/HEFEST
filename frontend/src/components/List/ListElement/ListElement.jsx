@@ -55,26 +55,39 @@ export function ListElement({
             );
 
         }
-        if(binaryChoice === true){
-            return(<div className="list-element-buttons">
+        if (binaryChoice === true) {
+            return (<div className="list-element-buttons">
                 <SmallButton
                     className="nested-button"
                     type="confirm"
-                    onClickHandler={(e) => {
-                        e.stopPropagation();
+                    onClickHandler={ async (e) => {
+                        /*e.stopPropagation();
                         console.log(listElementData);
                         updateZahtjevStatus(listElementData.id, "odobren");
-                        onSuccess && onSuccess();
+                        onSuccess && onSuccess();*/
+                        e.stopPropagation();
+                        try {
+                            await updateZahtjevStatus(listElementData.id, "odobren");
+                            notify.success("Status ažuriran");
+                            if (onSuccess) await onSuccess();
+                        } catch (err) {
+                            notify.error("Greška pri ažuriranju");
                         }
+                    }
                     }
                 />
                 <SmallButton
                     className="nested-button"
                     type="deny"
-                    onClickHandler={(e) => {
+                    onClickHandler={ async (e) => {
                         e.stopPropagation();
-                        updateZahtjevStatus(listElementData.id, "neodobren");
-                        onSuccess && onSuccess();
+                        try {
+                            await updateZahtjevStatus(listElementData.id, "neodobren"); // Dodaj await
+                            notify.success("Status ažuriran");
+                            if (onSuccess) await onSuccess();
+                        } catch (err) {
+                            notify.error("Greška pri ažuriranju");
+                        }
                     }}
                 />
             </div>)
@@ -102,12 +115,16 @@ export function ListElement({
     const apiTag = tag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : tag;
     const isCompleted = apiTag === "dnevni_zadaci" && listElementData.zavrsen;
 
+    const isTehnicar = tag && tag.includes("tehnicari");
+    const isActiveTehnicar = isTehnicar && !!(listElementData.isAktivan || listElementData.aktivan);
 
+    console.log("Tag:", tag, "Podaci:", listElementData);
     return (
         <>
             <div
-
-                className={`list-element ${className || ''} ${isHovered ? 'hovered' : ''} ${isCompleted ? 'completed' : ''}`}
+                className={`list-element ${className || ''} ${isHovered ? 'hovered' : ''} 
+                        ${isCompleted ? 'completed' : ''} 
+                        ${isActiveTehnicar ? 'active-technician' : ''}`}
                 onClick={() => onClickFunc(listElementData)}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}

@@ -160,7 +160,7 @@ export function Dashboard({sidebarContents, role}) {
             <div className="content-area">
 
                 <Sidebar contents={sidebarContents[role]} screenHandle={handleScreen}
-                         activeHandle={toggleStatus} active={isActive} />
+                         activeHandle={toggleStatus} active={isActive} userRole={role} />
 
                 <main className={`home-screen ${activeScreen !== "home" ? "content-active" : ""}`}
                       style={{
