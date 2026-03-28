@@ -333,9 +333,22 @@ export const requestSchema = {
             span: 24,
             props: {
                 rows: 4,
-                placeholder: "Unesite detaljan opis zahtjeva..."
+                placeholder: "Unesite detaljan opis stavki i razloga zahtjeva..."
             }
         },
+        {
+            name: 'magacionerJmb',
+            label: 'Magacioner',
+            type: "select",
+            required: true,
+            span: 24,
+            optionsTag: "magacioneri", // Ovo sad gađa onaj novi case iznad
+            props: {
+                placeholder: "Izaberite magacionera",
+                showSearch: true,
+                optionFilterProp: "label" // Pretraga će raditi po imenu
+            }
+        }
     ],
 };
 
@@ -488,6 +501,7 @@ export const dailyTaskSchema = {
     ],
 };
 export const myDailyTaskSchema = {
+    title: "Podaci o dnevnom zadatku",
     submitLabel: "Kreiraj moj zadatak",
     layout: "vertical",
     fields: [

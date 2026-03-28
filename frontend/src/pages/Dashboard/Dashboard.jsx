@@ -298,15 +298,19 @@ export function Dashboard({sidebarContents, role}) {
                             onClick={(data) => handleOpenDetails(data, selectedEmployeeTag)}
                         />
                     )}
+
                     {activeScreen === "new-request" && (
                         <List
-                            isEditable={true}
+                            isEditable={true} // Omogućava dugme "Novi" (plus)
                             listTitle={screenTitle}
                             screenState="request-overview"
                             tag="zahtjevi"
+                            filterByPoslovodja={true} // Da poslovođa vidi samo svoje poslate zahtjeve
+                            onSuccess={handleRegisterRefresh} // Bitno da se lista osvježi nakon što DynamicForm završi slanje
                             onClick={(data) => handleOpenDetails(data, "zahtjevi")}
                         />
                     )}
+
                 </main>
             </div>
 
