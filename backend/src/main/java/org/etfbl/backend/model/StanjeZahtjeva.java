@@ -2,5 +2,6 @@ package org.etfbl.backend.model;
 
 public enum StanjeZahtjeva {
     neobradjen,
-    obradjen;
+    odobren,
+    neodobren
 }

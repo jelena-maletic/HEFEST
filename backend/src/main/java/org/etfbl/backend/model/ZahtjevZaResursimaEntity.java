@@ -28,7 +28,7 @@ public class ZahtjevZaResursimaEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "StanjeZahtjeva", nullable = false)
-    private StanjeZahtjeva stanjeZahtjeva=StanjeZahtjeva.neobradjen;
+    private StanjeZahtjeva stanjeZahtjeva;
 
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

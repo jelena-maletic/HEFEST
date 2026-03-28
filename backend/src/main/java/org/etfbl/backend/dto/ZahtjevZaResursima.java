@@ -13,6 +13,7 @@ import java.util.Set;
  */
 @Data
 public class ZahtjevZaResursima implements Serializable {
+    Integer id;
     Instant datumSlanja;
     Instant datumObrade;
     String opis;

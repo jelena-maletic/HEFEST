@@ -1,9 +1,11 @@
 package org.etfbl.backend.controller;
 
+import org.etfbl.backend.dto.DnevniZadatak;
 import org.etfbl.backend.dto.Projekat;
 import org.etfbl.backend.dto.Zaduzenje;
 import org.etfbl.backend.dto.ZahtjevZaResursima;
 import org.etfbl.backend.exceptions.NotFoundException;
+import org.etfbl.backend.model.StanjeZahtjeva;
 import org.etfbl.backend.service.ZahtjevZaResursimaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +36,13 @@ public class ZahtjevZaResursimaController {
     public ResponseEntity<List<ZahtjevZaResursima>> getAllByPoslovodjaJMB(@PathVariable String poslovodjaJMB) throws NotFoundException {
         List<ZahtjevZaResursima> r=zahtjevZaResursimaService.getZahtjeviByPoslovodjaId(poslovodjaJMB);
         return ResponseEntity.ok(r);
+    }
+
+    @PatchMapping("/{id}/stanjeZahtjeva")
+    public ResponseEntity<ZahtjevZaResursima> updateStanje(
+            @PathVariable Integer id,
+            @RequestParam StanjeZahtjeva stanjeZahtjeva){
+        return ResponseEntity.ok(zahtjevZaResursimaService.updateStanje(id, stanjeZahtjeva));
     }
 
 }
