@@ -11,7 +11,7 @@ import CenteredOverlay from "../components/CenteredOverlay/CenteredOverlay.jsx";
 import axios from "axios";
 import {changePasswordSchema} from "../data/Forms.jsx";
 
-export function Sidebar({contents, screenHandle, activeHandle, active}) {
+export function Sidebar({contents, screenHandle, activeHandle, active, userRole}) {
     const [activeScreen, setActiveScreen] = useState("home");
     const [showPasswordForm, setShowPasswordForm] = useState(false);
 
@@ -42,6 +42,7 @@ export function Sidebar({contents, screenHandle, activeHandle, active}) {
         </nav>
 
         <div className="bottom-section">
+            {userRole === "tehnicar" && (
             <div className="status-toggle">
                 <label>
                     <div className="status-label">
@@ -57,6 +58,7 @@ export function Sidebar({contents, screenHandle, activeHandle, active}) {
                     </div>
                 </label>
             </div>
+            )}
 
             <div className="bottom-buttons">
                 <button className="icon-btn" onClick={() => setShowPasswordForm(true)}>
