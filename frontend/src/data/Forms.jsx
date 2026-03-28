@@ -167,6 +167,7 @@ export const vehicleSchema = {
             label: "Broj putnika",
             type: "number",
             span: 12,
+            required: true,
         },
         {
             name: "maksimalnaNosivost",
@@ -174,7 +175,7 @@ export const vehicleSchema = {
             type: "number",
             span: 12,
         },
-        {
+        /*{
             name: "stanjeMagacina",
             label: "Stanje magacina",
             type: "number",
@@ -189,19 +190,19 @@ export const vehicleSchema = {
             required: true,
             min: 0,
             span: 12,
-        },
+        },*/
         {
             name: "datumRegistracije",
             label: "Datum registracije",
             type: "date",
-            required: false,
+            required: true,
             span: 12,
         },
         {
             name: "datumIstekaRegistracije",
             label: "Datum isteka registracije",
             type: "date",
-            required: false,
+            required: true,
             span: 12,
             rules: [
                 ({ getFieldValue }) => ({

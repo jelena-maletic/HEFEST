@@ -4,6 +4,10 @@ import {formatDate, getStatusTagColor, getPriorityTagColor, calculateAgeFromJMBG
 import TimesheetViewer from '../components/TimesheetViewer/TimesheetViewer.jsx';
 
 
+const safeValue = (value, fallback = 'Nema informacija') => {
+    if (value === null || value === undefined || value === "") return fallback;
+    return value;
+};
 const isVisible = (userRole, allowedRoles) => {
     if (!allowedRoles || allowedRoles.length === 0) return true;
     return allowedRoles.includes(userRole?.toLowerCase());
@@ -27,13 +31,13 @@ const groupItems = (items) => {
 const mapProjectDetails = (data,role) => {
     const allItems=[
         { section: 'Osnovni Detalji', label: 'Naziv', value: data.naziv, key: 'naziv' },
-        { section: 'Osnovni Detalji', label: 'Opis', value: data.opis, key: 'opis' },
+        { section: 'Osnovni Detalji', label: 'Opis', value: safeValue(data.opis), key: 'opis' },
         { section: 'Osnovni Detalji', label: 'Prioritet', value: data.prioritet, key: 'prio',
             render: (v) => <Tag color={getPriorityTagColor(v)}>{v}</Tag> },
         { section: 'Osnovni Detalji', label: 'Klijent', value: data.klijent, key: 'klijent' },
         { section: 'Vremenski Okvir', label: 'Status', value: data.status, key: 'status',
             render: (v) => <Tag color={getStatusTagColor(v)}>{v}</Tag> },
-        { section: 'Vremenski Okvir', label: 'Početak rada', value: formatDate(data.pocetakRada), key: 'start' },
+        { section: 'Vremenski Okvir', label: 'Početak rada', value: formatDate(data.pocetakRada)|| "Nije počelo", key: 'start' },
         { section: 'Vremenski Okvir', label: 'Rok', value: formatDate(data.rok), key: 'deadline' },
         { section: 'Vremenski Okvir', label: 'Završeno', value: data.krajRada ? formatDate(data.krajRada) : 'U toku', key: 'end' },
         {
@@ -80,12 +84,11 @@ const mapProjectDetails = (data,role) => {
 const mapEmployeeDetails = (data) => {
     return groupItems([
         { section: 'Lične Informacije', label: 'Ime i Prezime', value: `${data.ime} ${data.prezime}`, key: 'full_name' },
-        //{ section: 'Lične Informacije', label: 'JMBG', value: data.jmb, key: 'jmbg' },
+
         {
             section: 'Lične Informacije',
             label: 'Godine',
-            // Koristimo tvoju funkciju za računanje godina
-            value: calculateAgeFromJMBG( data.jmb),//TREBACE DTO IZMIJENITI
+            value: calculateAgeFromJMBG( data.jmb),
             key: 'age'
         },
         { section: 'Lične Informacije', label: 'Email', value: data.email, key: 'email' },
@@ -103,7 +106,7 @@ const mapVehicleDetails = (data) => {
         { section: 'Tehnički Podaci', label: 'Registracija', value: data.registarskiBroj, key: 'reg' },
         { section: 'Tehnički Podaci', label: 'Tip Vozila', value: data.tipVozila, key: 'type' },
         { section: 'Tehnički Podaci', label: 'Broj Putnika', value: data.brojPutnika, key: 'type' },
-        { section: 'Tehnički Podaci', label: 'Maksimalna Nosivost', value: data.maksimalnaNosivost, key: 'type' },
+        { section: 'Tehnički Podaci', label: 'Maksimalna Nosivost', value: data.maksimalnaNosivost? `${data.maksimalnaNosivost} kg` : 'Nije navedeno', key: 'type' },
         { section: 'Dokumentacija', label: 'Registracija važi od', value: formatDate(data.datumRegistracije), key: 'reg_from' },
         { section: 'Dokumentacija', label: 'Registracija ističe', value: formatDate(data.datumIstekaRegistracije), key: 'reg_to' }
     ]);
