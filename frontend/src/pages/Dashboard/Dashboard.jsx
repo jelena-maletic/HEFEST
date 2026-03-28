@@ -254,12 +254,12 @@ export function Dashboard({sidebarContents, role}) {
                         initialValues={rawEntityData}
                         onSubmit={async (formData) => {
                             try {
-                                /*const apiTag = currentTag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : currentTag;*/
+                                const apiTag = currentTag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : currentTag;
                                 console.log(rawEntityData.id);
-                                await updateElement(tag, rawEntityData.id, formData);
+                                await updateElement(apiTag, rawEntityData.id, formData);
                                 notify.success("Izmijenjeno", "Podaci su uspješno ažurirani.");
                                 setIsEditFormVisible(false);
-                                setIsDetailVisible(false); // Zatvori i detalje da se osvježi lista
+                                setIsDetailVisible(false);
                             } catch (error) {
                                 notify.error("Greška", "Ažuriranje nije uspjelo.");
                             }
