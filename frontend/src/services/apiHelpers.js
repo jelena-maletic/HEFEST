@@ -263,19 +263,18 @@ export const updateElement = async (tag, id, data) => {
             }
 
             case "zahtjevi": {
-                return dataArray.flatMap((t) => {
-                    const zahtjevi = [];
-                    let temp = {
-                        title: t.poslovodja.ime + " " + t.poslovodja.prezime,
-                        detail: "Datum slanja: " + t.datumSlanja,
-                        subline: "Stanje zahtjeva: " + t.stanjeZahtjeva
-                    };
-                    Object.assign(temp, t);
+                return dataArray.map((t) => ({
+                    ...t,
+                    id: t.id,
 
-                    zahtjevi.push(temp)
-                    return zahtjevi;
-                });
+                    title: t.poslovodja ? `${t.poslovodja.ime} ${t.poslovodja.prezime}` : "Nepoznat poslovođa",
+                    detail: "Datum slanja: " + (t.datumSlanja ? t.datumSlanja : "Nepoznato"),
+                    subline: "Stanje: " + t.stanjeZahtjeva,
+
+                    statusColor: t.stanjeZahtjeva === 'odobren' ? 'green' : (t.stanjeZahtjeva === 'neodobren' ? 'red' : 'orange')
+                }));
             }
+
             case "zaduzenja": {
                 return dataArray.flatMap((t) => {
                     let formValues = {
