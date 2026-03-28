@@ -13,11 +13,11 @@ import java.util.Set;
  */
 @Data
 public class ZahtjevZaResursima implements Serializable {
-    Integer id;
+    Integer id; // OVO DODAJ
     Instant datumSlanja;
     Instant datumObrade;
     String opis;
-    StanjeZahtjeva stanjeZahtjeva=StanjeZahtjeva.neobradjen;
+    StanjeZahtjeva stanjeZahtjeva;
     Poslovodja poslovodja;
-    //Set<ResursUZahtjevu> resursUZahtjevu;
+    Magacioner magacioner;
 }

@@ -36,19 +36,39 @@ public class ZahtjevZaResursimaService {
         return zahtjevZaResursimaRepository.findAll().stream().map(z -> modelMapper.map(z, ZahtjevZaResursima.class )).toList();
     }
 
+    public ZahtjevZaResursima getZahtjevById(Integer id) throws NotFoundException {
+        ZahtjevZaResursimaEntity entity = zahtjevZaResursimaRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Zahtjev sa ID-om " + id + " nije pronađen."));
+
+        return modelMapper.map(entity, ZahtjevZaResursima.class);
+    }
+
     public ZahtjevZaResursima sacuvajZahtjev(ZahtjevZaResursima dto) {
-        ZahtjevZaResursimaEntity entity=modelMapper.map(dto, ZahtjevZaResursimaEntity.class);
+        ZahtjevZaResursimaEntity entity = new ZahtjevZaResursimaEntity();
 
-        Instant sada = Instant.now();
-        entity.setDatumSlanja(sada);
+        entity.setOpis(dto.getOpis());
+        entity.setDatumSlanja(Instant.now());
+        entity.setStanjeZahtjeva(StanjeZahtjeva.neobradjen);
 
-        PoslovodjaEntity poslovodja = poslovodjaRepository.findById("1308001123123")
-                .orElseThrow(() -> new RuntimeException("Poslovodja ne postoji"));
+        if (dto.getPoslovodja() == null || dto.getPoslovodja().getJmb() == null) {
+            throw new RuntimeException("JMB poslovođe mora biti proslijeđen!");
+        }
+        String jmbPoslovodje = dto.getPoslovodja().getJmb();
 
-        MagacionerEntity magacioner = magacionerRepository.findById("1234567899999")
-                .orElseThrow(() -> new RuntimeException("Magacioner ne postoji"));
+        if (dto.getMagacioner() == null || dto.getMagacioner().getJmb() == null) {
+            throw new RuntimeException("JMB magacionera mora biti proslijeđen!");
+        }
+        String jmbMagacionera = dto.getMagacioner().getJmb();
+
+        PoslovodjaEntity poslovodja = poslovodjaRepository.findById(jmbPoslovodje)
+                .orElseThrow(() -> new RuntimeException("Poslovođa sa JMB " + jmbPoslovodje + " ne postoji u bazi"));
+
+        MagacionerEntity magacioner = magacionerRepository.findById(jmbMagacionera)
+                .orElseThrow(() -> new RuntimeException("Magacioner sa JMB " + jmbMagacionera + " ne postoji u bazi"));
+
         entity.setPoslovodja(poslovodja);
         entity.setMagacioner(magacioner);
+
         ZahtjevZaResursimaEntity sacuvan = zahtjevZaResursimaRepository.save(entity);
         return modelMapper.map(sacuvan, ZahtjevZaResursima.class);
     }
@@ -77,5 +97,31 @@ public class ZahtjevZaResursimaService {
         ZahtjevZaResursimaEntity updated = zahtjevZaResursimaRepository.saveAndFlush(entity);
 
         return modelMapper.map(updated, ZahtjevZaResursima.class);
+    }
+
+    public void obrisiZahtjev(Integer id) {
+        if (!zahtjevZaResursimaRepository.existsById(id)) {
+            throw new RuntimeException("Zahtjev sa ID-om " + id + " ne postoji.");
+        }
+        zahtjevZaResursimaRepository.deleteById(id);
+    }
+
+    public ZahtjevZaResursima updateZahtjev(Integer id, ZahtjevZaResursima dto) throws NotFoundException {
+        ZahtjevZaResursimaEntity postojeci = zahtjevZaResursimaRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Zahtjev ne postoji."));
+
+        // Poslovodja može mijenjati samo opis dok je zahtjev 'neobradjen'
+        if (postojeci.getStanjeZahtjeva() == StanjeZahtjeva.neobradjen) {
+            postojeci.setOpis(dto.getOpis());
+        }
+
+        // Ako magacioner odobrava/odbija (ovo će ti trebati kasnije)
+        if (dto.getStanjeZahtjeva() != null) {
+            postojeci.setStanjeZahtjeva(dto.getStanjeZahtjeva());
+            postojeci.setDatumObrade(Instant.now());
+        }
+
+        ZahtjevZaResursimaEntity sacuvan = zahtjevZaResursimaRepository.save(postojeci);
+        return modelMapper.map(sacuvan, ZahtjevZaResursima.class);
     }
 }
