@@ -11,7 +11,7 @@ import CenteredOverlay from "../../components/CenteredOverlay/CenteredOverlay.js
 import EntityDetailCard from "../../components/EntityDetailCard/EntityDetailCard.jsx";
 import {formatEntityDetails} from "../../utils/entityDetailFormatter.js";
 import {
-    deleteElement,
+    deleteElement, getKorisnikPodaci,
     getTehnicarData,
     updateElement,
     updateTehnicarAktivnost,
@@ -22,6 +22,7 @@ import DynamicForm from "../../components/DynamicForm.jsx";
 import {schemaMap} from "../../data/SchemaMap.jsx";
 import {useEffect} from "react";
 import {reverseGeocode} from "../../utils/reverseGeocode.js";
+import {getJmb} from "../../auth/auth.js";
 
 
 export function Dashboard({sidebarContents, role}) {
@@ -78,41 +79,29 @@ export function Dashboard({sidebarContents, role}) {
         "zahtjevi": "REQUEST",
         "new-request": "REQUEST"
     };
-    /*const handleOpenDetails = (rawData, tag) => {
-        const type = TAG_MAP[tag];
-        if (!type) return;
 
-        const formatted = formatEntityDetails(rawData, type, role);
-
-        setDetailData(formatted.items);
-        setRawEntityData(rawData);
-        setEntityType(type);
-        setIsDetailVisible(true);
-    };*/
     const handleOpenDetails = async (rawData, tag) => {
         const type = TAG_MAP[tag];
         if (!type) return;
 
         setCurrentTag(tag);
 
-        // Kopiramo rawData da ne bismo mutirali originalni objekt iz liste
         let enrichedData = {...rawData};
 
         try {
-            // AKO JE PROJEKAT: Pretvaramo koordinate u adresu
+
             if (type === 'PROJECT' && rawData.lokacija) {
-                // Pozivamo tvoju funkciju iz utils
+
                 const stvarnaAdresa = await reverseGeocode(rawData.lokacija);
-                // Dodajemo novo polje koje će mapper prepoznati
+
                 enrichedData.lokacijaNaziv = stvarnaAdresa;
             }
 
-            // Formatiramo podatke (sada enrichedData ima lokacijaNaziv, managerIme, itd.)
+
             const formatted = await formatEntityDetails(enrichedData, type, role);
 
-            // Punimo state-ove za prikaz
             setDetailData(formatted.items);
-            setRawEntityData(enrichedData); // Čuvamo obogaćene podatke (sa adresom)
+            setRawEntityData(enrichedData);
             setEntityType(type);
             setIsDetailVisible(true);
         } catch (error) {
@@ -163,11 +152,34 @@ export function Dashboard({sidebarContents, role}) {
             return refreshFn;
         });
     };
+    // Unutar Dashboard komponente, dodaj novi state:
+    const [userName, setUserName] = useState("");
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const jmb = getJmb();
+            if (jmb) {
+                try {
+                    const data = await getKorisnikPodaci(jmb);
+                    if (data) {
+                        console.log(data);
+                        setUserName(`${data}`);
+                    }
+                } catch (err) {
+                    // Ako API ne nađe JMB u 'zaposleni', možda je u drugoj tabeli ili je fallback uloga
+                    setUserName(role);
+                }
+            }
+        };
+        fetchUser();
+    }, [role]);
+
+
 
     return (
         <div className="app-container">
 
-            <TopBar activeScreen={activeScreen} screenTitle={screenTitle} screenHandle={handleScreen} role={role}/>
+            <TopBar activeScreen={activeScreen} screenTitle={screenTitle} screenHandle={handleScreen} userName={userName}/>
 
             <div className="content-area">
 
@@ -182,26 +194,26 @@ export function Dashboard({sidebarContents, role}) {
 
                     {activeScreen === "map" && <MapView role={role}/>}
                     {activeScreen === "calendar" && <Calendar/>}
-                    {/*{activeScreen === "employees" && <List isEditable={false} listTitle={screenTitle} screenState="user" tag="zaposleni" />}*/}
+
                     {activeScreen === "report-overview" && <div className={"report-lists"}>
                         <List isEditable={false} listTitle={"Dnevni " + screenTitle} screenState="report-overview"
                               dividerWidth={"90%"} tag="dnevni_izvjestaji"/>
                         <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview"
                               dividerWidth={"90%"} tag="sumarni_izvjestaji"/>
                     </div>}
-                    {/* Radna oprema */}
+
                     {activeScreen === "tools" &&
                         <List isEditable={true} listTitle={screenTitle} screenState="tools" tag="radna-oprema"
                               onSuccess={handleRegisterRefresh}
                               onClick={(data) => handleOpenDetails(data, "radna-oprema")}/>}
 
-                    {/* Vozila */}
+
                     {activeScreen === "vehicles" &&
                         <List isEditable={true} listTitle={screenTitle} screenState="truck" tag="vozila"
                               onSuccess={handleRegisterRefresh}
                               onClick={(data) => handleOpenDetails(data, "vozila")}/>}
 
-                    {/* Materijal */}
+
                     {activeScreen === "materials" &&
                         <List isEditable={true} listTitle={screenTitle} screenState="material" tag="materijal"
                               onSuccess={handleRegisterRefresh}
@@ -355,7 +367,7 @@ export function Dashboard({sidebarContents, role}) {
                 )}
             </CenteredOverlay>
 
-            {/* DINAMIČKA FORMA ZA IZMJENU */}
+
             {isEditFormVisible && (
                 <CenteredOverlay className="form-overlay" isVisible={isEditFormVisible}
                                  onClose={() => setIsEditFormVisible(false)}>

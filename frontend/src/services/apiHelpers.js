@@ -75,6 +75,17 @@ export const updateElement = async (tag, id, data) => {
     }
 };
 
+export const getKorisnikPodaci = async (jmb) => {
+    if (!jmb) return null;
+    try {
+
+        const response = await api.service(false).get(`/korisnici/${jmb}`);
+        return response.data;
+    } catch (error) {
+        console.error("Greška pri dohvatanju podataka korisnika za JMB: " + jmb, error);
+        throw error;
+    }
+};
 
 export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = false) => {
     let response;
