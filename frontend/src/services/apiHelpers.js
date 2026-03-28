@@ -50,24 +50,27 @@ export const deleteElement = async (tag, id) => {
 };
 
 export const updateElement = async (tag, id, data) => {
-    // 1. Mapiranje rute (oba idu na isti endpoint na backendu)
     const apiRoute = tag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : tag;
-
     let finalData = {...data};
 
-    // 2. Logika za JMB: Samo ako je ORIGINALNI tag "moji_dnevni_zadaci"
+    // Transformacija za zahtjeve da odgovara DTO-u na backendu
+    if (tag === "zahtjevi") {
+        finalData = {
+            opis: data.opis,
+            magacioner: data.magacionerJmb ? { jmb: data.magacionerJmb } : null,
+            // poslovodja se obično ne mijenja pri ažuriranju zahtjeva,
+            // ali možeš dodati ako zatreba
+        };
+    }
+
     if (tag === "moji_dnevni_zadaci") {
         const ulogovaniJmb = getJmb();
         finalData.tehnicarJmb = ulogovaniJmb;
         finalData.ulogovaniJmb = ulogovaniJmb;
-        console.log("Dodijeljen sopstveni JMB za update:", finalData.tehnicarJmb);
     }
 
     try {
-        // 3. KORISTI api.service(false) umjesto običnog axios-a
-        // false vjerovatno znači da ne koristiš "multipart/form-data" već običan JSON
         const response = await api.service(false).put(`/${apiRoute}/${id}`, finalData);
-
         return response.status;
     } catch (error) {
         console.error(`Greška pri ažuriranju taga ${tag}:`, error);

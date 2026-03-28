@@ -24,21 +24,29 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
     useEffect(() => {
         if (initialValues && schema?.fields) {
             const formattedValues = { ...initialValues };
+
             schema.fields.forEach(field => {
+                // POPRAVKA ZA EDIT: Ako polje u šemi traži JMB (npr. magacionerJmb)
+                // a u podacima imamo objekat (npr. magacioner: { jmb: "..." })
+                if (field.name.endsWith('Jmb')) {
+                    const objectName = field.name.replace('Jmb', '');
+                    if (formattedValues[objectName] && formattedValues[objectName].jmb) {
+                        formattedValues[field.name] = String(formattedValues[objectName].jmb);
+                    }
+                }
 
                 if (field.type === 'date' && formattedValues[field.name]) {
                     formattedValues[field.name] = dayjs(formattedValues[field.name]);
                 }
 
-
-                if (field.type === 'select' && field.mode === 'multiple') {
-                    formattedValues[field.name] = Array.isArray(formattedValues[field.name])
-                        ? formattedValues[field.name].map(val => String(val))
-                        : [];
-                }
-
-                else if (field.type === 'select' && formattedValues[field.name] !== undefined && formattedValues[field.name] !== null) {
-                    formattedValues[field.name] = String(formattedValues[field.name]);
+                if (field.type === 'select') {
+                    if (field.mode === 'multiple') {
+                        formattedValues[field.name] = Array.isArray(formattedValues[field.name])
+                            ? formattedValues[field.name].map(val => String(val))
+                            : [];
+                    } else if (formattedValues[field.name] !== undefined && formattedValues[field.name] !== null) {
+                        formattedValues[field.name] = String(formattedValues[field.name]);
+                    }
                 }
             });
             form.setFieldsValue(formattedValues);
@@ -53,38 +61,56 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
 
         schema.fields.forEach((field) => {
             if (field.type === "select") {
-                // OPCIJA A: Ako polje ima direktan URL (kao što imaju poslovođe)
+
+                // --- CASE 1: Polje koristi direktan apiEndpoint (npr. tehničari) ---
                 if (field.apiEndpoint) {
                     let finalUrl = field.apiEndpoint;
+
                     if (typeof finalUrl === 'string' && finalUrl.includes(":jmb")) {
                         const trenutniJmb = getJmb();
                         if (!trenutniJmb) return;
                         finalUrl = finalUrl.replace(":jmb", trenutniJmb);
                     }
+
                     api.service(false).get(finalUrl)
                         .then((res) => {
+                            const data = Array.isArray(res.data) ? res.data : [];
                             setDynamicOptions((prev) => ({
                                 ...prev,
-                                [field.name]: Array.isArray(res.data) ? res.data : [],
+                                [field.name]: data,
                             }));
+
+                            // Popravka za edit: postavi vrijednost nakon što stignu podaci
+                            if (initialValues && initialValues[field.name]) {
+                                form.setFieldValue(field.name, String(initialValues[field.name]));
+                            }
                         })
-                        .catch((err) => console.error(`Greška endpoint: ${field.name}`, err));
+                        .catch((err) => console.error(`Greška pri učitavanju opcija za: ${field.name}`, err));
                 }
-                // OPCIJA B: Ako polje ima optionsTag (TVOJ MAGACIONER!)
+
+                // --- CASE 2: Polje koristi optionsTag (npr. magacioneri kroz apiHelpers) ---
                 else if (field.optionsTag) {
                     fetchData(field.optionsTag)
                         .then((data) => {
-                            console.log("Podaci stigli za tag:", field.optionsTag, data);
                             setDynamicOptions((prev) => ({
                                 ...prev,
-                                [field.name]: data, // Ovo puni magacionere!
+                                [field.name]: data,
                             }));
+
+                            // Popravka za edit: postavi vrijednost nakon što stignu podaci
+                            if (initialValues && initialValues[field.name]) {
+                                // Provjera ako je u pitanju magacionerJmb, a backend poslao objekat 'magacioner'
+                                const val = initialValues[field.name] || initialValues.magacioner?.jmb;
+                                if (val) {
+                                    form.setFieldValue(field.name, String(val));
+                                }
+                            }
                         })
-                        .catch((err) => console.error(`Greška tag: ${field.optionsTag}`, err));
+                        .catch((err) => console.error(`Greška pri učitavanju tag-a: ${field.optionsTag}`, err));
                 }
             }
         });
-    }, [schema]);
+    }, [schema, initialValues, form]);
 
     const resourceType = Form.useWatch('resourceType', form);
 
