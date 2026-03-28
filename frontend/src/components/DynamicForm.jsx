@@ -6,6 +6,7 @@ import { getJmb } from "../auth/auth.js";
 import api from "../auth/axiosInstance.js";
 import LocationPicker from "../components/LocationPicker/LocationPicker.jsx";
 const { Option } = Select;
+import { fetchData } from "../services/apiHelpers.js";
 
 const componentMap = {
     input: Input,
@@ -51,24 +52,36 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
         if (!schema?.fields) return;
 
         schema.fields.forEach((field) => {
-            if (field.type === "select" && field.apiEndpoint) {
-                let finalUrl = field.apiEndpoint;
-
-                if (typeof finalUrl === 'string' && finalUrl.includes(":jmb")) {
-                    const trenutniJmb = getJmb();
-                    if (!trenutniJmb) return;
-                    finalUrl = finalUrl.replace(":jmb", trenutniJmb);
+            if (field.type === "select") {
+                // OPCIJA A: Ako polje ima direktan URL (kao što imaju poslovođe)
+                if (field.apiEndpoint) {
+                    let finalUrl = field.apiEndpoint;
+                    if (typeof finalUrl === 'string' && finalUrl.includes(":jmb")) {
+                        const trenutniJmb = getJmb();
+                        if (!trenutniJmb) return;
+                        finalUrl = finalUrl.replace(":jmb", trenutniJmb);
+                    }
+                    api.service(false).get(finalUrl)
+                        .then((res) => {
+                            setDynamicOptions((prev) => ({
+                                ...prev,
+                                [field.name]: Array.isArray(res.data) ? res.data : [],
+                            }));
+                        })
+                        .catch((err) => console.error(`Greška endpoint: ${field.name}`, err));
                 }
-
-
-                api.service(false).get(finalUrl)
-                    .then((res) => {
-                        setDynamicOptions((prev) => ({
-                            ...prev,
-                            [field.name]: Array.isArray(res.data) ? res.data : [],
-                        }));
-                    })
-                    .catch((err) => console.error(`Greška pri učitavanju opcija za: ${field.name}`, err));
+                // OPCIJA B: Ako polje ima optionsTag (TVOJ MAGACIONER!)
+                else if (field.optionsTag) {
+                    fetchData(field.optionsTag)
+                        .then((data) => {
+                            console.log("Podaci stigli za tag:", field.optionsTag, data);
+                            setDynamicOptions((prev) => ({
+                                ...prev,
+                                [field.name]: data, // Ovo puni magacionere!
+                            }));
+                        })
+                        .catch((err) => console.error(`Greška tag: ${field.optionsTag}`, err));
+                }
             }
         });
     }, [schema]);

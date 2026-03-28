@@ -295,7 +295,7 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
                 id: t.id,
 
                 title: t.poslovodja ? `${t.poslovodja.ime} ${t.poslovodja.prezime}` : "Nepoznat poslovođa",
-                detail: "Datum slanja: " + (t.datumSlanja ? t.datumSlanja : "Nepoznato"),
+                detail: t.opis,
                 subline: "Stanje: " + t.stanjeZahtjeva,
 
                 statusColor: t.stanjeZahtjeva === 'odobren' ? 'green' : (t.stanjeZahtjeva === 'neodobren' ? 'red' : 'orange')
