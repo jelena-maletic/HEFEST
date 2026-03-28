@@ -35,6 +35,7 @@ const mapProjectDetails = (data,role) => {
         { section: 'Osnovni Detalji', label: 'Prioritet', value: data.prioritet, key: 'prio',
             render: (v) => <Tag color={getPriorityTagColor(v)}>{v}</Tag> },
         { section: 'Osnovni Detalji', label: 'Klijent', value: data.klijent, key: 'klijent' },
+        { section: 'Osnovni Detalji', label: 'Lokacija', value: data.lokacija, key: 'lokacija' },
         { section: 'Vremenski Okvir', label: 'Status', value: data.status, key: 'status',
             render: (v) => <Tag color={getStatusTagColor(v)}>{v}</Tag> },
         { section: 'Vremenski Okvir', label: 'Početak rada', value: formatDate(data.pocetakRada)|| "Nije počelo", key: 'start' },
