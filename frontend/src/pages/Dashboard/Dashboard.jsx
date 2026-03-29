@@ -225,14 +225,20 @@ export function Dashboard({sidebarContents, role}) {
                               onClick={(data) => handleOpenDetails(data, "zaduzenja")} tag="zaduzenja"
                               filterByPoslovodja={true}/>}
 
-                    {activeScreen === "request-overview" && <List key={`list-${activeScreen}-${refreshTrigger}`}
-                                                                  isEditable={false}
-                                                                  binaryChoice={true}
-                                                                  listTitle={screenTitle}
-                                                                  onClick={(data) => handleOpenDetails(data, "zahtjevi")}
-                                                                  screenState="request-overview"
-                                                                  tag="zahtjevi"
-                                                                  onSuccess={handleRegisterRefresh}/>}
+                    {activeScreen === "request-overview" && (
+                        <List
+                            key={`list-${activeScreen}-${refreshTrigger}`}
+                            isEditable={false}
+                            binaryChoice={true}
+                            listTitle={screenTitle}
+                            onClick={(data) => handleOpenDetails(data, "zahtjevi")}
+                            screenState="request-overview"
+                            tag="zahtjevi"
+                            onSuccess={handleRegisterRefresh}
+                            filterByMagacioner={role === "magacioner"}
+                        />
+                    )}
+
                     {activeScreen === "technicians" && (
                         <List
                             isEditable={false}

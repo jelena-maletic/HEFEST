@@ -20,6 +20,7 @@ export function List({
                          tag,
                          filterByPoslovodja,
                          filterByTehnicar,
+                         filterByMagacioner,
                          onSuccess
                      }) {
 
@@ -30,7 +31,7 @@ export function List({
     const selectedSchema = schemaMap[tag];
 
     const reloadData = async () => {
-        const data = await fetchData(tag, filterByPoslovodja, filterByTehnicar);
+        const data = await fetchData(tag, filterByPoslovodja, filterByTehnicar, filterByMagacioner);
         setListData(data || []);
     };
 
@@ -57,7 +58,7 @@ export function List({
 
     useEffect(() => {
         const getData = async () => {
-            const data = await fetchData(tag, filterByPoslovodja, filterByTehnicar);
+            const data = await fetchData(tag, filterByPoslovodja, filterByTehnicar, filterByMagacioner);
             setListData(data || []);
         };
 

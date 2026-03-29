@@ -90,7 +90,7 @@ export const getKorisnikPodaci = async (jmb) => {
     }
 };
 
-export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = false) => {
+export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = false, filterByMagacioner = false) => {
     let response;
     const apiTag = tag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : tag;
     try {
@@ -113,6 +113,11 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
 
     if (tag === "zahtjevi" && filterPoslovodja) {
         dataArray = dataArray.filter(t => t.poslovodja?.jmb === ulogovaniJmb);
+    }
+
+    if (tag === "zahtjevi" && filterByMagacioner) {
+        // Filtriramo zahtjeve tako da magacioner vidi samo one gdje je on dodijeljen
+        dataArray = dataArray.filter(t => t.magacioner?.jmb === ulogovaniJmb);
     }
 
     const isZadatakTag = (tag === "dnevni_zadaci" || tag === "moji_dnevni_zadaci");
