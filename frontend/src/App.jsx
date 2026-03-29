@@ -17,18 +17,31 @@ function App() {
         <ConfigProvider
             theme={{
                 token: {
-                    colorPrimary: '#2F3640',
-                    colorError: '#ff4d4f',
-                    borderRadius: 8,
+                    colorPrimary: '#475569',
+                    colorTextBase: '#1e293b',
+                    colorBgLayout: '#f8fafc',
+                    colorBorder: '#e2e8f0',
+                    borderRadius: 6,
                     fontFamily: 'Inter, sans-serif',
                 },
                 components: {
                     Button: {
-                        fontWeight: 600,
                         boxShadow: 'none',
+                        boxShadowSecondary: 'none',
+                        boxShadowTertiary: 'none',
+                        fontWeight: 500,
+                        colorPrimaryHover: '#334155',
+                        controlOutline: 'transparent',
                     },
                     Card: {
-                        borderRadiusLG: 12,
+                        boxShadowTertiary: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
+                        colorBorderSecondary: '#f1f5f9',
+                        borderRadiusLG: 10,
+                    },
+                    Input: {
+                        activeBorderColor: '#64748b',
+                        hoverBorderColor: '#94a3b8',
+                        controlOutline: 'transparent',
                     }
                 },
             }}
