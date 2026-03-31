@@ -366,7 +366,7 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
                 return [{
                     ...t,
                     title: formatValue(t.naziv),
-                    detail: formatValue(t.opis),
+                    detail: t.poslovodjaImePrezime || (t.manager ? `JMB: ${t.manager}` : "Projekat nije dodijeljen nijednom poslovođi"),
                     subline: `Početak rada: ${formatValue(t.pocetakRada)}`
                 }];
             });

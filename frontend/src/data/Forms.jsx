@@ -10,7 +10,8 @@ export const projectSchema = {
             required: true,
             span: 12,
             rules: [
-                { max: 100, message: "Naziv ne smije biti duži od 100 karaktera" }
+                { max: 100, message: "Naziv ne smije biti duži od 100 karaktera" },
+                { min: 3, message: "Naziv mora imati bar 3 karaktera" }
             ]
         },
         {
@@ -19,6 +20,7 @@ export const projectSchema = {
             type: "input",
             required: true,
             span: 12,
+            rules: [{ max: 150, message: "Ime klijenta predugačko (max 150)" }]
         },
 
         {
@@ -119,6 +121,7 @@ export const projectSchema = {
             type: "textarea",
             required: false,
             span: 24,
+            rules: [{ max: 1000, message: "Opis ne smije prelaziti 1000 karaktera" }]
         },
     ],
 };
@@ -134,6 +137,7 @@ export const vehicleSchema = {
             type: "input",
             required: true,
             span: 12,
+            rules: [{ max: 60, message: "Maksimalno 60 karaktera" }]
         },
         {
             name: "registarskiBroj",
@@ -228,6 +232,7 @@ export const equipmentSchema = {
             type: "input",
             required: true,
             span: 12,
+            rules: [{ max: 80, message: "Naziv radne opreme predugačak (max 80)" }]
         },
         {
             name: "stanjeMagacina",
@@ -269,7 +274,8 @@ export const materialSchema = {
             label: 'Naziv materijala',
             type: "input",
             required: true,
-            span: 12
+            span: 12,
+            rules: [{ max: 80, message: "Naziv materijala predugačak (max 80)" }]
         },
         {
             name: "stanjeMagacina",
@@ -322,6 +328,7 @@ export const materialSchema = {
 };
 
 export const requestSchema = {
+    title: "Zahtjev za zaduživanje resursa",
     submitLabel: "Pošalji zahtjev",
     layout: "vertical",
     fields: [
@@ -342,11 +349,11 @@ export const requestSchema = {
             type: "select",
             required: true,
             span: 24,
-            optionsTag: "magacioneri", // Ovo sad gađa onaj novi case iznad
+            optionsTag: "magacioneri",
             props: {
                 placeholder: "Izaberite magacionera",
                 showSearch: true,
-                optionFilterProp: "label" // Pretraga će raditi po imenu
+                optionFilterProp: "label"
             }
         }
     ],
@@ -449,6 +456,19 @@ export const assignmentSchema = {
             type: "date",
             required: false,
             span: 12,
+            rules: [
+                ({ getFieldValue }) => ({
+                    validator(_, value) {
+                        const datumZaduzenja = getFieldValue('datumZaduzenja');
+
+                        if (!value || !datumZaduzenja || value.isSameOrAfter(datumZaduzenja)) {
+                            return Promise.resolve();
+                        }
+
+                        return Promise.reject(new Error('Datum razduženja ne može biti prije datuma zaduženja!'));
+                    },
+                }),
+            ],
         },
         {
             name: "zaduzenaKolicina",
@@ -465,6 +485,21 @@ export const assignmentSchema = {
             required: false,
             min: 0,
             span: 12,
+            rules: [
+                ({ getFieldValue }) => ({
+                    validator(_, value) {
+                        const zaduzeno = getFieldValue('zaduzenaKolicina');
+
+                        if (value === undefined || value === null || !zaduzeno || value <= zaduzeno) {
+                            return Promise.resolve();
+                        }
+
+                        return Promise.reject(
+                            new Error(`Razdužena količina ne može biti veća od zadužene (${zaduzeno})!`)
+                        );
+                    },
+                }),
+            ],
         },
     ],
 };
@@ -480,6 +515,7 @@ export const dailyTaskSchema = {
             type: "textarea",
             required: true,
             span: 24,
+            rules: [{ max: 500, message: "Opis ne smije prelaziti 500 karaktera" }]
         },
         {
             name: "tehnicarJmb",
@@ -511,6 +547,7 @@ export const myDailyTaskSchema = {
             type: "textarea",
             required: true,
             span: 24,
+            rules: [{ max: 500, message: "Opis ne smije prelaziti 500 karaktera" }]
         },
         {
             name: "datum",
