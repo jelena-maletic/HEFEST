@@ -14,8 +14,8 @@ import java.time.LocalDate;
 public class SumarniIzvjestaj implements Serializable {
     private Integer idIzvjestaja;
     private LocalDate datumKreiranja;
-    //private Integer idProjekta;
-    // String jmbPoslovodja;
+    private Integer idProjekta;
+    String jmbPoslovodja;
     private Projekat projekat;
     private Poslovodja poslovodja;
     private LocalDate pocetniDatum;

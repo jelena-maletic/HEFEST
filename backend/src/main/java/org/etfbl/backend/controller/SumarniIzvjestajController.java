@@ -3,10 +3,7 @@ package org.etfbl.backend.controller;
 import org.etfbl.backend.dto.Materijal;
 import org.etfbl.backend.dto.SumarniIzvjestaj;
 import org.etfbl.backend.service.SumarniIzvjestajService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,5 +20,25 @@ public class SumarniIzvjestajController {
     @GetMapping
     public List<SumarniIzvjestaj> findAll() {
         return sumarniIzvjestajService.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public SumarniIzvjestaj getOne(@PathVariable Integer id) {
+        return sumarniIzvjestajService.getById(id);
+    }
+
+    @PostMapping
+    public SumarniIzvjestaj create(@RequestBody SumarniIzvjestaj dto) {
+        return sumarniIzvjestajService.create(dto);
+    }
+
+    @PutMapping("/{id}")
+    public SumarniIzvjestaj update(@PathVariable Integer id, @RequestBody SumarniIzvjestaj dto) {
+        return sumarniIzvjestajService.update(id, dto);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Integer id) {
+        sumarniIzvjestajService.delete(id);
     }
 }
