@@ -25,6 +25,14 @@ export function ListElement({
     const [updateForm, setUpdateForm] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
     const statusClass = listElementData.statusColor ? `status-${listElementData.statusColor}` : '';
+    const truncateText = (text, maxLength) => {
+        if (!text) return "";
+        return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+    };
+
+    const titleLimit = 25;
+    const detailLimit = 30;
+    const sublineLimit = 40;
 
     const images = loadAssets();
     const notify = useNotification();
@@ -151,13 +159,13 @@ export function ListElement({
 
                 <div className="list-element-info">
                 <span className="list-element-title">
-                {listElementData.title || "Bez naslova"}
+               {truncateText(listElementData.title || "Bez naslova", titleLimit)}
         </span>
                     <span className="list-element-detail">
-            {listElementData.detail}
+            {truncateText(listElementData.detail, detailLimit)}
         </span>
                     <span className="list-element-subline">
-            {listElementData.subline}
+           {truncateText(listElementData.subline, sublineLimit)}
         </span>
                 </div>
 
