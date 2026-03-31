@@ -125,7 +125,7 @@
 /* Boje za statuse zahtjeva */
 .status-green {
     border-left: 6px solid #52c41a !important;
-
+}
     .status-red {
         border-left: 6px solid #ff4d4f !important;
     }
@@ -253,4 +253,3 @@
         box-shadow: 0 0 8px #4CAF50;
         vertical-align: middle;
     }
-}

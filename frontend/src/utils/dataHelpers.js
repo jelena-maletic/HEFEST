@@ -21,6 +21,7 @@ export const getStatusTagColor = (status) => {
     const lowerStatus = status ? status.toLowerCase() : '';
     switch (lowerStatus) {
         case 'završen':
+        case 'neodobren':
             return 'red';
         case 'aktivan':
             return 'green';
@@ -28,8 +29,6 @@ export const getStatusTagColor = (status) => {
             return 'default';
         case 'dogovoren':
             return 'blue';
-        case 'neodobren':
-            return 'red';
         case 'odobren':
             return 'green';
         default:
