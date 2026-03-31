@@ -170,29 +170,28 @@ export const vehicleSchema = {
             type: "number",
             span: 12,
             required: true,
+            rules: [
+                { required: true, message: "Unesite broj putnika!" },
+                {
+                    type: "number",
+                    min: 1,
+                    message: "Broj putnika mora biti najmanje 1 (vozač)!"
+                }
+            ],
         },
         {
             name: "maksimalnaNosivost",
             label: "Maksimalna nosivost (kg)",
             type: "number",
             span: 12,
+            rules: [
+                {
+                    type: "number",
+                    min: 0,
+                    message: "Nosivost ne može biti negativna!"
+                }
+            ],
         },
-        /*{
-            name: "stanjeMagacina",
-            label: "Stanje magacina",
-            type: "number",
-            required: true,
-            min: 0,
-            span: 12,
-        },
-        {
-            name: "minimalnaKolicina",
-            label: "Minimalna količina",
-            type: "number",
-            required: true,
-            min: 0,
-            span: 12,
-        },*/
         {
             name: "datumRegistracije",
             label: "Datum registracije",
@@ -241,6 +240,13 @@ export const equipmentSchema = {
             required: true,
             min: 0,
             span: 12,
+            rules: [
+                {
+                    type: "number",
+                    min: 0,
+                    message: "Ne može biti negativan broj!"
+                }
+            ],
         },
         {
             name: "minimalnaKolicina",
@@ -249,6 +255,13 @@ export const equipmentSchema = {
             required: true,
             min: 0,
             span: 12,
+            rules: [
+                {
+                    type: "number",
+                    min: 0,
+                    message: "Ne može biti negativan broj!"
+                }
+            ],
         },
         {
             name: "kategorija",
@@ -284,6 +297,13 @@ export const materialSchema = {
             required: true,
             min: 0,
             span: 12,
+            rules: [
+                {
+                    type: "number",
+                    min: 0,
+                    message: "Ne može biti negativan broj!"
+                }
+            ],
         },
         {
             name: "minimalnaKolicina",
@@ -292,6 +312,13 @@ export const materialSchema = {
             required: true,
             min: 0,
             span: 12,
+            rules: [
+                {
+                    type: "number",
+                    min: 0,
+                    message: "Ne može biti negativan broj!"
+                }
+            ],
         },
         {
             name: 'kategorija',
@@ -477,6 +504,18 @@ export const assignmentSchema = {
             required: true,
             min: 0,
             span: 12,
+            rules: [
+                { required: true, message: "Ovo polje je obavezno!" },
+                {
+                    type: "number",
+                    min: 0,
+                    message: "Količina ne može biti negativna!"
+                },
+                {
+                    validator: (_, value) =>
+                        value > 0 ? Promise.resolve() : Promise.reject(new Error("Količina mora biti veća od 0!"))
+                }
+            ],
         },
         {
             name: "razduzenaKolicina",
