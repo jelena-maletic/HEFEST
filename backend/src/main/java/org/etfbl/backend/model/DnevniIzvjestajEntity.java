@@ -41,4 +41,7 @@ public class DnevniIzvjestajEntity extends IzvjestajEntity{
     @JoinColumn(name = "Sumarni_Izvjestaj_IdIzvjestaja")
     private SumarniIzvjestajEntity sumarniIzvjestajIdizvjestaja;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "Tehnicar_JMB", nullable = false)
+    private TehnicarEntity tehnicar;
 }

@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 
 public interface PoslovodjaUpravljaProjektomRepository extends JpaRepository<PoslovodjaUpravljaProjektomEntity, PoslovodjaUpravljaProjektomId> {
     @Query("SELECT p.poslovodjaJMB FROM PoslovodjaUpravljaProjektomEntity p WHERE p.idProjekta = :idProjekta")
@@ -18,6 +20,8 @@ public interface PoslovodjaUpravljaProjektomRepository extends JpaRepository<Pos
     @Transactional
     @Query("DELETE FROM PoslovodjaUpravljaProjektomEntity p WHERE p.idProjekta = :idProjekta")
     void deleteByProjekatId(@Param("idProjekta") Integer idProjekta);
+
+    Optional<PoslovodjaUpravljaProjektomEntity> findByProjekat_IdProjektaAndPoslovodja_Jmb(Integer idProjekta, String jmb);
 }
 
 

@@ -5,11 +5,15 @@ import org.etfbl.backend.dto.DnevniIzvjestaj;
 import org.etfbl.backend.dto.Poslovodja;
 import org.etfbl.backend.dto.Projekat;
 import org.etfbl.backend.dto.SumarniIzvjestaj;
+import org.etfbl.backend.model.DnevniIzvjestajEntity;
 import org.etfbl.backend.repository.DnevniIzvjestajRepository;
+import org.etfbl.backend.repository.PoslovodjaUpravljaProjektomRepository;
 import org.etfbl.backend.repository.SumarniIzvjestajRepository;
+import org.etfbl.backend.repository.TehnicarRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Transactional
@@ -17,46 +21,115 @@ import java.util.List;
 public class DnevniIzvjestajService {
         private final ModelMapper modelMapper;
         private final DnevniIzvjestajRepository dnevniIzvjestajRepository;
+        private final PoslovodjaUpravljaProjektomRepository poslovodjaUpravljaProjektomRepository;
+        private final TehnicarRepository tehnicarRepository;
 
-        public DnevniIzvjestajService(ModelMapper modelMapper, DnevniIzvjestajRepository dnevniIzvjestajRepository) {
+        public DnevniIzvjestajService(ModelMapper modelMapper, DnevniIzvjestajRepository dnevniIzvjestajRepository, PoslovodjaUpravljaProjektomRepository poslovodjaUpravljaProjektomRepository, TehnicarRepository tehnicarRepository) {
             this.modelMapper = modelMapper;
             this.dnevniIzvjestajRepository = dnevniIzvjestajRepository;
+            this.poslovodjaUpravljaProjektomRepository = poslovodjaUpravljaProjektomRepository;
+            this.tehnicarRepository = tehnicarRepository;
         }
 
-        public List<DnevniIzvjestaj> getAll() {
-            return dnevniIzvjestajRepository.findAll().stream().map(entity -> {
-                DnevniIzvjestaj dto = new DnevniIzvjestaj();
+    public List<DnevniIzvjestaj> getAll() {
+        return dnevniIzvjestajRepository.findAll().stream()
+                .map(this::mapToDto)
+                .toList();
+    }
 
-                dto.setIdIzvjestaja(entity.getId());
-                dto.setDatumKreiranja(entity.getDatumKreiranja());
+    public DnevniIzvjestaj getById(Integer id) {
+        DnevniIzvjestajEntity entity = dnevniIzvjestajRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Dnevni izvještaj nije pronađen: " + id));
+        return mapToDto(entity);
+    }
 
-                if (entity.getPoslovodjaUpravljaProjektom() != null) {
-                    var pup = entity.getPoslovodjaUpravljaProjektom();
+    public DnevniIzvjestaj create(DnevniIzvjestaj dto) {
+        DnevniIzvjestajEntity entity = new DnevniIzvjestajEntity();
 
-                    if (pup.getProjekat() != null) {
-                        Projekat pDto = new Projekat();
-                        pDto.setId(pup.getProjekat().getIdProjekta());
-                        pDto.setNaziv(pup.getProjekat().getNaziv());
-                        dto.setProjekat(pDto);
-                    }
+        entity.setIzvjestaj(entity);
 
-                    if (pup.getPoslovodja() != null) {
-                        Poslovodja rDto = new Poslovodja();
-                        rDto.setIme(pup.getPoslovodja().getIme());
-                        rDto.setPrezime(pup.getPoslovodja().getPrezime());
-                        dto.setPoslovodja(rDto);
-                    }
-                }
+        updateEntityFromDto(entity, dto);
 
-                dto.setDatum(entity.getDatum());
-                dto.setSatiRada(entity.getSatiRada());
-                dto.setNocniSati(entity.getNocniSati());
-                dto.setPrekovremeniSati(entity.getPrekovremeniSati());
-                dto.setTerenskiSati(entity.getTerenskiSati());
-                dto.setUkupniSati(entity.getUkupniSati());
-                dto.setOpisRadova(entity.getOpisRadova());
+        entity.setDatumKreiranja(LocalDate.now());
 
-                return dto;
-            }).toList();
+        var pup = poslovodjaUpravljaProjektomRepository.findByProjekat_IdProjektaAndPoslovodja_Jmb(dto.getIdProjekta(), dto.getJmbPoslovodja())
+                .orElseThrow(() -> new RuntimeException("Veza poslovođa-projekat ne postoji!"));
+        entity.setPoslovodjaUpravljaProjektom(pup);
+
+        if (dto.getJmbTehnicar() != null && !dto.getJmbTehnicar().isEmpty()) {
+            var tehnicar = tehnicarRepository.findById(dto.getJmbTehnicar())
+                    .orElseThrow(() -> new RuntimeException("Tehničar sa tim JMB nije pronađen!"));
+            entity.setTehnicar(tehnicar);
         }
+
+        return mapToDto(dnevniIzvjestajRepository.save(entity));
+    }
+
+    public DnevniIzvjestaj update(Integer id, DnevniIzvjestaj dto) {
+        DnevniIzvjestajEntity entity = dnevniIzvjestajRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Izvještaj nije pronađen"));
+
+        updateEntityFromDto(entity, dto);
+
+        if (dto.getJmbTehnicar() != null) {
+            var tehnicar = tehnicarRepository.findById(dto.getJmbTehnicar())
+                    .orElseThrow(() -> new RuntimeException("Tehničar nije pronađen"));
+            entity.setTehnicar(tehnicar);
+        }
+
+        return mapToDto(dnevniIzvjestajRepository.save(entity));
+    }
+
+    public void delete(Integer id) {
+        dnevniIzvjestajRepository.deleteById(id);
+    }
+
+    private void updateEntityFromDto(DnevniIzvjestajEntity entity, DnevniIzvjestaj dto) {
+        entity.setDatum(dto.getDatum());
+        entity.setSatiRada(dto.getSatiRada());
+        entity.setNocniSati(dto.getNocniSati());
+        entity.setPrekovremeniSati(dto.getPrekovremeniSati());
+        entity.setTerenskiSati(dto.getTerenskiSati());
+        entity.setUkupniSati(dto.getUkupniSati());
+        entity.setOpisRadova(dto.getOpisRadova());
+    }
+
+    private DnevniIzvjestaj mapToDto(DnevniIzvjestajEntity entity) {
+        DnevniIzvjestaj dto = new DnevniIzvjestaj();
+        dto.setIdIzvjestaja(entity.getId());
+        dto.setDatumKreiranja(entity.getDatumKreiranja());
+        dto.setDatum(entity.getDatum());
+        dto.setSatiRada(entity.getSatiRada());
+        dto.setNocniSati(entity.getNocniSati());
+        dto.setPrekovremeniSati(entity.getPrekovremeniSati());
+        dto.setTerenskiSati(entity.getTerenskiSati());
+        dto.setUkupniSati(entity.getUkupniSati());
+        dto.setOpisRadova(entity.getOpisRadova());
+
+        if (entity.getPoslovodjaUpravljaProjektom() != null) {
+            var pup = entity.getPoslovodjaUpravljaProjektom();
+            if (pup.getProjekat() != null) {
+                Projekat pDto = new Projekat();
+                pDto.setId(pup.getProjekat().getIdProjekta());
+                pDto.setNaziv(pup.getProjekat().getNaziv());
+                dto.setProjekat(pDto);
+            }
+            if (pup.getPoslovodja() != null) {
+                Poslovodja rDto = new Poslovodja();
+                rDto.setIme(pup.getPoslovodja().getIme());
+                rDto.setPrezime(pup.getPoslovodja().getPrezime());
+                dto.setPoslovodja(rDto);
+            }
+        }
+
+        if (entity.getTehnicar() != null) {
+            dto.setJmbTehnicar(entity.getTehnicar().getJmb());
+
+            var tDto = new org.etfbl.backend.dto.Tehnicar();
+            tDto.setIme(entity.getTehnicar().getIme());
+            tDto.setPrezime(entity.getTehnicar().getPrezime());
+            dto.setTehnicar(tDto);
+        }
+        return dto;
+    }
 }

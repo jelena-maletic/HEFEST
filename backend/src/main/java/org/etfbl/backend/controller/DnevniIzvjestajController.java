@@ -2,10 +2,7 @@ package org.etfbl.backend.controller;
 
 import org.etfbl.backend.dto.DnevniIzvjestaj;
 import org.etfbl.backend.service.DnevniIzvjestajService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,4 +18,24 @@ public class DnevniIzvjestajController {
 
     @GetMapping
     public List<DnevniIzvjestaj> findAll() {return dnevniIzvjestajService.getAll();}
+
+    @GetMapping("/{id}")
+    public DnevniIzvjestaj getOne(@PathVariable Integer id) {
+        return dnevniIzvjestajService.getById(id);
+    }
+
+    @PostMapping
+    public DnevniIzvjestaj create(@RequestBody DnevniIzvjestaj dto) {
+        return dnevniIzvjestajService.create(dto);
+    }
+
+    @PutMapping("/{id}")
+    public DnevniIzvjestaj update(@PathVariable Integer id, @RequestBody DnevniIzvjestaj dto) {
+        return dnevniIzvjestajService.update(id, dto);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Integer id) {
+        dnevniIzvjestajService.delete(id);
+    }
 }
