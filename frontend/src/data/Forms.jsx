@@ -456,6 +456,19 @@ export const assignmentSchema = {
             type: "date",
             required: false,
             span: 12,
+            rules: [
+                ({ getFieldValue }) => ({
+                    validator(_, value) {
+                        const datumZaduzenja = getFieldValue('datumZaduzenja');
+
+                        if (!value || !datumZaduzenja || value.isSameOrAfter(datumZaduzenja)) {
+                            return Promise.resolve();
+                        }
+
+                        return Promise.reject(new Error('Datum razduženja ne može biti prije datuma zaduženja!'));
+                    },
+                }),
+            ],
         },
         {
             name: "zaduzenaKolicina",
@@ -472,6 +485,21 @@ export const assignmentSchema = {
             required: false,
             min: 0,
             span: 12,
+            rules: [
+                ({ getFieldValue }) => ({
+                    validator(_, value) {
+                        const zaduzeno = getFieldValue('zaduzenaKolicina');
+
+                        if (value === undefined || value === null || !zaduzeno || value <= zaduzeno) {
+                            return Promise.resolve();
+                        }
+
+                        return Promise.reject(
+                            new Error(`Razdužena količina ne može biti veća od zadužene (${zaduzeno})!`)
+                        );
+                    },
+                }),
+            ],
         },
     ],
 };
@@ -487,6 +515,7 @@ export const dailyTaskSchema = {
             type: "textarea",
             required: true,
             span: 24,
+            rules: [{ max: 500, message: "Opis ne smije prelaziti 500 karaktera" }]
         },
         {
             name: "tehnicarJmb",
@@ -518,6 +547,7 @@ export const myDailyTaskSchema = {
             type: "textarea",
             required: true,
             span: 24,
+            rules: [{ max: 500, message: "Opis ne smije prelaziti 500 karaktera" }]
         },
         {
             name: "datum",
