@@ -1,6 +1,7 @@
 import api from "../auth/axiosInstance.js";
 import axios from "axios";
 import {getJmb} from "../auth/auth.js";
+import {getStatusTagColor} from "../utils/dataHelpers.js";
 
 const API_BASE = "http://localhost:8080/api";
 
@@ -309,16 +310,32 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
         }
 
         case "zahtjevi": {
-            return dataArray.map((t) => ({
-                ...t,
-                id: t.id,
 
-                title: t.poslovodja ? `${t.poslovodja.ime} ${t.poslovodja.prezime}` : "Nepoznat poslovođa",
-                detail: t.opis,
-                subline: "Stanje: " + t.stanjeZahtjeva,
+            const ulogovaniJmb = getJmb();
 
-                statusColor: t.stanjeZahtjeva === 'odobren' ? 'green' : (t.stanjeZahtjeva === 'neodobren' ? 'red' : 'orange')
-            }));
+            return dataArray.map((t) => {
+
+                let dynamicTitle = "Nepoznat učesnik";
+
+                if (t.magacioner?.jmb === ulogovaniJmb) {
+                    dynamicTitle = t.poslovodja
+                        ? `Od: ${t.poslovodja.ime} ${t.poslovodja.prezime}`
+                        : "Nepoznat poslovođa";
+                } else {
+                    dynamicTitle = t.magacioner
+                        ? `Za: ${t.magacioner.ime} ${t.magacioner.prezime}`
+                        : "Za: Magacin (na čekanju)";
+                }
+
+                return {
+                    ...t,
+                    id: t.id,
+                    title: dynamicTitle,
+                    detail: t.opis,
+                    subline: "Stanje: " + (t.stanjeZahtjeva?.toLowerCase() === "neobradjen" ? "neobrađen" : t.stanjeZahtjeva),
+                    statusColor: getStatusTagColor(t.stanjeZahtjeva)
+                };
+            });
         }
 
         case "zaduzenja": {

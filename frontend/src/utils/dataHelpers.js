@@ -28,6 +28,10 @@ export const getStatusTagColor = (status) => {
             return 'default';
         case 'dogovoren':
             return 'blue';
+        case 'neodobren':
+            return 'red';
+        case 'odobren':
+            return 'green';
         default:
             return 'default';
     }

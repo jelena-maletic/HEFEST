@@ -9,6 +9,7 @@ import {useNotification} from "../../NotificationContext.jsx";
 import ConfirmationDialog from "../../ConfirmationDialog.jsx";
 import {updateZadatakStatus} from "../../../services/apiHelpers.js";
 
+
 export function ListElement({
                                 screenState,
                                 listElementData,
@@ -23,6 +24,7 @@ export function ListElement({
     const [isHovered, setIsHovered] = useState(false);
     const [updateForm, setUpdateForm] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    const statusClass = listElementData.statusColor ? `status-${listElementData.statusColor}` : '';
 
     const images = loadAssets();
     const notify = useNotification();
@@ -124,7 +126,8 @@ export function ListElement({
             <div
                 className={`list-element ${className || ''} ${isHovered ? 'hovered' : ''} 
                         ${isCompleted ? 'completed' : ''} 
-                        ${isActiveTehnicar ? 'active-technician' : ''}`}
+                        ${isActiveTehnicar ? 'active-technician' : ''}
+                        ${statusClass}`}
                 onClick={() => onClickFunc(listElementData)}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}

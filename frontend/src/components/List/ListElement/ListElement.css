@@ -1,4 +1,4 @@
-.list-element{
+.list-element {
     margin: 1em;
     border-radius: 10px;
     border: 2px solid transparent;
@@ -8,15 +8,15 @@
     flex-direction: row;
     gap: 1em;
     align-items: center;
-    min-width: 50em;
+    width: 50em;
     min-height: 9em;
     padding: 0.6em 0.6em;
     font-size: 10px;
-    font-family: inherit;
     background-color: #DDDDDD;
     color: #2E2F2E;
     cursor: pointer;
     transition: .25s;
+    overflow: hidden;
 }
 .list-element:hover {
     border-color: #DDDDDD;
@@ -33,9 +33,13 @@
     outline: 4px auto -webkit-focus-ring-color;
 }
 
-.list-element-info{
+.list-element-info {
     display: flex;
     flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    padding-right: 80px;
 }
 
 .list-element-title{
@@ -91,137 +95,162 @@
     transition: inherit;
 }
 
-.list-element-buttons{
+.list-element-buttons {
     display: flex;
     flex-direction: row;
     position: absolute;
-    top: 10px;
-    right: -35%;
-    /*align-items: flex-end;*/
-    gap: 1em;
-    width: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 15px;
+    gap: 0.5em;
+    width: auto;
 }
 
 .list-element-buttons button{
     padding: 12px;
 }
 
-/* ================= GRID ELEMENT – potpuno odvojen ================= */
-.grid-element {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+.list-element-title,
+.list-element-detail,
+.list-element-subline {
 
-    min-width: 220px; /* manja širina */
-    min-height: 150px;
-    max-height: 200px;
-    padding: 16px;
-    margin: 0;             /* margin ne nasljeđuje iz list-element */
-    /*background: #e6e6e6;*/
-    border-radius: 16px;
-    box-shadow: inset 0 0 0 1px #ccc;
-    gap: 10px;
-    cursor: pointer;
-    transition: 0.25s;
+    display: block;
+    width: 100%;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.grid-element .list-image {
-    width: 54px;
-    height: 54px;
-    object-fit: contain;
-    margin-bottom: 10px;
-    align-self: center;
-}
+/* Boje za statuse zahtjeva */
+.status-green {
+    border-left: 6px solid #52c41a !important;
 
-.grid-element .list-element-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-}
+    .status-red {
+        border-left: 6px solid #ff4d4f !important;
+    }
 
-.grid-element .list-element-title {
-    font-size: 14px;
-    font-weight: 600;
-}
+    .status-grey {
+        border-left: 6px solid #bfbfbf !important;
+    }
 
-.grid-element .list-element-detail {
-    font-size: 12px;
-    color: #8F8F8F;
-}
+    /* ================= GRID ELEMENT – potpuno odvojen ================= */
 
-.grid-element .list-element-subline {
-    font-size: 11px;
-}
+    .grid-element {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
 
-.grid-element .list-element-buttons {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
-}
+        min-width: 220px;
+        min-height: 150px;
+        max-height: 200px;
+        padding: 16px;
+        margin: 0;
+        border-radius: 16px;
+        box-shadow: inset 0 0 0 1px #ccc;
+        gap: 10px;
+        cursor: pointer;
+        transition: 0.25s;
+    }
 
-.form-overlay .centered-centered-overlay-backdrop{
-    width: 35em;
-}
+    .grid-element .list-image {
+        width: 54px;
+        height: 54px;
+        object-fit: contain;
+        margin-bottom: 10px;
+        align-self: center;
+    }
 
-.interactive-icon {
-    cursor: pointer;
-    transition: transform 0.2s ease, opacity 0.2s ease;
-}
+    .grid-element .list-element-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+    }
 
-.interactive-icon:hover {
-    transform: scale(1.05);
-    opacity: 0.8;
-}
+    .grid-element .list-element-title {
+        font-size: 14px;
+        font-weight: 600;
+    }
 
-.list-element.completed {
-    background-color: #f4f7f4 !important;
+    .grid-element .list-element-detail {
+        font-size: 12px;
+        color: #8F8F8F;
+    }
 
-    border-left: 6px solid #8FBC8F;
+    .grid-element .list-element-subline {
+        font-size: 11px;
+    }
 
-    opacity: 0.9;
-    transition: all 0.3s ease;
-}
+    .grid-element .list-element-buttons {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 10px;
+    }
 
-.list-element.completed .list-element-title {
-    text-decoration: line-through;
-    color: #a8a8a8;
-}
+    .form-overlay .centered-centered-overlay-backdrop {
+        width: 35em;
+    }
 
-.list-element.completed .list-element-detail,
-.list-element.completed .list-element-subline {
-    color: #b0b0b0;
-}
+    .interactive-icon {
+        cursor: pointer;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+    }
 
-.list-element.completed .list-image {
-    opacity: 0.5;
-}
+    .interactive-icon:hover {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
 
-.list-element.completed .interactive-icon:hover {
-    opacity: 1;
-}
+    .list-element.completed {
+        background-color: #f4f7f4 !important;
 
-.list-element.active-technician {
-    border-left: 6px solid #4CAF50 !important;
-    background-color: rgba(76, 175, 80, 0.1) !important;
-}
+        border-left: 6px solid #8FBC8F;
 
-.list-element.active-technician:hover {
-    background-color: #1e3d20 !important;
-    color: #ffffff;
-}
+        opacity: 0.9;
+        transition: all 0.3s ease;
+    }
 
-.active-technician .list-element-title::after {
-    content: '';
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    background-color: #4CAF50;
-    border-radius: 50%;
-    margin-left: 10px;
-    box-shadow: 0 0 8px #4CAF50;
-    vertical-align: middle;
+    .list-element.completed .list-element-title {
+        text-decoration: line-through;
+        color: #a8a8a8;
+    }
+
+    .list-element.completed .list-element-detail,
+    .list-element.completed .list-element-subline {
+        color: #b0b0b0;
+    }
+
+    .list-element.completed .list-image {
+        opacity: 0.5;
+    }
+
+    .list-element.completed .interactive-icon:hover {
+        opacity: 1;
+    }
+
+    .list-element.active-technician {
+        border-left: 6px solid #4CAF50 !important;
+        background-color: rgba(76, 175, 80, 0.1) !important;
+    }
+
+    .list-element.active-technician:hover {
+        background-color: #1e3d20 !important;
+        color: #ffffff;
+    }
+
+    .active-technician .list-element-title::after {
+        content: '';
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        background-color: #4CAF50;
+        border-radius: 50%;
+        margin-left: 10px;
+        box-shadow: 0 0 8px #4CAF50;
+        vertical-align: middle;
+    }
 }

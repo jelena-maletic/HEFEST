@@ -205,15 +205,64 @@ const mapMaterialDetails = (data) => {
         { section: 'Skladište', label: 'Minimalna Količina', value: data.minimalnaKolicina, key: 'min_stock' }
     ]);
 };
-//+ detalji o tehnicaru, o materijalu, o izvjestaju
 
-// --- GLAVNI EKSPORT ---
+const mapRequestDetails = (data, role) => {
+
+    const managerLabel = role?.toLowerCase() === 'magacioner' ? 'Poslao poslovođa' : 'Zahtjev podnio';
+
+    return groupItems([
+        {
+            section: 'Informacije o Zahtjevu',
+            label: 'Stanje zahtjeva',
+            value: data.stanjeZahtjeva?.toLowerCase() === "neobradjen" ? "neobrađen" : data.stanjeZahtjeva,
+            key: 'status',
+            render: (v) => <Tag color={getStatusTagColor(v)}>{v}</Tag>
+        },
+        {
+            section: 'Osobe',
+            label: managerLabel,
+            value: data.poslovodjaIme || data.poslovodja.ime+" "+data.poslovodja.prezime,
+            key: 'manager',
+            render: (v) => <strong>{safeValue(v)}</strong>
+        },
+        {
+            section: 'Osobe',
+            label: 'Magacioner ',
+            value: data.magacioner
+                ? `${data.magacioner.ime} ${data.magacioner.prezime}`
+                : (data.magacionerIme || 'Čeka na obradu'),
+            key: 'warehouse_staff',
+            render: (v) => <span>{v}</span>
+        },
+        {
+            section: 'Sadržaj',
+            label: 'Opis zahtjeva',
+            value: safeValue(data.opis, 'Nema opisa'),
+            key: 'desc',
+            span: 3
+        },
+        {
+            section: 'Vremenski okvir',
+            label: 'Datum slanja',
+            value: formatDate(data.datumSlanja),
+            key: 'date_sent'
+        },
+        {
+            section: 'Vremenski okvir',
+            label: 'Datum obrade',
+            value: data.datumObrade ? formatDate(data.datumObrade) : 'Čeka na obradu',
+            key: 'date_processed'
+        }
+    ]);
+};
+
 export const mappers = {
     PROJECT: { title: 'Detalji Projekta', mapper: mapProjectDetails },
     EMPLOYEE: { title: 'Detalji Zaposlenog', mapper: mapEmployeeDetails },
     VEHICLE: { title: 'Detalji Vozila', mapper: mapVehicleDetails },
     TOOL: { title: 'Detalji Opreme', mapper: mapToolDetails },
-    MATERIAL: {title: 'Detalji Materijala', mapper: mapMaterialDetails }
+    MATERIAL: {title: 'Detalji Materijala', mapper: mapMaterialDetails },
+    REQUEST: {title:'Detalji Zahtjeva za Resursima', mapper: mapRequestDetails}
 
 
 };
