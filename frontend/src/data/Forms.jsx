@@ -597,3 +597,66 @@ export const myDailyTaskSchema = {
         }
     ],
 };
+
+export const utroseniMaterijalSchema = [
+    {
+        name: "idMaterijala",
+        label: "Materijal",
+        type: "select",
+        required: true,
+        span: 24,
+        apiEndpoint: "http://localhost:8080/api/materijal",
+        optionLabel: "naziv",
+        optionValue: "idResursa",
+        rules: [{ required: true, message: "Molimo odaberite materijal!" }],
+    },
+    {
+        name: "kolicina",
+        label: "Količina",
+        type: "number",
+        required: true,
+        span: 12,
+        rules: [
+            { required: true, message: "Unesite količinu!" },
+            { type: "number", min: 0.01, message: "Količina mora biti veća od 0!" }
+        ],
+    },
+    {
+        name: "etaza",
+        label: "Etaža / Sprat",
+        type: "text",
+        span: 12,
+        rules: [{ max: 45, message: "Maksimalno 45 karaktera!" }],
+    },
+    {
+        name: "pozicija",
+        label: "Pozicija (Mjesto ugradnje)",
+        type: "text",
+        required: true,
+        span: 12,
+        rules: [
+            { required: true, message: "Unesite poziciju!" },
+            { max: 45, message: "Maksimalno 45 karaktera!" }
+        ],
+    },
+    {
+        name: "strujniKrug",
+        label: "Strujni krug",
+        type: "text",
+        span: 12,
+        rules: [{ max: 45, message: "Maksimalno 45 karaktera!" }],
+    },
+    {
+        name: "namjena",
+        label: "Namjena",
+        type: "text",
+        span: 24,
+        rules: [{ max: 100, message: "Maksimalno 100 karaktera!" }],
+    },
+    {
+        name: "napomena",
+        label: "Napomena",
+        type: "textarea",
+        span: 24,
+    }
+];
