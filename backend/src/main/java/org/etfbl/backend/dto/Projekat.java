@@ -31,4 +31,5 @@ public class Projekat implements Serializable {
     @JsonProperty("manager")
     String poslovodja;
 
+    String poslovodjaImePrezime;
 }

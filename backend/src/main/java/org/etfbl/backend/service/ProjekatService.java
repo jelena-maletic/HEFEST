@@ -102,6 +102,13 @@ public class ProjekatService {
         String managerJmb = poslovodjaUpravljaProjektomRepository.findPoslovodjaJmbByIdProjekta(id);
         dto.setPoslovodja(managerJmb);
 
+        if (managerJmb != null) {
+            poslovodjaRepository.findById(managerJmb).ifPresent(p -> {
+                String punoIme = p.getIme() + " " + p.getPrezime();
+                dto.setPoslovodjaImePrezime(punoIme);
+            });
+        }
+
         List<String> tehnicari = tehnicarNaProjektuRepository.findTehnicarJMBByIdProjekta(id);
         dto.setTimTehnicara(tehnicari);
 
@@ -122,7 +129,7 @@ public class ProjekatService {
         }
 
         return projekti.stream()
-                .map(p -> modelMapper.map(p, Projekat.class))
+                .map(this::mapToDto)
                 .toList();
     }
 
