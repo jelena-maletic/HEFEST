@@ -246,6 +246,7 @@ export function Dashboard({sidebarContents, role}) {
                             screenState="user"
                             tag="tehnicari/only"
                             onClick={(data) => handleOpenDetails(data, "tehnicari")}
+                            filterByPoslovodja={role === "poslovodja"}
                         />
                     )}
                     {activeScreen === "report-overview-manager" && <div className={"report-lists"}>

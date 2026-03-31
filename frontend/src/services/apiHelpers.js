@@ -98,32 +98,37 @@ const formatDateOnly = (dateString) => {
 };
 
 export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = false, filterByMagacioner = false) => {
+    const ulogovaniJmb = getJmb();
     let response;
     const apiTag = tag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : tag;
     try {
-        response = await api.service(false).get(`/${apiTag}`);
-    } catch (error) {
+
+        if (tag === "tehnicari/only" && filterPoslovodja) {
+
+            response = await api.service(false).get(`/tehnicari/za-poslovodju/${ulogovaniJmb}`);
+        } else {
+
+            response = await api.service(false).get(`/${apiTag}`);
+        }} catch (error) {
         console.error("Greška pri dohvatanju podataka: " + error);
         return [];
     }
 
     if (!response.data || !Array.isArray(response.data)) {
         console.error("Server nije vratio niz!");
-        return []; // Dodala sam [] ovdje da ne bude undefined
+        return [];
     }
 
     let dataArray = Array.isArray(response.data) ? response.data : [response.data];
 
-    // --- OVDJE JE BILA GREŠKA: DODAJ OVU LINIJU ---
-    const ulogovaniJmb = getJmb();
-    // ----------------------------------------------
+
 
     if (tag === "zahtjevi" && filterPoslovodja) {
         dataArray = dataArray.filter(t => t.poslovodja?.jmb === ulogovaniJmb);
     }
 
     if (tag === "zahtjevi" && filterByMagacioner) {
-        // Filtriramo zahtjeve tako da magacioner vidi samo one gdje je on dodijeljen
+
         dataArray = dataArray.filter(t => t.magacioner?.jmb === ulogovaniJmb);
     }
 
@@ -167,6 +172,7 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
             t.manager === ulogovaniJmb
         );
     }
+
 
 
     switch (tag) {
