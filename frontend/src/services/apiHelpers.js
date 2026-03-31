@@ -91,6 +91,12 @@ export const getKorisnikPodaci = async (jmb) => {
     }
 };
 
+const formatDateOnly = (dateString) => {
+    if (!dateString) return "Nije definisano";
+    const date = new Date(dateString);
+    return date.toLocaleDateString('sr-RS');
+};
+
 export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = false, filterByMagacioner = false) => {
     let response;
     const apiTag = tag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : tag;
@@ -252,7 +258,7 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
                     tehnicarPunoIme: t.tehnicar ? `${t.tehnicar.ime} ${t.tehnicar.prezime}` : "Nije dodijeljen",
 
                     title: t.opis,
-                    detail: "Datum: " + t.datum,
+                    detail: "Datum: " + formatDateOnly(t.datum),
                     subline: "Tehničar: " + (t.tehnicar ? `${t.tehnicar.ime} ${t.tehnicar.prezime}` : "Nije dodijeljen"),
                     status: t.zavrsen ? "Završen" : "U toku",
                     statusColor: t.zavrsen ? "green" : "orange"
@@ -268,7 +274,7 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
 
                 let temp = {
                     title: t.projekat.naziv,
-                    detail: t.datum,
+                    detail: formatDateOnly(t.datum),
                     subline: t.poslovodja.ime + " " + t.poslovodja.prezime
                 }
                 Object.assign(temp, t);
@@ -284,7 +290,7 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
 
                 let temp = {
                     title: t.projekat.naziv,
-                    detail: "Od " + t.pocetniDatum + " do " + t.krajnjiDatum,
+                    detail: "Od " + formatDateOnly(t.pocetniDatum) + " do " + formatDateOnly(t.krajnjiDatum),
                     subline: t.poslovodja.ime + " " + t.poslovodja.prezime
                 }
                 Object.assign(temp, t);
@@ -340,6 +346,17 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
 
         case "zaduzenja": {
             return dataArray.flatMap((t) => {
+                const formatirajDatum = (isoString) => {
+                    if (!isoString) return "Nije zaduženo";
+                    const date = new Date(isoString);
+                    return date.toLocaleDateString('sr-RS', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                };
                 let formValues = {
                     id: `${t.manager}/${t.resursId}`,
 
@@ -354,7 +371,7 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
                     datumRazduzenja: t.datumRazduzenja,
 
                     title: t.zaduzenaKolicina + "x " + (t.resursNaziv || "Nepoznat resurs"),
-                    detail: "Datum zaduženja: " + t.datumZaduzenja,
+                    detail: "Datum zaduženja: " + formatirajDatum(t.datumZaduzenja),
                     subline: "Zadužio: " + (t.poslovodjaImePrezime || t.manager)
                 };
 
@@ -367,7 +384,7 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
                     ...t,
                     title: formatValue(t.naziv),
                     detail: t.poslovodjaImePrezime || (t.manager ? `JMB: ${t.manager}` : "Projekat nije dodijeljen nijednom poslovođi"),
-                    subline: `Početak rada: ${formatValue(t.pocetakRada)}`
+                    subline: `Početak: ${formatDateOnly(t.pocetakRada)}  •  Rok: ${formatDateOnly(t.rok)}`
                 }];
             });
         }
