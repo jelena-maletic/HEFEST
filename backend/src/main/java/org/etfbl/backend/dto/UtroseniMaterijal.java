@@ -19,4 +19,6 @@ public class UtroseniMaterijal implements Serializable {
     String namjena;
     String napomena;
     Materijal materijal;
+    Integer idMaterijala;
+    Integer idIzvjestaja;
 }

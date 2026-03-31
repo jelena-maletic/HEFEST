@@ -4,10 +4,7 @@ import org.etfbl.backend.dto.UtroseniMaterijal;
 import org.etfbl.backend.dto.Vozilo;
 import org.etfbl.backend.service.UtroseniMaterijalService;
 import org.etfbl.backend.service.VoziloService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,4 +24,23 @@ public class UtroseniMaterijalController {
             return utroseniMaterijalService.getAllUtroseniMaterijal();
         }
 
+    @GetMapping("/{id}")
+    public UtroseniMaterijal getOne(@PathVariable Integer id) {
+        return utroseniMaterijalService.getById(id);
+    }
+
+    @PostMapping
+    public UtroseniMaterijal create(@RequestBody UtroseniMaterijal dto) {
+        return utroseniMaterijalService.create(dto);
+    }
+
+    @PutMapping("/{id}")
+    public UtroseniMaterijal update(@PathVariable Integer id, @RequestBody UtroseniMaterijal dto) {
+        return utroseniMaterijalService.update(id, dto);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Integer id) {
+        utroseniMaterijalService.delete(id);
+    }
 }
