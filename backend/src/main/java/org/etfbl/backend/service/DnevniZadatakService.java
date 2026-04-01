@@ -13,6 +13,7 @@ import org.etfbl.backend.repository.TehnicarRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,6 @@ public class DnevniZadatakService {
         return dnevniZadatakRepository.findAll().stream().map(entity -> {
             DnevniZadatak dto = modelMapper.map(entity, DnevniZadatak.class);
 
-            // RUČNO MAPIRANJE ID-a (Entity.id -> DTO.idDnevnogZadatka)
             dto.setIdDnevnogZadatka(entity.getId());
 
             if (entity.getDnevniIzvjestaj() != null) {
@@ -55,6 +55,14 @@ public class DnevniZadatakService {
 
             return dto;
         }).collect(Collectors.toList());
+    }
+
+    public List<DnevniZadatak> getZavrseniZadaciZaTehnicaraIDatum(String jmb, LocalDate datum) {
+        List<DnevniZadatakEntity> zadaci = dnevniZadatakRepository.findAllByTehnicar_JmbAndDatumAndZavrsenTrue(jmb, datum);
+
+        return zadaci.stream()
+                .map(entity -> modelMapper.map(entity, DnevniZadatak.class))
+                .collect(Collectors.toList());
     }
 
     public DnevniZadatak create(DnevniZadatakRequest request) {
