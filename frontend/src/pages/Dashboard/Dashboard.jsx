@@ -386,7 +386,6 @@ export function Dashboard({sidebarContents, role}) {
                         onSubmit={async (formData) => {
                             try {
                                 const apiTag = currentTag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : currentTag;
-                                console.log(rawEntityData.id);
                                 await updateElement(apiTag, rawEntityData.id, formData);
                                 notify.success("Izmijenjeno", "Podaci su uspješno ažurirani.");
                                 if (refreshCurrentList) refreshCurrentList();
