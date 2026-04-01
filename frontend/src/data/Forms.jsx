@@ -598,65 +598,214 @@ export const myDailyTaskSchema = {
     ],
 };
 
-export const utroseniMaterijalSchema = [
-    {
-        name: "idMaterijala",
-        label: "Materijal",
-        type: "select",
-        required: true,
-        span: 24,
-        apiEndpoint: "http://localhost:8080/api/materijal",
-        optionLabel: "naziv",
-        optionValue: "idResursa",
-        rules: [{ required: true, message: "Molimo odaberite materijal!" }],
-    },
-    {
-        name: "kolicina",
-        label: "Količina",
-        type: "number",
-        required: true,
-        span: 12,
-        rules: [
-            { required: true, message: "Unesite količinu!" },
-            { type: "number", min: 0.01, message: "Količina mora biti veća od 0!" }
-        ],
-    },
-    {
-        name: "etaza",
-        label: "Etaža / Sprat",
-        type: "text",
-        span: 12,
-        rules: [{ max: 45, message: "Maksimalno 45 karaktera!" }],
-    },
-    {
-        name: "pozicija",
-        label: "Pozicija (Mjesto ugradnje)",
-        type: "text",
-        required: true,
-        span: 12,
-        rules: [
-            { required: true, message: "Unesite poziciju!" },
-            { max: 45, message: "Maksimalno 45 karaktera!" }
-        ],
-    },
-    {
-        name: "strujniKrug",
-        label: "Strujni krug",
-        type: "text",
-        span: 12,
-        rules: [{ max: 45, message: "Maksimalno 45 karaktera!" }],
-    },
-    {
-        name: "namjena",
-        label: "Namjena",
-        type: "text",
-        span: 24,
-        rules: [{ max: 100, message: "Maksimalno 100 karaktera!" }],
-    },
-    {
-        name: "napomena",
-        label: "Napomena",
-        type: "textarea",
-        span: 24,
-    }
-];
+export const utroseniMaterijalSchema = {
+    title: "Utroseni materijal",
+    submitLabel: "Kreiraj",
+    layout: "vertical",
+    fields: [
+
+        {
+            name: "idMaterijala",
+            label: "Materijal",
+            type: "select",
+            required: true,
+            span: 24,
+            apiEndpoint: "http://localhost:8080/api/materijal",
+            optionLabel: "naziv",
+            optionValue: "idResursa",
+            rules: [{required: true, message: "Molimo odaberite materijal!"}],
+        },
+        {
+            name: "kolicina",
+            label: "Količina",
+            type: "number",
+            required: true,
+            span: 12,
+            rules: [
+                {required: true, message: "Unesite količinu!"},
+                {type: "number", min: 0.01, message: "Količina mora biti veća od 0!"}
+            ],
+        },
+        {
+            name: "etaza",
+            label: "Etaža / Sprat",
+            type: "text",
+            span: 12,
+            rules: [{max: 45, message: "Maksimalno 45 karaktera!"}],
+        },
+        {
+            name: "pozicija",
+            label: "Pozicija (Mjesto ugradnje)",
+            type: "text",
+            required: true,
+            span: 12,
+            rules: [
+                {required: true, message: "Unesite poziciju!"},
+                {max: 45, message: "Maksimalno 45 karaktera!"}
+            ],
+        },
+        {
+            name: "strujniKrug",
+            label: "Strujni krug",
+            type: "text",
+            span: 12,
+            rules: [{max: 45, message: "Maksimalno 45 karaktera!"}],
+        },
+        {
+            name: "namjena",
+            label: "Namjena",
+            type: "text",
+            span: 24,
+            rules: [{max: 100, message: "Maksimalno 100 karaktera!"}],
+        },
+        {
+            name: "napomena",
+            label: "Napomena",
+            type: "textarea",
+            span: 24,
+        }
+    ]
+};
+
+export const dnevniIzvjestajSchema = {
+    title: "Dnevni izvještaj",
+    submitLabel: "Kreiraj",
+    layout: "vertical",
+    fields: [
+        {
+            name: "idProjekta",
+            label: "Projekat",
+            type: "select",
+            required: true,
+            span: 12,
+            apiEndpoint: "http://localhost:8080/api/projekti",
+            optionLabel: "naziv",
+            optionValue: "idProjekta",
+            rules: [{ required: true, message: "Morate odabrati projekat!" }],
+        },
+        {
+            name: "datum",
+            label: "Datum ",
+            type: "date",
+            required: true,
+            span: 12,
+            rules: [{required: true, message: "Odaberite datum!"}],
+        },
+        {
+            name: "ukupniSati",
+            label: "Ukupni sati",
+            type: "number",
+            required: true,
+            span: 12,
+            rules: [
+                {required: true, message: "Unesite ukupne sate!"},
+                {type: "number", min: 0, message: "Vrijednost ne može biti negativna!"}
+            ],
+        },
+        {
+            name: "satiRada",
+            label: "Redovni radni sati",
+            type: "number",
+            required: true,
+            span: 12,
+            rules: [{required: true, message: "Unesite sate rada!"}],
+        },
+        {
+            name: "prekovremeniSati",
+            label: "Prekovremeni sati",
+            type: "number",
+            span: 12,
+            rules: [{type: "number", min: 0}],
+        },
+        {
+            name: "nocniSati",
+            label: "Noćni rad (sati)",
+            type: "number",
+            span: 12,
+            rules: [{type: "number", min: 0}],
+        },
+        {
+            name: "terenskiSati",
+            label: "Terenski dodatak (sati)",
+            type: "number",
+            span: 12,
+            rules: [{type: "number", min: 0}],
+        },
+        {
+            name: "opisRadova",
+            label: "Opis izvedenih radova",
+            type: "textarea",
+            span: 24,
+            rules: [{required: true, message: "Molimo unesite opis radova!"}],
+        }
+    ]
+};
+
+export const sumarniIzvjestajSchema = {
+    title: "Sumarni izvještaj",
+    submitLabel: "Kreiraj",
+    layout: "vertical",
+    fields: [
+        {
+            name: "idProjekta",
+            label: "Projekat",
+            type: "select",
+            required: true,
+            span: 12,
+            apiEndpoint: "http://localhost:8080/api/projekti",
+            optionLabel: "naziv",
+            optionValue: "idProjekta",
+            rules: [{ required: true, message: "Morate odabrati projekat!" }],
+        },
+        {
+            name: "pocetniDatum",
+            label: "Početak perioda",
+            type: "date",
+            required: true,
+            span: 12,
+            rules: [{ required: true, message: "Odaberite početni datum!" }],
+        },
+        {
+            name: "krajnjiDatum",
+            label: "Kraj perioda",
+            type: "date",
+            required: true,
+            span: 12,
+            dependencies: ['pocetniDatum'],
+            rules: [
+                { required: true, message: "Odaberite krajnji datum!" },
+                ({ getFieldValue }) => ({
+                    validator(_, value) {
+                        const pocetni = getFieldValue('pocetniDatum');
+                        if (!value || !pocetni) {
+                            return Promise.resolve();
+                        }
+                        if (value.isBefore(pocetni, 'day')) {
+                            return Promise.reject(new Error('Krajnji datum ne može biti prije početnog!'));
+                        }
+                        return Promise.resolve();
+                    },
+                }),
+            ],
+        },
+
+        {
+            name: "ukupniSatiRada",
+            label: "Ukupni radni sati",
+            type: "number",
+            required: true,
+            span: 24,
+            rules: [
+                { required: true, message: "Unesite sate!" },
+                { type: "number", min: 0 }
+            ],
+        },
+        {
+            name: "opis",
+            label: "Zaključak i napomene",
+            type: "textarea",
+            span: 24,
+            rules: [{ required: true, message: "Opis je obavezan!" }],
+        }
+    ]
+};
