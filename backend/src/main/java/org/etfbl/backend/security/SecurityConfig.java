@@ -80,6 +80,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/resursi/**").permitAll()
                         .requestMatchers("/api/korisnici/**").permitAll()
                         .requestMatchers("/api/zahtjevi/**").permitAll()
+                        .requestMatchers("/api/sumarni-dnevni/**").permitAll()
                         .requestMatchers("/api/korisnici/change-password").authenticated()
                         .anyRequest().authenticated()
                 )
