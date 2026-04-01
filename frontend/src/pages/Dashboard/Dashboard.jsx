@@ -23,6 +23,7 @@ import {schemaMap} from "../../data/SchemaMap.jsx";
 import {useEffect} from "react";
 import {reverseGeocode} from "../../utils/reverseGeocode.js";
 import {getJmb} from "../../auth/auth.js";
+import CreateDnevniIzvjestajForm from "../../components/CreateDnevniIzvjestajForm.jsx";
 
 
 export function Dashboard({sidebarContents, role}) {
@@ -43,6 +44,8 @@ export function Dashboard({sidebarContents, role}) {
     const [refreshCurrentList, setRefreshCurrentList] = useState(null);
 
     const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+    const [showCreateIzvjestaj, setShowCreateIzvjestaj] = useState(false);
 
     const triggerRefresh = () => {
         setRefreshTrigger(prev => prev + 1);
@@ -316,6 +319,15 @@ export function Dashboard({sidebarContents, role}) {
                             onSuccess={handleRegisterRefresh} // Bitno da se lista osvježi nakon što DynamicForm završi slanje
                             onClick={(data) => handleOpenDetails(data, "zahtjevi")}
                         />
+                    )}
+
+                    {activeScreen === "add-report" && (
+                        <div style={{ padding: 24, overflowY: "auto", height: "100%" }}>
+                            <CreateDnevniIzvjestajForm
+                                onClose={() => handleScreen("home", "home")}
+                                onSuccess={() => handleScreen("home", "home")}
+                            />
+                        </div>
                     )}
 
                 </main>
