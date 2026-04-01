@@ -1,10 +1,7 @@
 package org.etfbl.backend.service;
 
 import jakarta.transaction.Transactional;
-import org.etfbl.backend.dto.DnevniIzvjestaj;
-import org.etfbl.backend.dto.Poslovodja;
-import org.etfbl.backend.dto.Projekat;
-import org.etfbl.backend.dto.SumarniIzvjestaj;
+import org.etfbl.backend.dto.*;
 import org.etfbl.backend.model.DnevniIzvjestajEntity;
 import org.etfbl.backend.repository.DnevniIzvjestajRepository;
 import org.etfbl.backend.repository.PoslovodjaUpravljaProjektomRepository;
@@ -100,6 +97,7 @@ public class DnevniIzvjestajService {
 
     private DnevniIzvjestaj mapToDto(DnevniIzvjestajEntity entity) {
         DnevniIzvjestaj dto = new DnevniIzvjestaj();
+
         dto.setIdIzvjestaja(entity.getId());
         dto.setDatumKreiranja(entity.getDatumKreiranja());
         dto.setDatum(entity.getDatum());
@@ -112,28 +110,40 @@ public class DnevniIzvjestajService {
 
         if (entity.getPoslovodjaUpravljaProjektom() != null) {
             var pup = entity.getPoslovodjaUpravljaProjektom();
+
             if (pup.getProjekat() != null) {
-                Projekat pDto = new Projekat();
+                dto.setIdProjekta(pup.getProjekat().getIdProjekta());
+
+                org.etfbl.backend.dto.Projekat pDto = new org.etfbl.backend.dto.Projekat();
                 pDto.setId(pup.getProjekat().getIdProjekta());
                 pDto.setNaziv(pup.getProjekat().getNaziv());
                 dto.setProjekat(pDto);
             }
+
             if (pup.getPoslovodja() != null) {
-                Poslovodja rDto = new Poslovodja();
+                dto.setJmbPoslovodja(pup.getPoslovodja().getJmb());
+
+                org.etfbl.backend.dto.Poslovodja rDto = new org.etfbl.backend.dto.Poslovodja();
+                rDto.setJmb(pup.getPoslovodja().getJmb());
                 rDto.setIme(pup.getPoslovodja().getIme());
                 rDto.setPrezime(pup.getPoslovodja().getPrezime());
                 dto.setPoslovodja(rDto);
             }
         }
 
+
         if (entity.getTehnicar() != null) {
+
             dto.setJmbTehnicar(entity.getTehnicar().getJmb());
 
-            var tDto = new org.etfbl.backend.dto.Tehnicar();
+            org.etfbl.backend.dto.Tehnicar tDto = new org.etfbl.backend.dto.Tehnicar();
+            tDto.setJmb(entity.getTehnicar().getJmb());
             tDto.setIme(entity.getTehnicar().getIme());
             tDto.setPrezime(entity.getTehnicar().getPrezime());
+
             dto.setTehnicar(tDto);
         }
+
         return dto;
     }
 }
