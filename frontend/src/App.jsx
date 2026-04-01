@@ -6,6 +6,7 @@ import {Dashboard} from "./pages/Dashboard/Dashboard.jsx";
 import {useState} from "react";
 import {NotificationProvider} from "./components/NotificationContext.jsx";
 import {ConfigProvider} from 'antd';
+import srRS from 'antd/locale/sr_RS';
 
 function App() {
     const [role, setRole] = useState("def");
@@ -15,6 +16,7 @@ function App() {
 
     return (
         <ConfigProvider
+            locale={srRS}
             theme={{
                 token: {
                     colorPrimary: '#475569',

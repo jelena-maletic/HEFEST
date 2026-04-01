@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Select} from 'antd';
+import {Modal, Select} from 'antd';
 import './Dashboard.css';
 import MapView from "../../components/MapView.jsx";
 import Calendar from "../../components/Calendar.jsx";
@@ -311,24 +311,32 @@ export function Dashboard({sidebarContents, role}) {
 
                     {activeScreen === "new-request" && (
                         <List
-                            isEditable={true} // Omogućava dugme "Novi" (plus)
+                            isEditable={true}
                             listTitle={screenTitle}
                             screenState="request-overview"
                             tag="zahtjevi"
-                            filterByPoslovodja={true} // Da poslovođa vidi samo svoje poslate zahtjeve
-                            onSuccess={handleRegisterRefresh} // Bitno da se lista osvježi nakon što DynamicForm završi slanje
+                            filterByPoslovodja={true}
+                            onSuccess={handleRegisterRefresh}
                             onClick={(data) => handleOpenDetails(data, "zahtjevi")}
                         />
                     )}
 
-                    {activeScreen === "add-report" && (
-                        <div style={{ padding: 24, overflowY: "auto", height: "100%" }}>
-                            <CreateDnevniIzvjestajForm
-                                onClose={() => handleScreen("home", "home")}
-                                onSuccess={() => handleScreen("home", "home")}
-                            />
-                        </div>
-                    )}
+                    <Modal
+                        title={null}
+                        open={activeScreen === "add-report"}
+                        onCancel={() => handleScreen("home", "home")}
+                        footer={null}
+                        width={900}
+                        centered
+                        destroyOnClose
+                    >
+                        <CreateDnevniIzvjestajForm
+                            onClose={() => handleScreen("home", "home")}
+                            onSuccess={() => {
+                                handleScreen("home", "home");
+                            }}
+                        />
+                    </Modal>
 
                 </main>
             </div>
