@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import {
     Form, Select, DatePicker, InputNumber,
-    Input, Button, Card, Divider
+    Input, Button, Card, Divider, Row, Col, Space
 } from "antd";
-import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
+import { PlusOutlined, DeleteOutlined, FileTextOutlined, BuildOutlined } from "@ant-design/icons";
 import api from "../auth/axiosInstance.js";
 import { useNotification } from "./NotificationContext.jsx";
 
@@ -37,39 +37,22 @@ const CreateDnevniIzvjestajForm = ({ onClose, onSuccess }) => {
         api.service(true).get("http://localhost:8080/api/materijal")
             .then(res => {
                 const data = Array.isArray(res.data) ? res.data : [];
-                //console.log("Materijal primjer:", data[0]);
                 setMaterijali(data);
             })
             .catch(() => notify.error("Greška", "Učitavanje materijala nije uspjelo."));
     }, []);
 
-    const dodajStavku = () => {
-        setStavke(prev => [...prev, PRAZNA_STAVKA()]);
-    };
-
-    const ukloniStavku = (localId) => {
-        setStavke(prev => prev.filter(s => s._localId !== localId));
-    };
-
+    const dodajStavku = () => setStavke(prev => [...prev, PRAZNA_STAVKA()]);
+    const ukloniStavku = (localId) => setStavke(prev => prev.filter(s => s._localId !== localId));
     const updateStavka = (localId, field, value) => {
-        setStavke(prev =>
-            prev.map(s => s._localId === localId ? { ...s, [field]: value } : s)
-        );
+        setStavke(prev => prev.map(s => s._localId === localId ? { ...s, [field]: value } : s));
     };
 
     const validirajStavke = () => {
         for (let i = 0; i < stavke.length; i++) {
             const s = stavke[i];
-            if (!s.idMaterijala) {
-                notify.error("Greška u stavci", `Stavka ${i + 1}: odaberite materijal.`);
-                return false;
-            }
-            if (!s.kolicina || s.kolicina <= 0) {
-                notify.error("Greška u stavci", `Stavka ${i + 1}: unesite ispravnu količinu.`);
-                return false;
-            }
-            if (!s.pozicija?.trim()) {
-                notify.error("Greška u stavci", `Stavka ${i + 1}: pozicija je obavezna.`);
+            if (!s.idMaterijala || !s.kolicina || s.kolicina <= 0 || !s.pozicija?.trim()) {
+                notify.error("Validacija", `Stavka ${i + 1} nije kompletna.`);
                 return false;
             }
         }
@@ -82,7 +65,6 @@ const CreateDnevniIzvjestajForm = ({ onClose, onSuccess }) => {
             if (!validirajStavke()) return;
 
             setLoading(true);
-
             const ulogovaniJmb = sessionStorage.getItem('jmb');
 
             const izvjestajPayload = {
@@ -97,37 +79,21 @@ const CreateDnevniIzvjestajForm = ({ onClose, onSuccess }) => {
                 opisRadova: values.opisRadova,
             };
 
-            console.log(izvjestajPayload)
-
-            const izvjestajRes = await api.service(true).post(
-                "http://localhost:8080/api/dnevni_izvjestaji",
-                izvjestajPayload
-            );
-
-            const idIzvjestaja =
-                izvjestajRes.data?.idIzvjestaja ||
-                izvjestajRes.data?.id ||
-                izvjestajRes.data;
+            const izvjestajRes = await api.service(true).post("http://localhost:8080/api/dnevni_izvjestaji", izvjestajPayload);
+            const idIzvjestaja = izvjestajRes.data?.idIzvjestaja || izvjestajRes.data?.id || izvjestajRes.data;
 
             const materijalRequests = stavke.map(({ _localId, ...stavka }) =>
-                api.service(false).post(
-                    `http://localhost:8080/api/utroseni_materijali`,
-                    { ...stavka, idIzvjestaja }
-                )
+                api.service(false).post(`http://localhost:8080/api/utroseni_materijali`, { ...stavka, idIzvjestaja })
             );
 
             await Promise.all(materijalRequests);
-
-            notify.success("Uspješno", "Dnevni izvještaj je kreiran.");
+            notify.success("Uspješno", "Izvještaj je sačuvan.");
             form.resetFields();
             setStavke([]);
             onSuccess?.();
             onClose?.();
-
         } catch (err) {
-            if (err?.errorFields) return;
-            console.error(err);
-            notify.error("Greška", "Kreiranje izvještaja nije uspjelo.");
+            if (!err?.errorFields) notify.error("Greška", "Slanje podataka nije uspjelo.");
         } finally {
             setLoading(false);
         }
@@ -135,170 +101,174 @@ const CreateDnevniIzvjestajForm = ({ onClose, onSuccess }) => {
 
     return (
         <Card
-            title="Novi dnevni izvještaj"
-            style={{ width: 860, maxHeight: "85vh", overflowY: "auto" }}
+            bordered={false}
+            title={<Space><FileTextOutlined /><span>Novi Dnevni Izvještaj</span></Space>}
+            style={{ width: "100%", maxWidth: 900, margin: "0 auto", borderRadius: 4, boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
         >
-            <Form form={form} layout="vertical">
+            <Form form={form} layout="vertical" requiredMark="optional">
 
-                <Divider orientation="left">Osnovni podaci</Divider>
+                <Row gutter={24}>
+                    <Col xs={24} md={16}>
+                        <Form.Item name="idProjekta" label="Odabir Projekta" rules={[{ required: true }]}>
+                            <Select size="large" placeholder="Pretražite projekte..." showSearch optionFilterProp="children">
+                                {projekti.map(p => <Option key={p.id} value={p.id}>{p.naziv}</Option>)}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} md={8}>
+                        <Form.Item name="datum" label="Datum Izvođenja" rules={[{ required: true }]}>
+                            <DatePicker size="large" style={{ width: "100%" }} />
+                        </Form.Item>
+                    </Col>
+                </Row>
 
-                <div style={{ display: "flex", gap: 16 }}>
-                    <Form.Item
-                        name="idProjekta"
-                        label="Projekat"
-                        rules={[{ required: true, message: "Odaberite projekat!" }]}
-                        style={{ flex: 1 }}
-                    >
-                        <Select placeholder="Odaberite projekat" showSearch
-                                optionFilterProp="children" allowClear>
-                            {projekti.map(p => (
-                                <Option key={String(p.id)} value={String(p.id)}>
-                                    {p.naziv}
-                                </Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
+                <Divider orientation="left" style={{ borderColor: "#d9d9d9" }}>Radni Sati</Divider>
 
-                    <Form.Item
-                        name="datum"
-                        label="Datum"
-                        rules={[{ required: true, message: "Odaberite datum!" }]}
-                        style={{ flex: 1 }}
-                    >
-                        <DatePicker style={{ width: "100%" }} />
-                    </Form.Item>
-                </div>
+                <Row gutter={16}>
+                    <Col span={8}>
+                        <Form.Item name="ukupniSati" label="Ukupno" rules={[{ required: true }]}>
+                            <InputNumber size="large" min={0} style={{ width: "100%" }} placeholder="0" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={8}>
+                        <Form.Item name="satiRada" label="Redovni" rules={[{ required: true }]}>
+                            <InputNumber size="large" min={0} style={{ width: "100%" }} placeholder="0" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={8}>
+                        <Form.Item name="prekovremeniSati" label="Prekovremeni">
+                            <InputNumber size="large" min={0} style={{ width: "100%" }} placeholder="0" />
+                        </Form.Item>
+                    </Col>
+                </Row>
 
-                <div style={{ display: "flex", gap: 16 }}>
-                    <Form.Item name="ukupniSati" label="Ukupni sati"
-                               rules={[{ required: true, message: "Unesite ukupne sate!" }]}
-                               style={{ flex: 1 }}>
-                        <InputNumber min={0} style={{ width: "100%" }} />
-                    </Form.Item>
-                    <Form.Item name="satiRada" label="Redovni radni sati"
-                               rules={[{ required: true, message: "Unesite sate rada!" }]}
-                               style={{ flex: 1 }}>
-                        <InputNumber min={0} style={{ width: "100%" }} />
-                    </Form.Item>
-                    <Form.Item name="prekovremeniSati" label="Prekovremeni sati"
-                               style={{ flex: 1 }}>
-                        <InputNumber min={0} style={{ width: "100%" }} />
-                    </Form.Item>
-                </div>
+                <Row gutter={16}>
+                    <Col span={8}>
+                        <Form.Item name="nocniSati" label="Noćni Rad">
+                            <InputNumber size="large" min={0} style={{ width: "100%" }} placeholder="0" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={8}>
+                        <Form.Item name="terenskiSati" label="Terenski Dodatak">
+                            <InputNumber size="large" min={0} style={{ width: "100%" }} placeholder="0" />
+                        </Form.Item>
+                    </Col>
+                </Row>
 
-                <div style={{ display: "flex", gap: 16 }}>
-                    <Form.Item name="nocniSati" label="Noćni rad (sati)"
-                               style={{ flex: 1 }}>
-                        <InputNumber min={0} style={{ width: "100%" }} />
-                    </Form.Item>
-                    <Form.Item name="terenskiSati" label="Terenski dodatak (sati)"
-                               style={{ flex: 1 }}>
-                        <InputNumber min={0} style={{ width: "100%" }} />
-                    </Form.Item>
-                    <div style={{ flex: 1 }} />
-                </div>
-
-                <Form.Item name="opisRadova" label="Opis izvedenih radova"
-                           rules={[{ required: true, message: "Unesite opis radova!" }]}>
-                    <TextArea rows={3} />
+                <Form.Item name="opisRadova" label="Opis Izvršenih Radova" rules={[{ required: true }]}>
+                    <TextArea rows={4} placeholder="Unesite detaljan opis radova na gradilištu..." style={{ borderRadius: 2 }} />
                 </Form.Item>
 
-                <Divider orientation="left">Utrošeni materijal</Divider>
-
-                {stavke.length === 0 && (
-                    <p style={{ color: "#aaa", marginBottom: 12, fontSize: 13 }}>
-                        Nema dodanih stavki. Kliknite dugme ispod da dodate materijal.
-                    </p>
-                )}
+                <Divider orientation="left" style={{ borderColor: "#d9d9d9" }}>
+                    <Space><BuildOutlined /> Utrošeni Materijal</Space>
+                </Divider>
 
                 {stavke.map((stavka, index) => (
-                    <Card
+                    <div
                         key={stavka._localId}
-                        size="small"
-                        style={{ marginBottom: 12, borderColor: "#e8e8e8" }}
-                        title={
-                            <span style={{ fontWeight: 500, fontSize: 13 }}>
-                                Materijal #{index + 1}
-                            </span>
-                        }
-                        extra={
-                            <Button type="text" danger size="small"
-                                    icon={<DeleteOutlined />}
-                                    onClick={() => ukloniStavku(stavka._localId)}>
-                                Ukloni
-                            </Button>
-                        }
+                        style={{
+                            background: "#fafafa",
+                            padding: "20px",
+                            borderRadius: 4,
+                            border: "1px solid #e8e8e8",
+                            marginBottom: 20,
+                            position: "relative"
+                        }}
                     >
-                        <div style={{ display: "flex", gap: 16 }}>
-                            <Form.Item label="Materijal" required style={{ flex: 2, marginBottom: 8 }}>
-                                <Select
-                                    placeholder="Odaberite materijal"
-                                    showSearch optionFilterProp="children" allowClear
-                                    value={stavka.idMaterijala}
-                                    onChange={val => updateStavka(stavka._localId, "idMaterijala", val)}
-                                >
-                                    {materijali.map(m => (
-                                        <Option key={String(m.id)} value={String(m.id)}>
-                                            {m.naziv}
-                                        </Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
-                            <Form.Item label="Količina" required style={{ flex: 1, marginBottom: 8 }}>
-                                <InputNumber
-                                    min={0.01} style={{ width: "100%" }}
-                                    value={stavka.kolicina}
-                                    onChange={val => updateStavka(stavka._localId, "kolicina", val)}
-                                />
-                            </Form.Item>
+                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
+                            <strong style={{ color: "#1890ff" }}>STAVKA #{index + 1}</strong>
+                            <Button
+                                type="text"
+                                danger
+                                icon={<DeleteOutlined />}
+                                onClick={() => ukloniStavku(stavka._localId)}
+                            >
+                                Ukloni stavku
+                            </Button>
                         </div>
 
-                        <div style={{ display: "flex", gap: 16 }}>
-                            <Form.Item label="Etaža / Sprat" style={{ flex: 1, marginBottom: 8 }}>
-                                <Input maxLength={45} value={stavka.etaza}
-                                       onChange={e => updateStavka(stavka._localId, "etaza", e.target.value)} />
-                            </Form.Item>
-                            <Form.Item label="Pozicija (Mjesto ugradnje)" required
-                                       style={{ flex: 1, marginBottom: 8 }}>
-                                <Input maxLength={45} value={stavka.pozicija}
-                                       onChange={e => updateStavka(stavka._localId, "pozicija", e.target.value)} />
-                            </Form.Item>
-                            <Form.Item label="Strujni krug" style={{ flex: 1, marginBottom: 8 }}>
-                                <Input maxLength={45} value={stavka.strujniKrug}
-                                       onChange={e => updateStavka(stavka._localId, "strujniKrug", e.target.value)} />
-                            </Form.Item>
-                        </div>
+                        <Row gutter={16}>
+                            <Col span={16}>
+                                <Form.Item label="Materijal / Element" required>
+                                    <Select
+                                        showSearch
+                                        placeholder="Odaberite materijal..."
+                                        value={stavka.idMaterijala}
+                                        onChange={val => updateStavka(stavka._localId, "idMaterijala", val)}
+                                    >
+                                        {materijali.map(m => <Option key={m.id} value={m.id}>{m.naziv}</Option>)}
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                                <Form.Item label="Količina" required>
+                                    <InputNumber
+                                        min={0.01}
+                                        style={{ width: "100%" }}
+                                        value={stavka.kolicina}
+                                        onChange={val => updateStavka(stavka._localId, "kolicina", val)}
+                                    />
+                                </Form.Item>
+                            </Col>
+                        </Row>
 
-                        <div style={{ display: "flex", gap: 16 }}>
-                            <Form.Item label="Namjena" style={{ flex: 1, marginBottom: 0 }}>
-                                <Input maxLength={100} value={stavka.namjena}
-                                       onChange={e => updateStavka(stavka._localId, "namjena", e.target.value)} />
-                            </Form.Item>
-                            <Form.Item label="Napomena" style={{ flex: 1, marginBottom: 0 }}>
-                                <TextArea rows={1} value={stavka.napomena}
-                                          onChange={e => updateStavka(stavka._localId, "napomena", e.target.value)} />
-                            </Form.Item>
-                        </div>
-                    </Card>
+                        <Row gutter={16}>
+                            <Col span={8}>
+                                <Form.Item label="Etaža">
+                                    <Input value={stavka.etaza} onChange={e => updateStavka(stavka._localId, "etaza", e.target.value)} />
+                                </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                                <Form.Item label="Pozicija" required>
+                                    <Input value={stavka.pozicija} onChange={e => updateStavka(stavka._localId, "pozicija", e.target.value)} />
+                                </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                                <Form.Item label="Strujni krug">
+                                    <Input value={stavka.strujniKrug} onChange={e => updateStavka(stavka._localId, "strujniKrug", e.target.value)} />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+
+                        <Row gutter={16}>
+                            <Col span={12}>
+                                <Form.Item label="Namjena">
+                                    <Input value={stavka.namjena} onChange={e => updateStavka(stavka._localId, "namjena", e.target.value)} />
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item label="Napomena">
+                                    <Input value={stavka.napomena} onChange={e => updateStavka(stavka._localId, "napomena", e.target.value)} />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                    </div>
                 ))}
 
                 <Button
-                    type="dashed" icon={<PlusOutlined />}
+                    type="dashed"
                     onClick={dodajStavku}
-                    style={{ width: "100%", marginBottom: 20 }}
+                    block
+                    icon={<PlusOutlined />}
+                    style={{ height: 45, marginBottom: 24, borderRadius: 4 }}
                 >
-                     Dodaj materijal
+                    Dodaj materijal na listu
                 </Button>
 
-                <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
-                    <Button onClick={() => { form.resetFields(); setStavke([]); onClose?.(); }}>
+                <div style={{ display: "flex", justifyContent: "flex-end", gap: 12, borderTop: "1px solid #f0f0f0", paddingTop: 20 }}>
+                    <Button size="large" onClick={onClose} style={{ borderRadius: 4 }}>
                         Odustani
                     </Button>
-                    <Button type="primary" loading={loading} onClick={handleSubmit}>
-                        Kreiraj izvještaj
+                    <Button
+                        type="primary"
+                        size="large"
+                        loading={loading}
+                        onClick={handleSubmit}
+                        style={{ borderRadius: 4, paddingLeft: 40, paddingRight: 40 }}
+                    >
+                        Snimi Izvještaj
                     </Button>
                 </div>
-
             </Form>
         </Card>
     );
