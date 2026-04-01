@@ -46,21 +46,25 @@ public class DnevniIzvjestajService {
     public DnevniIzvjestaj create(DnevniIzvjestaj dto) {
         DnevniIzvjestajEntity entity = new DnevniIzvjestajEntity();
 
+        // 1. Postavi osnovne podatke (sate, opis, datum)
+        updateEntityFromDto(entity, dto);
+        entity.setDatumKreiranja(LocalDate.now());
         entity.setIzvjestaj(entity);
 
-        updateEntityFromDto(entity, dto);
+        // 2. POSTAVLJANJE TEHNIČARA (Ulogovana osoba sa frontenda)
+        // dto.getJmbTehnicar() je zapravo JMB osobe koja je kliknula "Save"
+        var tehnicar = tehnicarRepository.findById(dto.getJmbTehnicar())
+                .orElseThrow(() -> new RuntimeException("Tehničar nije pronađen!"));
+        entity.setTehnicar(tehnicar);
 
-        entity.setDatumKreiranja(LocalDate.now());
+        // 3. PRONALAŽENJE POSLOVOĐE PREKO PROJEKTA
+        // Tražimo bilo kog poslovođu koji upravlja ovim projektom
+        // Pretpostavka: findByProjekat_IdProjekta vraća Optional veze u repozitorijumu
+        var pup = poslovodjaUpravljaProjektomRepository.findByProjekat_IdProjekta(dto.getIdProjekta())
+                .stream().findFirst() // Uzimamo prvog (ili onog aktivnog)
+                .orElseThrow(() -> new RuntimeException("Nije pronađen poslovođa za projekat ID: " + dto.getIdProjekta()));
 
-        var pup = poslovodjaUpravljaProjektomRepository.findByProjekat_IdProjektaAndPoslovodja_Jmb(dto.getIdProjekta(), dto.getJmbPoslovodja())
-                .orElseThrow(() -> new RuntimeException("Veza poslovođa-projekat ne postoji!"));
         entity.setPoslovodjaUpravljaProjektom(pup);
-
-        if (dto.getJmbTehnicar() != null && !dto.getJmbTehnicar().isEmpty()) {
-            var tehnicar = tehnicarRepository.findById(dto.getJmbTehnicar())
-                    .orElseThrow(() -> new RuntimeException("Tehničar sa tim JMB nije pronađen!"));
-            entity.setTehnicar(tehnicar);
-        }
 
         return mapToDto(dnevniIzvjestajRepository.save(entity));
     }

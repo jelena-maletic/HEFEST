@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -22,6 +23,8 @@ public interface PoslovodjaUpravljaProjektomRepository extends JpaRepository<Pos
     void deleteByProjekatId(@Param("idProjekta") Integer idProjekta);
 
     Optional<PoslovodjaUpravljaProjektomEntity> findByProjekat_IdProjektaAndPoslovodja_Jmb(Integer idProjekta, String jmb);
+
+    List<PoslovodjaUpravljaProjektomEntity> findByProjekat_IdProjekta(Integer idProjekta);
 }
 
 
