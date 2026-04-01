@@ -6,9 +6,11 @@ import org.etfbl.backend.model.DnevniZadatakEntity;
 import org.etfbl.backend.model.DnevniZadatakRequest;
 import org.etfbl.backend.service.DnevniIzvjestajService;
 import org.etfbl.backend.service.DnevniZadatakService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -24,6 +26,15 @@ public class DnevniZadatakController {
     @GetMapping
     public List<DnevniZadatak> getAll() {
         return dnevniZadatakService.getAll();
+    }
+
+    // Endpoint: GET /api/dnevni_zadaci/tehnicar/{jmb}/zavrseni?datum=2026-04-01
+    @GetMapping("/tehnicar/{jmb}/zavrseni")
+    public List<DnevniZadatak> getZavrseni(
+            @PathVariable String jmb,
+            @RequestParam("datum") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate datum) {
+
+        return dnevniZadatakService.getZavrseniZadaciZaTehnicaraIDatum(jmb, datum);
     }
 
     @PostMapping

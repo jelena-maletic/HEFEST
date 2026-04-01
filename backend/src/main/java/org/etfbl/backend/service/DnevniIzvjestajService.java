@@ -46,22 +46,16 @@ public class DnevniIzvjestajService {
     public DnevniIzvjestaj create(DnevniIzvjestaj dto) {
         DnevniIzvjestajEntity entity = new DnevniIzvjestajEntity();
 
-        // 1. Postavi osnovne podatke (sate, opis, datum)
         updateEntityFromDto(entity, dto);
         entity.setDatumKreiranja(LocalDate.now());
         entity.setIzvjestaj(entity);
 
-        // 2. POSTAVLJANJE TEHNIČARA (Ulogovana osoba sa frontenda)
-        // dto.getJmbTehnicar() je zapravo JMB osobe koja je kliknula "Save"
         var tehnicar = tehnicarRepository.findById(dto.getJmbTehnicar())
                 .orElseThrow(() -> new RuntimeException("Tehničar nije pronađen!"));
         entity.setTehnicar(tehnicar);
 
-        // 3. PRONALAŽENJE POSLOVOĐE PREKO PROJEKTA
-        // Tražimo bilo kog poslovođu koji upravlja ovim projektom
-        // Pretpostavka: findByProjekat_IdProjekta vraća Optional veze u repozitorijumu
         var pup = poslovodjaUpravljaProjektomRepository.findByProjekat_IdProjekta(dto.getIdProjekta())
-                .stream().findFirst() // Uzimamo prvog (ili onog aktivnog)
+                .stream().findFirst()
                 .orElseThrow(() -> new RuntimeException("Nije pronađen poslovođa za projekat ID: " + dto.getIdProjekta()));
 
         entity.setPoslovodjaUpravljaProjektom(pup);
@@ -136,4 +130,6 @@ public class DnevniIzvjestajService {
         }
         return dto;
     }
+
+
 }
