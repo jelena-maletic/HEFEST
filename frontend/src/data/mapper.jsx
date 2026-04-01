@@ -256,13 +256,98 @@ const mapRequestDetails = (data, role) => {
     ]);
 };
 
+// --- MAPER ZA DNEVNI IZVJEŠTAJ ---
+
+const mapDailyReportDetails = (data) => {
+    return groupItems([
+        {
+            section: 'Informacije o Radu',
+            label: 'Projekat',
+            value: data.projekat?.naziv || `ID: ${data.idProjekta}`,
+            key: 'proj',
+            render: (v) => <span style={{ fontWeight: 600, color: '#1890ff' }}>{v}</span>
+        },
+        {
+            section: 'Informacije o Radu',
+            label: 'Datum Izvršenja',
+            value: formatDate(data.datum),
+            key: 'work_date'
+        },
+        {
+            section: 'Informacije o Radu',
+            label: 'Opis Radova',
+            value: safeValue(data.opisRadova),
+            key: 'desc',
+            span: 3, // Zauzima cijeli red za bolju čitljivost dugih tekstova
+            render: (v) => <div style={{ fontStyle: 'italic', color: '#595959', padding: '8px', background: '#f5f5f5', borderRadius: '4px' }}>{v}</div>
+        },
+
+        {
+            section: 'Angažovano Osoblje',
+            label: 'Izvještaj podnio (Tehničar)',
+            value: data.tehnicar ? `${data.tehnicar.ime} ${data.tehnicar.prezime}` : data.jmbTehnicar,
+            key: 'tech'
+        },
+        {
+            section: 'Angažovano Osoblje',
+            label: 'Odgovorni Poslovođa',
+            value: data.poslovodja ? `${data.poslovodja.ime} ${data.poslovodja.prezime}` : data.jmbPoslovodja,
+            key: 'mgr'
+        },
+
+        {
+            section: 'Specifikacija Radnih Sati',
+            label: 'Redovni Sati',
+            value: data.satiRada,
+            key: 'reg_h',
+            render: (v) => <span><strong>{v || 0}</strong> h</span>
+        },
+        {
+            section: 'Specifikacija Radnih Sati',
+            label: 'Prekovremeni',
+            value: data.prekovremeniSati,
+            key: 'over_h',
+            render: (v) => <span style={{ color: v > 0 ? '#faad14' : 'inherit' }}><strong>{v || 0}</strong> h</span>
+        },
+        {
+            section: 'Specifikacija Radnih Sati',
+            label: 'Noćni Rad',
+            value: data.nocniSati,
+            key: 'night_h',
+            render: (v) => <span style={{ color: v > 0 ? '#722ed1' : 'inherit' }}><strong>{v || 0}</strong> h</span>
+        },
+        {
+            section: 'Specifikacija Radnih Sati',
+            label: 'Terenski Rad',
+            value: data.terenskiSati,
+            key: 'field_h',
+            render: (v) => <span style={{ color: v > 0 ? '#13c2c2' : 'inherit' }}><strong>{v || 0}</strong> h</span>
+        },
+        {
+            section: 'Specifikacija Radnih Sati',
+            label: 'Ukupno angažovano',
+            value: data.ukupniSati,
+            key: 'total_h',
+            span: 2,
+            render: (v) => (
+                <Tag color="blue" style={{ padding: '4px 12px', fontSize: '14px', borderRadius: '4px' }}>
+                    <strong>{v || 0} radnih sati</strong>
+                </Tag>
+            )
+        }
+    ]);
+};
+
+
+
 export const mappers = {
     PROJECT: { title: 'Detalji Projekta', mapper: mapProjectDetails },
     EMPLOYEE: { title: 'Detalji Zaposlenog', mapper: mapEmployeeDetails },
     VEHICLE: { title: 'Detalji Vozila', mapper: mapVehicleDetails },
     TOOL: { title: 'Detalji Opreme', mapper: mapToolDetails },
     MATERIAL: {title: 'Detalji Materijala', mapper: mapMaterialDetails },
-    REQUEST: {title:'Detalji Zahtjeva za Resursima', mapper: mapRequestDetails}
+    REQUEST: {title:'Detalji Zahtjeva za Resursima', mapper: mapRequestDetails},
+    REPORT: { title: 'Detalji Dnevnog Izvještaja', mapper: mapDailyReportDetails }
 
 
 };

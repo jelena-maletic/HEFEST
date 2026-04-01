@@ -200,7 +200,7 @@ export function Dashboard({sidebarContents, role}) {
 
                     {activeScreen === "report-overview" && <div className={"report-lists"}>
                         <List isEditable={false} listTitle={"Dnevni " + screenTitle} screenState="report-overview"
-                              dividerWidth={"90%"} tag="dnevni_izvjestaji"/>
+                              dividerWidth={"90%"} tag="dnevni_izvjestaji" onClick={(data) => handleOpenDetails(data, "dnevni_izvjestaji")}/>
                         <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview"
                               dividerWidth={"90%"} tag="sumarni_izvjestaji"/>
                     </div>}
@@ -253,8 +253,15 @@ export function Dashboard({sidebarContents, role}) {
                         />
                     )}
                     {activeScreen === "report-overview-manager" && <div className={"report-lists"}>
-                        <List isEditable={false} listTitle={"Dnevni " + screenTitle} screenState="report-overview"
-                              dividerWidth={"90%"} tag="dnevni_izvjestaji"/>
+                        <List
+                            isEditable={false}
+                            listTitle={"Dnevni " + screenTitle}
+                            screenState="report-overview"
+                            dividerWidth={"90%"}
+                            tag="dnevni_izvjestaji"
+                            onClick={(data) => handleOpenDetails(data, "dnevni_izvjestaji")} // DODATO
+                            filterByPoslovodja={true}
+                        />
                         <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview"
                               dividerWidth={"90%"} tag="sumarni_izvjestaji"/>
                     </div>}
