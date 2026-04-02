@@ -118,6 +118,28 @@
 }
 
 
+.list-element.active-technician {
+    border-left: 6px solid #4CAF50 !important;
+    background-color: rgba(76, 175, 80, 0.1) !important;
+}
+
+.list-element.active-technician:hover {
+    background-color: #1e3d20 !important;
+    color: #ffffff;
+}
+
+.active-technician .list-element-title::after {
+    content: '';
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: #4CAF50;
+    border-radius: 50%;
+    margin-left: 10px;
+    box-shadow: 0 0 8px #4CAF50;
+    vertical-align: middle;
+}
+
 /* ================= GRID ELEMENT – potpuno odvojen ================= */
 .grid-element {
     display: flex;

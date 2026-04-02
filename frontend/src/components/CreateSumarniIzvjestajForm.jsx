@@ -39,7 +39,7 @@ const CreateSumarniIzvjestajForm = ({ onClose, onSuccess }) => {
         if (dnevniIzvjestaji.length === 0) return;
 
         let ukupnoSati = 0;
-        let generisaniOpis = "SUMARNI PREGLED RADOVA:\n\n";
+        let generisaniOpis = "";
 
         dnevniIzvjestaji.forEach(izv => {
             ukupnoSati += (izv.ukupniSati || 0);

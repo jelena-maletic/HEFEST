@@ -81,7 +81,8 @@ export function Dashboard({sidebarContents, role}) {
         "dnevni_izvjestaji": "REPORT",
         "dnevni_zadaci": "TASK",
         "zahtjevi": "REQUEST",
-        "new-request": "REQUEST"
+        "new-request": "REQUEST",
+        "sumarni_izvjestaji":"SUMMARY_REPORT"
     };
 
     const handleOpenDetails = async (rawData, tag) => {
@@ -203,7 +204,8 @@ export function Dashboard({sidebarContents, role}) {
                         <List isEditable={false} listTitle={"Dnevni " + screenTitle} screenState="report-overview"
                               dividerWidth={"90%"} tag="dnevni_izvjestaji" onClick={(data) => handleOpenDetails(data, "dnevni_izvjestaji")}/>
                         <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview"
-                              dividerWidth={"90%"} tag="sumarni_izvjestaji"/>
+                              dividerWidth={"90%"} tag="sumarni_izvjestaji" onClick={(data) => handleOpenDetails(data, "sumarni_izvjestaji")} // DODATO
+                              />
                     </div>}
 
                     {activeScreen === "tools" &&
@@ -264,7 +266,8 @@ export function Dashboard({sidebarContents, role}) {
                             filterByPoslovodja={true}
                         />
                         <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview"
-                              dividerWidth={"90%"} tag="sumarni_izvjestaji"/>
+                              dividerWidth={"90%"} tag="sumarni_izvjestaji" onClick={(data) => handleOpenDetails(data, "sumarni_izvjestaji")} // DODATO
+                              filterByPoslovodja={true}/>
                     </div>}
                     {activeScreen === "projects" &&
                         <List isEditable={true} listTitle={screenTitle} screenState="projects"
