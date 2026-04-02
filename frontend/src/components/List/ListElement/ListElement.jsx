@@ -9,6 +9,7 @@ import {useNotification} from "../../NotificationContext.jsx";
 import ConfirmationDialog from "../../ConfirmationDialog.jsx";
 import {updateZadatakStatus} from "../../../services/apiHelpers.js";
 
+
 export function ListElement({
                                 screenState,
                                 listElementData,
@@ -23,6 +24,15 @@ export function ListElement({
     const [isHovered, setIsHovered] = useState(false);
     const [updateForm, setUpdateForm] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    const statusClass = listElementData.statusColor ? `status-${listElementData.statusColor}` : '';
+    const truncateText = (text, maxLength) => {
+        if (!text) return "";
+        return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+    };
+
+    const titleLimit = 25;
+    const detailLimit = 30;
+    const sublineLimit = 40;
 
     const images = loadAssets();
     const notify = useNotification();
@@ -55,26 +65,39 @@ export function ListElement({
             );
 
         }
-        if(binaryChoice === true){
-            return(<div className="list-element-buttons">
+        if (binaryChoice === true) {
+            return (<div className="list-element-buttons">
                 <SmallButton
                     className="nested-button"
                     type="confirm"
-                    onClickHandler={(e) => {
-                        e.stopPropagation();
+                    onClickHandler={ async (e) => {
+                        /*e.stopPropagation();
                         console.log(listElementData);
                         updateZahtjevStatus(listElementData.id, "odobren");
-                        onSuccess && onSuccess();
+                        onSuccess && onSuccess();*/
+                        e.stopPropagation();
+                        try {
+                            await updateZahtjevStatus(listElementData.id, "odobren");
+                            notify.success("Status ažuriran");
+                            if (onSuccess) await onSuccess();
+                        } catch (err) {
+                            notify.error("Greška pri ažuriranju");
                         }
+                    }
                     }
                 />
                 <SmallButton
                     className="nested-button"
                     type="deny"
-                    onClickHandler={(e) => {
+                    onClickHandler={ async (e) => {
                         e.stopPropagation();
-                        updateZahtjevStatus(listElementData.id, "neodobren");
-                        onSuccess && onSuccess();
+                        try {
+                            await updateZahtjevStatus(listElementData.id, "neodobren"); // Dodaj await
+                            notify.success("Status ažuriran");
+                            if (onSuccess) await onSuccess();
+                        } catch (err) {
+                            notify.error("Greška pri ažuriranju");
+                        }
                     }}
                 />
             </div>)
@@ -102,12 +125,17 @@ export function ListElement({
     const apiTag = tag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : tag;
     const isCompleted = apiTag === "dnevni_zadaci" && listElementData.zavrsen;
 
+    const isTehnicar = tag && tag.includes("tehnicari");
+    const isActiveTehnicar = isTehnicar && !!(listElementData.isAktivan || listElementData.aktivan);
 
+    console.log("Tag:", tag, "Podaci:", listElementData);
     return (
         <>
             <div
-
-                className={`list-element ${className || ''} ${isHovered ? 'hovered' : ''} ${isCompleted ? 'completed' : ''}`}
+                className={`list-element ${className || ''} ${isHovered ? 'hovered' : ''} 
+                        ${isCompleted ? 'completed' : ''} 
+                        ${isActiveTehnicar ? 'active-technician' : ''}
+                        ${statusClass}`}
                 onClick={() => onClickFunc(listElementData)}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
@@ -131,13 +159,13 @@ export function ListElement({
 
                 <div className="list-element-info">
                 <span className="list-element-title">
-                {listElementData.title || "Bez naslova"}
+               {truncateText(listElementData.title || "Bez naslova", titleLimit)}
         </span>
                     <span className="list-element-detail">
-            {listElementData.detail}
+            {truncateText(listElementData.detail, detailLimit)}
         </span>
                     <span className="list-element-subline">
-            {listElementData.subline}
+           {truncateText(listElementData.subline, sublineLimit)}
         </span>
                 </div>
 

@@ -1,5 +1,3 @@
-import {getJmb} from "../auth/auth.js";
-
 export const projectSchema = {
     title:"Podaci o projektu",
     submitLabel: "Potvrdi",
@@ -12,7 +10,8 @@ export const projectSchema = {
             required: true,
             span: 12,
             rules: [
-                { max: 100, message: "Naziv ne smije biti duži od 100 karaktera" }
+                { max: 100, message: "Naziv ne smije biti duži od 100 karaktera" },
+                { min: 3, message: "Naziv mora imati bar 3 karaktera" }
             ]
         },
         {
@@ -21,6 +20,7 @@ export const projectSchema = {
             type: "input",
             required: true,
             span: 12,
+            rules: [{ max: 150, message: "Ime klijenta predugačko (max 150)" }]
         },
 
         {
@@ -97,7 +97,7 @@ export const projectSchema = {
         {
             name: "lokacija",
             label: "Adresa / Lokacija radilišta",
-            type: "textarea",
+            type: "location",
             required: true,
             span: 24,
         },
@@ -121,6 +121,7 @@ export const projectSchema = {
             type: "textarea",
             required: false,
             span: 24,
+            rules: [{ max: 1000, message: "Opis ne smije prelaziti 1000 karaktera" }]
         },
     ],
 };
@@ -136,6 +137,7 @@ export const vehicleSchema = {
             type: "input",
             required: true,
             span: 12,
+            rules: [{ max: 60, message: "Maksimalno 60 karaktera" }]
         },
         {
             name: "registarskiBroj",
@@ -168,29 +170,28 @@ export const vehicleSchema = {
             type: "number",
             span: 12,
             required: true,
+            rules: [
+                { required: true, message: "Unesite broj putnika!" },
+                {
+                    type: "number",
+                    min: 1,
+                    message: "Broj putnika mora biti najmanje 1 (vozač)!"
+                }
+            ],
         },
         {
             name: "maksimalnaNosivost",
             label: "Maksimalna nosivost (kg)",
             type: "number",
             span: 12,
+            rules: [
+                {
+                    type: "number",
+                    min: 0,
+                    message: "Nosivost ne može biti negativna!"
+                }
+            ],
         },
-        /*{
-            name: "stanjeMagacina",
-            label: "Stanje magacina",
-            type: "number",
-            required: true,
-            min: 0,
-            span: 12,
-        },
-        {
-            name: "minimalnaKolicina",
-            label: "Minimalna količina",
-            type: "number",
-            required: true,
-            min: 0,
-            span: 12,
-        },*/
         {
             name: "datumRegistracije",
             label: "Datum registracije",
@@ -230,6 +231,7 @@ export const equipmentSchema = {
             type: "input",
             required: true,
             span: 12,
+            rules: [{ max: 80, message: "Naziv radne opreme predugačak (max 80)" }]
         },
         {
             name: "stanjeMagacina",
@@ -238,6 +240,13 @@ export const equipmentSchema = {
             required: true,
             min: 0,
             span: 12,
+            rules: [
+                {
+                    type: "number",
+                    min: 0,
+                    message: "Ne može biti negativan broj!"
+                }
+            ],
         },
         {
             name: "minimalnaKolicina",
@@ -246,6 +255,13 @@ export const equipmentSchema = {
             required: true,
             min: 0,
             span: 12,
+            rules: [
+                {
+                    type: "number",
+                    min: 0,
+                    message: "Ne može biti negativan broj!"
+                }
+            ],
         },
         {
             name: "kategorija",
@@ -271,7 +287,8 @@ export const materialSchema = {
             label: 'Naziv materijala',
             type: "input",
             required: true,
-            span: 12
+            span: 12,
+            rules: [{ max: 80, message: "Naziv materijala predugačak (max 80)" }]
         },
         {
             name: "stanjeMagacina",
@@ -280,6 +297,13 @@ export const materialSchema = {
             required: true,
             min: 0,
             span: 12,
+            rules: [
+                {
+                    type: "number",
+                    min: 0,
+                    message: "Ne može biti negativan broj!"
+                }
+            ],
         },
         {
             name: "minimalnaKolicina",
@@ -288,6 +312,13 @@ export const materialSchema = {
             required: true,
             min: 0,
             span: 12,
+            rules: [
+                {
+                    type: "number",
+                    min: 0,
+                    message: "Ne može biti negativan broj!"
+                }
+            ],
         },
         {
             name: 'kategorija',
@@ -324,6 +355,7 @@ export const materialSchema = {
 };
 
 export const requestSchema = {
+    title: "Zahtjev za zaduživanje resursa",
     submitLabel: "Pošalji zahtjev",
     layout: "vertical",
     fields: [
@@ -335,9 +367,22 @@ export const requestSchema = {
             span: 24,
             props: {
                 rows: 4,
-                placeholder: "Unesite detaljan opis zahtjeva..."
+                placeholder: "Unesite detaljan opis stavki i razloga zahtjeva..."
             }
         },
+        {
+            name: 'magacionerJmb',
+            label: 'Magacioner',
+            type: "select",
+            required: true,
+            span: 24,
+            optionsTag: "magacioneri",
+            props: {
+                placeholder: "Izaberite magacionera",
+                showSearch: true,
+                optionFilterProp: "label"
+            }
+        }
     ],
 };
 
@@ -438,6 +483,19 @@ export const assignmentSchema = {
             type: "date",
             required: false,
             span: 12,
+            rules: [
+                ({ getFieldValue }) => ({
+                    validator(_, value) {
+                        const datumZaduzenja = getFieldValue('datumZaduzenja');
+
+                        if (!value || !datumZaduzenja || value.isSameOrAfter(datumZaduzenja)) {
+                            return Promise.resolve();
+                        }
+
+                        return Promise.reject(new Error('Datum razduženja ne može biti prije datuma zaduženja!'));
+                    },
+                }),
+            ],
         },
         {
             name: "zaduzenaKolicina",
@@ -446,6 +504,18 @@ export const assignmentSchema = {
             required: true,
             min: 0,
             span: 12,
+            rules: [
+                { required: true, message: "Ovo polje je obavezno!" },
+                {
+                    type: "number",
+                    min: 0,
+                    message: "Količina ne može biti negativna!"
+                },
+                {
+                    validator: (_, value) =>
+                        value > 0 ? Promise.resolve() : Promise.reject(new Error("Količina mora biti veća od 0!"))
+                }
+            ],
         },
         {
             name: "razduzenaKolicina",
@@ -454,6 +524,21 @@ export const assignmentSchema = {
             required: false,
             min: 0,
             span: 12,
+            rules: [
+                ({ getFieldValue }) => ({
+                    validator(_, value) {
+                        const zaduzeno = getFieldValue('zaduzenaKolicina');
+
+                        if (value === undefined || value === null || !zaduzeno || value <= zaduzeno) {
+                            return Promise.resolve();
+                        }
+
+                        return Promise.reject(
+                            new Error(`Razdužena količina ne može biti veća od zadužene (${zaduzeno})!`)
+                        );
+                    },
+                }),
+            ],
         },
     ],
 };
@@ -469,6 +554,7 @@ export const dailyTaskSchema = {
             type: "textarea",
             required: true,
             span: 24,
+            rules: [{ max: 500, message: "Opis ne smije prelaziti 500 karaktera" }]
         },
         {
             name: "tehnicarJmb",
@@ -490,6 +576,7 @@ export const dailyTaskSchema = {
     ],
 };
 export const myDailyTaskSchema = {
+    title: "Podaci o dnevnom zadatku",
     submitLabel: "Kreiraj moj zadatak",
     layout: "vertical",
     fields: [
@@ -499,6 +586,7 @@ export const myDailyTaskSchema = {
             type: "textarea",
             required: true,
             span: 24,
+            rules: [{ max: 500, message: "Opis ne smije prelaziti 500 karaktera" }]
         },
         {
             name: "datum",
@@ -508,4 +596,216 @@ export const myDailyTaskSchema = {
             span: 12,
         }
     ],
+};
+
+export const utroseniMaterijalSchema = {
+    title: "Utroseni materijal",
+    submitLabel: "Kreiraj",
+    layout: "vertical",
+    fields: [
+
+        {
+            name: "idMaterijala",
+            label: "Materijal",
+            type: "select",
+            required: true,
+            span: 24,
+            apiEndpoint: "http://localhost:8080/api/materijal",
+            optionLabel: "naziv",
+            optionValue: "idResursa",
+            rules: [{required: true, message: "Molimo odaberite materijal!"}],
+        },
+        {
+            name: "kolicina",
+            label: "Količina",
+            type: "number",
+            required: true,
+            span: 12,
+            rules: [
+                {required: true, message: "Unesite količinu!"},
+                {type: "number", min: 0.01, message: "Količina mora biti veća od 0!"}
+            ],
+        },
+        {
+            name: "etaza",
+            label: "Etaža / Sprat",
+            type: "text",
+            span: 12,
+            rules: [{max: 45, message: "Maksimalno 45 karaktera!"}],
+        },
+        {
+            name: "pozicija",
+            label: "Pozicija (Mjesto ugradnje)",
+            type: "text",
+            required: true,
+            span: 12,
+            rules: [
+                {required: true, message: "Unesite poziciju!"},
+                {max: 45, message: "Maksimalno 45 karaktera!"}
+            ],
+        },
+        {
+            name: "strujniKrug",
+            label: "Strujni krug",
+            type: "text",
+            span: 12,
+            rules: [{max: 45, message: "Maksimalno 45 karaktera!"}],
+        },
+        {
+            name: "namjena",
+            label: "Namjena",
+            type: "text",
+            span: 24,
+            rules: [{max: 100, message: "Maksimalno 100 karaktera!"}],
+        },
+        {
+            name: "napomena",
+            label: "Napomena",
+            type: "textarea",
+            span: 24,
+        }
+    ]
+};
+
+export const dnevniIzvjestajSchema = {
+    title: "Dnevni izvještaj",
+    submitLabel: "Kreiraj",
+    layout: "vertical",
+    fields: [
+        {
+            name: "idProjekta",
+            label: "Projekat",
+            type: "select",
+            required: true,
+            span: 12,
+            apiEndpoint: "http://localhost:8080/api/projekti",
+            optionLabel: "naziv",
+            optionValue: "idProjekta",
+            rules: [{ required: true, message: "Morate odabrati projekat!" }],
+        },
+        {
+            name: "datum",
+            label: "Datum ",
+            type: "date",
+            required: true,
+            span: 12,
+            rules: [{required: true, message: "Odaberite datum!"}],
+        },
+        {
+            name: "ukupniSati",
+            label: "Ukupni sati",
+            type: "number",
+            required: true,
+            span: 12,
+            rules: [
+                {required: true, message: "Unesite ukupne sate!"},
+                {type: "number", min: 0, message: "Vrijednost ne može biti negativna!"}
+            ],
+        },
+        {
+            name: "satiRada",
+            label: "Redovni radni sati",
+            type: "number",
+            required: true,
+            span: 12,
+            rules: [{required: true, message: "Unesite sate rada!"}],
+        },
+        {
+            name: "prekovremeniSati",
+            label: "Prekovremeni sati",
+            type: "number",
+            span: 12,
+            rules: [{type: "number", min: 0}],
+        },
+        {
+            name: "nocniSati",
+            label: "Noćni rad (sati)",
+            type: "number",
+            span: 12,
+            rules: [{type: "number", min: 0}],
+        },
+        {
+            name: "terenskiSati",
+            label: "Terenski dodatak (sati)",
+            type: "number",
+            span: 12,
+            rules: [{type: "number", min: 0}],
+        },
+        {
+            name: "opisRadova",
+            label: "Opis izvedenih radova",
+            type: "textarea",
+            span: 24,
+            rules: [{required: true, message: "Molimo unesite opis radova!"}],
+        }
+    ]
+};
+
+export const sumarniIzvjestajSchema = {
+    title: "Sumarni izvještaj",
+    submitLabel: "Kreiraj",
+    layout: "vertical",
+    fields: [
+        {
+            name: "idProjekta",
+            label: "Projekat",
+            type: "select",
+            required: true,
+            span: 12,
+            apiEndpoint: "http://localhost:8080/api/projekti",
+            optionLabel: "naziv",
+            optionValue: "idProjekta",
+            rules: [{ required: true, message: "Morate odabrati projekat!" }],
+        },
+        {
+            name: "pocetniDatum",
+            label: "Početak perioda",
+            type: "date",
+            required: true,
+            span: 12,
+            rules: [{ required: true, message: "Odaberite početni datum!" }],
+        },
+        {
+            name: "krajnjiDatum",
+            label: "Kraj perioda",
+            type: "date",
+            required: true,
+            span: 12,
+            dependencies: ['pocetniDatum'],
+            rules: [
+                { required: true, message: "Odaberite krajnji datum!" },
+                ({ getFieldValue }) => ({
+                    validator(_, value) {
+                        const pocetni = getFieldValue('pocetniDatum');
+                        if (!value || !pocetni) {
+                            return Promise.resolve();
+                        }
+                        if (value.isBefore(pocetni, 'day')) {
+                            return Promise.reject(new Error('Krajnji datum ne može biti prije početnog!'));
+                        }
+                        return Promise.resolve();
+                    },
+                }),
+            ],
+        },
+
+        {
+            name: "ukupniSatiRada",
+            label: "Ukupni radni sati",
+            type: "number",
+            required: true,
+            span: 24,
+            rules: [
+                { required: true, message: "Unesite sate!" },
+                { type: "number", min: 0 }
+            ],
+        },
+        {
+            name: "opis",
+            label: "Zaključak i napomene",
+            type: "textarea",
+            span: 24,
+            rules: [{ required: true, message: "Opis je obavezan!" }],
+        }
+    ]
 };

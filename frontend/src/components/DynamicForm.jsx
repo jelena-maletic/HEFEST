@@ -3,9 +3,10 @@ import { Form, Input, Button, Select, DatePicker, InputNumber, Card } from "antd
 import dayjs from "dayjs";
 import './DynamicForm.css';
 import { getJmb } from "../auth/auth.js";
-import api from "../auth/axiosInstance.js"; // OSIGURAJ DA JE PUTANJA TAČNA
-
+import api from "../auth/axiosInstance.js";
+import LocationPicker from "../components/LocationPicker/LocationPicker.jsx";
 const { Option } = Select;
+import { fetchData } from "../services/apiHelpers.js";
 
 const componentMap = {
     input: Input,
@@ -19,26 +20,35 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
     const [form] = Form.useForm();
     const [dynamicOptions, setDynamicOptions] = useState({});
 
-    // 1. Postavljanje inicijalnih vrijednosti i formatiranje podataka
+    const formatFieldValue = (field, rawValue) => {
+        if (!rawValue) return field.mode === 'multiple' ? [] : undefined;
+
+        if (field.type === 'date') return dayjs(rawValue);
+
+        if (field.type === 'select') {
+            if (field.mode === 'multiple') {
+                const arrayVal = Array.isArray(rawValue) ? rawValue : String(rawValue).split(',').map(s => s.trim());
+                return arrayVal.map(val => String(val));
+            }
+            return String(rawValue);
+        }
+        return rawValue;
+    };
+
     useEffect(() => {
         if (initialValues && schema?.fields) {
             const formattedValues = { ...initialValues };
+
             schema.fields.forEach(field => {
-                // Formatiranje datuma za DatePicker
-                if (field.type === 'date' && formattedValues[field.name]) {
-                    formattedValues[field.name] = dayjs(formattedValues[field.name]);
+                // Fix za objekte tipa magacioner: { jmb: "..." } -> magacionerJmb
+                if (field.name.endsWith('Jmb')) {
+                    const objectName = field.name.replace('Jmb', '');
+                    if (formattedValues[objectName]?.jmb) {
+                        formattedValues[field.name] = String(formattedValues[objectName].jmb);
+                    }
                 }
 
-                // Rješavanje "value should be array" warninga za multiple select
-                if (field.type === 'select' && field.mode === 'multiple') {
-                    formattedValues[field.name] = Array.isArray(formattedValues[field.name])
-                        ? formattedValues[field.name].map(val => String(val))
-                        : [];
-                }
-                // Pretvaranje običnog selecta u string radi lakšeg uparivanja
-                else if (field.type === 'select' && formattedValues[field.name] !== undefined && formattedValues[field.name] !== null) {
-                    formattedValues[field.name] = String(formattedValues[field.name]);
-                }
+                formattedValues[field.name] = formatFieldValue(field, formattedValues[field.name]);
             });
             form.setFieldsValue(formattedValues);
         } else {
@@ -46,54 +56,60 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
         }
     }, [initialValues, schema, form]);
 
-    // 2. Učitavanje nezavisnih Select opcija koristeći AUTHORIZED api.service
     useEffect(() => {
         if (!schema?.fields) return;
 
         schema.fields.forEach((field) => {
-            if (field.type === "select" && field.apiEndpoint) {
-                let finalUrl = field.apiEndpoint;
+            if (field.type === "select") {
+                const handleDataLoad = (data) => {
+                    setDynamicOptions((prev) => ({ ...prev, [field.name]: data }));
 
-                if (typeof finalUrl === 'string' && finalUrl.includes(":jmb")) {
-                    const trenutniJmb = getJmb();
-                    if (!trenutniJmb) return;
-                    finalUrl = finalUrl.replace(":jmb", trenutniJmb);
+                    if (initialValues) {
+                        let rawVal = initialValues[field.name];
+
+                        if (!rawVal && field.name === 'magacionerJmb') {
+                            rawVal = initialValues.magacioner?.jmb;
+                        }
+
+                        if (rawVal) {
+                            form.setFieldValue(field.name, formatFieldValue(field, rawVal));
+                        }
+                    }
+                };
+
+                if (field.apiEndpoint) {
+                    let finalUrl = field.apiEndpoint;
+                    if (typeof finalUrl === 'string' && finalUrl.includes(":jmb")) {
+                        const trenutniJmb = getJmb();
+                        if (trenutniJmb) finalUrl = finalUrl.replace(":jmb", trenutniJmb);
+                    }
+
+                    api.service(false).get(finalUrl)
+                        .then(res => handleDataLoad(Array.isArray(res.data) ? res.data : []))
+                        .catch(err => console.error(`Greška: ${field.name}`, err));
+                } else if (field.optionsTag) {
+                    fetchData(field.optionsTag)
+                        .then(data => handleDataLoad(data))
+                        .catch(err => console.error(`Greška: ${field.optionsTag}`, err));
                 }
-
-                // Koristimo api.service da izbjegnemo 403 Forbidden
-                api.service(false).get(finalUrl)
-                    .then((res) => {
-                        setDynamicOptions((prev) => ({
-                            ...prev,
-                            [field.name]: Array.isArray(res.data) ? res.data : [],
-                        }));
-                    })
-                    .catch((err) => console.error(`Greška pri učitavanju opcija za: ${field.name}`, err));
             }
         });
-    }, [schema]);
+    }, [schema, initialValues, form]);
 
     const resourceType = Form.useWatch('resourceType', form);
 
-    // 3. Učitavanje ZAVISNIH opcija (Vozila, Oprema, Materijal)
+    // 3. Efekat za zavisna polja (resourceType)
     useEffect(() => {
         const dependentField = schema?.fields?.find(f => f.dependsOn === 'resourceType');
-
         if (dependentField && resourceType && dependentField.endpoints) {
             const url = dependentField.endpoints[resourceType];
-
             api.service(false).get(url)
                 .then(res => {
                     const options = Array.isArray(res.data) ? res.data : [];
-                    setDynamicOptions(prev => ({
-                        ...prev,
-                        [dependentField.name]: options
-                    }));
+                    setDynamicOptions(prev => ({ ...prev, [dependentField.name]: options }));
 
-                    if (initialValues && initialValues[dependentField.name]) {
-                        form.setFieldValue(dependentField.name, String(initialValues[dependentField.name]));
-                    } else if (!initialValues) {
-                        form.setFieldValue(dependentField.name, undefined);
+                    if (initialValues?.[dependentField.name]) {
+                        form.setFieldValue(dependentField.name, formatFieldValue(dependentField, initialValues[dependentField.name]));
                     }
                 })
                 .catch(err => console.error("Greška pri učitavanju zavisnih opcija", err));
@@ -103,9 +119,19 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
     if (!schema || !schema.fields) return null;
 
     const renderField = (field) => {
+        if (field.type === "location") {
+            return (
+                <LocationPicker
+                    initialValue={form.getFieldValue(field.name)}
+                    onLocationSelected={(coords) => {
+                        form.setFieldsValue({ [field.name]: coords });
+                    }}
+                />
+            );
+        }
+
         if (field.type === "select") {
             const options = dynamicOptions[field.name] || field.options || [];
-
             return (
                 <Select
                     mode={field.mode}
@@ -127,10 +153,8 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
                         }
 
                         const rawValue = option.jmb || option.id || option.value || index;
-                        const value = String(rawValue);
-
                         return (
-                            <Option key={value} value={value}>
+                            <Option key={String(rawValue)} value={String(rawValue)}>
                                 {label}
                             </Option>
                         );
@@ -153,46 +177,31 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
                 form={form}
                 layout="vertical"
                 onFinish={(values) => {
-                    // Konverzija dayjs objekata u ISO stringove pre slanja na backend
                     const cleanedValues = { ...values };
                     schema.fields.forEach(f => {
                         if (f.type === 'date' && cleanedValues[f.name]) {
                             cleanedValues[f.name] = cleanedValues[f.name].toISOString();
                         }
                     });
-
                     onSubmit(cleanedValues);
                     form.resetFields();
                     onClose?.();
                 }}
             >
-                <Form.Item noStyle shouldUpdate={(prev, curr) => prev.resourceType !== curr.resourceType}>
-                    {() => (
-                        <>
-                            {schema.fields.map((field) => {
-                                if (field.dependsOn && !form.getFieldValue(field.dependsOn)) {
-                                    return null;
-                                }
+                {schema.fields.map((field) => {
+                    if (field.dependsOn && !form.getFieldValue(field.dependsOn)) return null;
 
-                                const finalRules = [
-                                    { required: field.required, message: field.requiredMessage || "Obavezno polje" },
-                                    ...(field.rules || [])
-                                ];
-
-                                return (
-                                    <Form.Item
-                                        key={field.name}
-                                        name={field.name}
-                                        label={field.label}
-                                        rules={finalRules}
-                                    >
-                                        {renderField(field)}
-                                    </Form.Item>
-                                );
-                            })}
-                        </>
-                    )}
-                </Form.Item>
+                    return (
+                        <Form.Item
+                            key={field.name}
+                            name={field.name}
+                            label={field.label}
+                            rules={[{ required: field.required, message: field.requiredMessage || "Obavezno polje" }, ...(field.rules || [])]}
+                        >
+                            {renderField(field)}
+                        </Form.Item>
+                    );
+                })}
 
                 <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
                     <Button onClick={onClose} style={{ marginRight: '10px' }}>Odustani</Button>

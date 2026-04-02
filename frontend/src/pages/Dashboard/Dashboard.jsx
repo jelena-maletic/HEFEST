@@ -1,28 +1,35 @@
 import {useState} from "react";
-import { Select } from 'antd';
+import {Modal, Select} from 'antd';
 import './Dashboard.css';
 import MapView from "../../components/MapView.jsx";
 import Calendar from "../../components/Calendar.jsx";
 import hefestLogo from '../../assets/hefest-logo.svg';
 import {TopBar} from "../../components/TopBar.jsx"
 import {Sidebar} from "../../components/Sidebar.jsx";
-import { List } from "../../components/List/List.jsx";
+import {List} from "../../components/List/List.jsx";
 import CenteredOverlay from "../../components/CenteredOverlay/CenteredOverlay.jsx";
 import EntityDetailCard from "../../components/EntityDetailCard/EntityDetailCard.jsx";
-import { formatEntityDetails } from "../../utils/entityDetailFormatter.js";
-import { deleteElement, updateElement } from "../../services/apiHelpers.js";
-import { useNotification } from "../../components/NotificationContext.jsx";
+import {formatEntityDetails} from "../../utils/entityDetailFormatter.js";
+import {
+    deleteElement, getKorisnikPodaci,
+    getTehnicarData,
+    updateElement,
+    updateTehnicarAktivnost,
+    updateZahtjevStatus
+} from "../../services/apiHelpers.js";
+import {useNotification} from "../../components/NotificationContext.jsx";
 import DynamicForm from "../../components/DynamicForm.jsx";
-import { schemaMap } from "../../data/SchemaMap.jsx";
-import {data} from "react-router-dom";
+import {schemaMap} from "../../data/SchemaMap.jsx";
+import {useEffect} from "react";
+import {reverseGeocode} from "../../utils/reverseGeocode.js";
+import {getJmb} from "../../auth/auth.js";
+import CreateDnevniIzvjestajForm from "../../components/CreateDnevniIzvjestajForm.jsx";
 
 
 export function Dashboard({sidebarContents, role}) {
     const [isActive, setIsActive] = useState(false);
     const [activeScreen, setActiveScreen] = useState("home");
     const [screenTitle, setScreenTitle] = useState("home");
-
-
 
     const [isDetailVisible, setIsDetailVisible] = useState(false);
     const [detailData, setDetailData] = useState(null);
@@ -35,6 +42,29 @@ export function Dashboard({sidebarContents, role}) {
     const [isEditFormVisible, setIsEditFormVisible] = useState(false);
 
     const [refreshCurrentList, setRefreshCurrentList] = useState(null);
+
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+    const [showCreateIzvjestaj, setShowCreateIzvjestaj] = useState(false);
+
+    const triggerRefresh = () => {
+        setRefreshTrigger(prev => prev + 1);
+    };
+
+    useEffect(() => {
+        const syncStatusWithBackend = async () => {
+            if (role === "tehnicar") {
+                try {
+                    const jmb = sessionStorage.getItem("jmb");
+                    const data = await getTehnicarData(jmb);
+                    setIsActive(data.aktivan);
+                } catch (err) {
+                    console.error("Neuspješno sinhronizovanje statusa:", err);
+                }
+            }
+        };
+        syncStatusWithBackend();
+    }, [role]);
 
     const TAG_MAP = {
         "projekti": "PROJECT",
@@ -52,30 +82,34 @@ export function Dashboard({sidebarContents, role}) {
         "zahtjevi": "REQUEST",
         "new-request": "REQUEST"
     };
-    /*const handleOpenDetails = (rawData, tag) => {
-        const type = TAG_MAP[tag];
-        if (!type) return;
 
-        const formatted = formatEntityDetails(rawData, type, role);
-
-        setDetailData(formatted.items);
-        setRawEntityData(rawData);
-        setEntityType(type);
-        setIsDetailVisible(true);
-    };*/
     const handleOpenDetails = async (rawData, tag) => {
         const type = TAG_MAP[tag];
         if (!type) return;
 
         setCurrentTag(tag);
+
+        let enrichedData = {...rawData};
+
         try {
-            const formatted = await formatEntityDetails(rawData, type, role);
+
+            if (type === 'PROJECT' && rawData.lokacija) {
+
+                const stvarnaAdresa = await reverseGeocode(rawData.lokacija);
+
+                enrichedData.lokacijaNaziv = stvarnaAdresa;
+            }
+
+
+            const formatted = await formatEntityDetails(enrichedData, type, role);
+
             setDetailData(formatted.items);
-            setRawEntityData(rawData);
+            setRawEntityData(enrichedData);
             setEntityType(type);
             setIsDetailVisible(true);
         } catch (error) {
-            console.error("Greška pri formatiranju detalja:", error);
+            console.error("Greška pri otvaranju detalja:", error);
+            notify.error("Greška", "Neuspješno učitavanje detalja.");
         }
     };
 
@@ -84,13 +118,20 @@ export function Dashboard({sidebarContents, role}) {
         setDetailData(null);
     };
 
-    const handleEdit = () => {
-        console.log("Otvaram formu za uređivanje:", rawEntityData);
-        // Ovdje ćeš kasnije dodati navigaciju na formu ili novi modal
+    const toggleStatus = async () => {
+        const jmb = sessionStorage.getItem("jmb");
+        const noviStatus = !isActive;
+
+        try {
+            await updateTehnicarAktivnost(jmb, noviStatus);
+
+            setIsActive(noviStatus);
+            notify.success("Status ažuriran", `Sada ste ${noviStatus ? "aktivni" : "neaktivni"}.`);
+        } catch (error) {
+            console.error("Greška pri promjeni statusa:", error);
+            notify.error("Greška", "Nije moguće ažurirati status na serveru.");
+        }
     };
-
-
-    const toggleStatus = () => setIsActive(!isActive);
 
     const handleScreen = (activeScreen, screenTitle) => {
         setActiveScreen(activeScreen);
@@ -101,11 +142,11 @@ export function Dashboard({sidebarContents, role}) {
     const [selectedEmployeeTag, setSelectedEmployeeTag] = useState("zaposleni");
 
     const employeeOptions = [
-        { value: "zaposleni", label: "Svi zaposleni" },
-        { value: "knjigovodje", label: "Knjigovođe" },
-        { value: "poslovodje", label: "Poslovođe" },
-        { value: "magacioneri", label: "Magacioneri" },
-        { value: "tehnicari", label: "Tehničari" }
+        {value: "zaposleni", label: "Svi zaposleni"},
+        {value: "knjigovodje", label: "Knjigovođe"},
+        {value: "poslovodje", label: "Poslovođe"},
+        {value: "magacioneri", label: "Magacioneri"},
+        {value: "tehnicari", label: "Tehničari"}
     ];
 
     const handleRegisterRefresh = (refreshFn) => {
@@ -114,16 +155,39 @@ export function Dashboard({sidebarContents, role}) {
             return refreshFn;
         });
     };
+    // Unutar Dashboard komponente, dodaj novi state:
+    const [userName, setUserName] = useState("");
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const jmb = getJmb();
+            if (jmb) {
+                try {
+                    const data = await getKorisnikPodaci(jmb);
+                    if (data) {
+                        console.log(data);
+                        setUserName(`${data}`);
+                    }
+                } catch (err) {
+                    // Ako API ne nađe JMB u 'zaposleni', možda je u drugoj tabeli ili je fallback uloga
+                    setUserName(role);
+                }
+            }
+        };
+        fetchUser();
+    }, [role]);
+
+
 
     return (
         <div className="app-container">
 
-            <TopBar activeScreen={activeScreen} screenTitle={screenTitle} screenHandle={handleScreen} role={role}/>
+            <TopBar activeScreen={activeScreen} screenTitle={screenTitle} screenHandle={handleScreen} userName={userName}/>
 
             <div className="content-area">
 
                 <Sidebar contents={sidebarContents[role]} screenHandle={handleScreen}
-                         activeHandle={toggleStatus} active={isActive} />
+                         activeHandle={toggleStatus} active={isActive} userRole={role}/>
 
                 <main className={`home-screen ${activeScreen !== "home" ? "content-active" : ""}`}
                       style={{
@@ -133,32 +197,51 @@ export function Dashboard({sidebarContents, role}) {
 
                     {activeScreen === "map" && <MapView role={role}/>}
                     {activeScreen === "calendar" && <Calendar/>}
-                    {/*{activeScreen === "employees" && <List isEditable={false} listTitle={screenTitle} screenState="user" tag="zaposleni" />}*/}
+
                     {activeScreen === "report-overview" && <div className={"report-lists"}>
-                                                                <List isEditable={false} listTitle={"Dnevni " + screenTitle} screenState="report-overview" dividerWidth={"90%"} tag="dnevni_izvjestaji" />
-                                                                <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview" dividerWidth={"90%"} tag="sumarni_izvjestaji"/>
-                                                            </div>}
-                    {/* Radna oprema */}
+                        <List isEditable={false} listTitle={"Dnevni " + screenTitle} screenState="report-overview"
+                              dividerWidth={"90%"} tag="dnevni_izvjestaji" onClick={(data) => handleOpenDetails(data, "dnevni_izvjestaji")}/>
+                        <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview"
+                              dividerWidth={"90%"} tag="sumarni_izvjestaji"/>
+                    </div>}
+
                     {activeScreen === "tools" &&
                         <List isEditable={true} listTitle={screenTitle} screenState="tools" tag="radna-oprema"
                               onSuccess={handleRegisterRefresh}
-                              onClick={(data) => handleOpenDetails(data, "radna-oprema")} />}
+                              onClick={(data) => handleOpenDetails(data, "radna-oprema")}/>}
 
-                    {/* Vozila */}
+
                     {activeScreen === "vehicles" &&
                         <List isEditable={true} listTitle={screenTitle} screenState="truck" tag="vozila"
                               onSuccess={handleRegisterRefresh}
-                              onClick={(data) => handleOpenDetails(data, "vozila")} />}
+                              onClick={(data) => handleOpenDetails(data, "vozila")}/>}
 
-                    {/* Materijal */}
+
                     {activeScreen === "materials" &&
                         <List isEditable={true} listTitle={screenTitle} screenState="material" tag="materijal"
                               onSuccess={handleRegisterRefresh}
-                              onClick={(data) => handleOpenDetails(data, "materijal")} />}
-                    {activeScreen === "taken-resources" && <List isEditable={true} listTitle={screenTitle} screenState="taken-resources" tag="zaduzenja" />}
-                    {activeScreen === "taken-resources-manager" && <List isEditable={false} listTitle={screenTitle} screenState="taken-resources" onClick={(data) => handleOpenDetails(data, "zaduzenja")} tag="zaduzenja" filterByPoslovodja={true}/>}
+                              onClick={(data) => handleOpenDetails(data, "materijal")}/>}
+                    {activeScreen === "taken-resources" &&
+                        <List isEditable={true} listTitle={screenTitle} screenState="taken-resources" tag="zaduzenja"/>}
+                    {activeScreen === "taken-resources-manager" &&
+                        <List isEditable={false} listTitle={screenTitle} screenState="taken-resources"
+                              onClick={(data) => handleOpenDetails(data, "zaduzenja")} tag="zaduzenja"
+                              filterByPoslovodja={true}/>}
 
-                    {activeScreen === "request-overview" && <List isEditable={false} binaryChoice={true} listTitle={screenTitle} onClick={(data) => handleOpenDetails(data, "zahtjevi")} screenState="request-overview" tag="zahtjevi" />}
+                    {activeScreen === "request-overview" && (
+                        <List
+                            key={`list-${activeScreen}-${refreshTrigger}`}
+                            isEditable={false}
+                            binaryChoice={true}
+                            listTitle={screenTitle}
+                            onClick={(data) => handleOpenDetails(data, "zahtjevi")}
+                            screenState="request-overview"
+                            tag="zahtjevi"
+                            onSuccess={handleRegisterRefresh}
+                            filterByMagacioner={role === "magacioner"}
+                        />
+                    )}
+
                     {activeScreen === "technicians" && (
                         <List
                             isEditable={false}
@@ -166,18 +249,34 @@ export function Dashboard({sidebarContents, role}) {
                             screenState="user"
                             tag="tehnicari/only"
                             onClick={(data) => handleOpenDetails(data, "tehnicari")}
+                            filterByPoslovodja={role === "poslovodja"}
                         />
                     )}
                     {activeScreen === "report-overview-manager" && <div className={"report-lists"}>
-                                                                <List isEditable={false} listTitle={"Dnevni " + screenTitle} screenState="report-overview" dividerWidth={"90%"} tag="dnevni_izvjestaji" />
-                                                                 <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview" dividerWidth={"90%"} tag="sumarni_izvjestaji"/>
-                                                              </div>}
-                    {activeScreen === "projects" && <List isEditable={true} listTitle={screenTitle} screenState="projects" onClick={(data) => handleOpenDetails(data, "projekti")} onSuccess={handleRegisterRefresh} tag="projekti"/>}
-                    {activeScreen === "assigned-projects" && <List isEditable={false} listTitle={screenTitle} screenState="projects" onClick={(data) => handleOpenDetails(data, "projekti")} tag="projekti" filterByPoslovodja={true}/>}
+                        <List
+                            isEditable={false}
+                            listTitle={"Dnevni " + screenTitle}
+                            screenState="report-overview"
+                            dividerWidth={"90%"}
+                            tag="dnevni_izvjestaji"
+                            onClick={(data) => handleOpenDetails(data, "dnevni_izvjestaji")} // DODATO
+                            filterByPoslovodja={true}
+                        />
+                        <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview"
+                              dividerWidth={"90%"} tag="sumarni_izvjestaji"/>
+                    </div>}
+                    {activeScreen === "projects" &&
+                        <List isEditable={true} listTitle={screenTitle} screenState="projects"
+                              onClick={(data) => handleOpenDetails(data, "projekti")} onSuccess={handleRegisterRefresh}
+                              tag="projekti"/>}
+                    {activeScreen === "assigned-projects" &&
+                        <List isEditable={false} listTitle={screenTitle} screenState="projects"
+                              onClick={(data) => handleOpenDetails(data, "projekti")} tag="projekti"
+                              filterByPoslovodja={true}/>}
 
                     {activeScreen === "tasks" && (
                         <List
-                            isEditable={ role === "poslovodja"}
+                            isEditable={role === "poslovodja"}
                             listTitle="Moji dnevni zadaci"
                             screenState="tasks"
                             tag="moji_dnevni_zadaci"
@@ -216,21 +315,42 @@ export function Dashboard({sidebarContents, role}) {
                             onClick={(data) => handleOpenDetails(data, selectedEmployeeTag)}
                         />
                     )}
+
                     {activeScreen === "new-request" && (
                         <List
                             isEditable={true}
                             listTitle={screenTitle}
                             screenState="request-overview"
                             tag="zahtjevi"
+                            filterByPoslovodja={true}
+                            onSuccess={handleRegisterRefresh}
                             onClick={(data) => handleOpenDetails(data, "zahtjevi")}
                         />
                     )}
+
+                    <Modal
+                        title={null}
+                        open={activeScreen === "add-report"}
+                        onCancel={() => handleScreen("home", "home")}
+                        footer={null}
+                        width={900}
+                        centered
+                        destroyOnClose
+                    >
+                        <CreateDnevniIzvjestajForm
+                            onClose={() => handleScreen("home", "home")}
+                            onSuccess={() => {
+                                handleScreen("home", "home");
+                            }}
+                        />
+                    </Modal>
+
                 </main>
             </div>
 
             <CenteredOverlay isVisible={isDetailVisible} onClose={handleCloseDetails}>
                 {detailData && (
-                    <div style={{ minWidth: '650px', maxWidth: '850px' }}>
+                    <div style={{minWidth: '650px', maxWidth: '850px'}}>
                         <EntityDetailCard
                             entityTitle={entityType === 'PROJECT' ? rawEntityData?.naziv : (rawEntityData?.title || rawEntityData?.ime + " " + rawEntityData?.prezime || "Detalji")}
                             entityType={entityType}
@@ -241,13 +361,13 @@ export function Dashboard({sidebarContents, role}) {
                             onEdit={() => setIsEditFormVisible(true)}
                             onDelete={async () => {
                                 try {
-
                                     const apiTag = currentTag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : currentTag;
                                     const responseStatus = await deleteElement(apiTag, rawEntityData.id);
 
                                     if (responseStatus >= 200 && responseStatus < 300) {
                                         notify.success("Obrisano", "Element je uspješno uklonjen.");
                                         if (refreshCurrentList) refreshCurrentList();
+                                        triggerRefresh();
                                         setIsDetailVisible(false);
                                     }
                                 } catch (error) {
@@ -255,16 +375,36 @@ export function Dashboard({sidebarContents, role}) {
                                     notify.error("Greška", "Neuspješno brisanje elementa.");
                                 }
                             }}
-                            onConfirm={() => console.log(1)}
-                            onDeny={() => console.log(2)}
+                            onConfirm={async () => {
+                                try {
+                                    await updateZahtjevStatus(rawEntityData.id, "odobren");
+                                    notify.success("Odobreno", "Zahtjev je uspješno odobren.");
+                                    if (refreshCurrentList) refreshCurrentList();
+                                    triggerRefresh();
+                                    setIsDetailVisible(false);
+                                } catch (error) {
+                                    notify.error("Greška", "Nije uspjelo odobravanje zahtjeva.");
+                                }
+                            }}
+                            onDeny={async () => {
+                                try {
+                                    await updateZahtjevStatus(rawEntityData.id, "neodobren");
+                                    notify.success("Odbijeno", "Zahtjev je odbijen.");
+                                    if (refreshCurrentList) refreshCurrentList();
+                                    setIsDetailVisible(false);
+                                } catch (error) {
+                                    notify.error("Greška", "Nije uspjelo odbijanje zahtjeva.");
+                                }
+                            }}
                         />
                     </div>
                 )}
             </CenteredOverlay>
 
-            {/* DINAMIČKA FORMA ZA IZMJENU */}
+
             {isEditFormVisible && (
-                <CenteredOverlay className="form-overlay" isVisible={isEditFormVisible} onClose={() => setIsEditFormVisible(false)}>
+                <CenteredOverlay className="form-overlay" isVisible={isEditFormVisible}
+                                 onClose={() => setIsEditFormVisible(false)}>
                     <DynamicForm
                         className="form"
                         schema={schemaMap[currentTag]}
@@ -273,7 +413,6 @@ export function Dashboard({sidebarContents, role}) {
                         onSubmit={async (formData) => {
                             try {
                                 const apiTag = currentTag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : currentTag;
-                                console.log(rawEntityData.id);
                                 await updateElement(apiTag, rawEntityData.id, formData);
                                 notify.success("Izmijenjeno", "Podaci su uspješno ažurirani.");
                                 if (refreshCurrentList) refreshCurrentList();

@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import eng from "@fullcalendar/core/locales/en-gb.cjs";
 import "./Calendar.css";
 
 import {fetchProjects} from "../services/apiHelpers.js";
-import {SmallButton} from "./SmallButton.jsx";
+import CenteredOverlay from "./CenteredOverlay/CenteredOverlay.jsx";
+import { reverseGeocode } from "../utils/reverseGeocode.js";
 
 function Calendar() {
     const [events, setEvents] = useState([]);
@@ -50,11 +50,11 @@ function Calendar() {
                         });
                     }
 
-                    if (p.zavrsetakRada) {
+                    if (p.krajRada) {
                         projectEvents.push({
                             id: `finished-${p.id}`,
                             title: `završen - ${p.naziv}`,
-                            start: p.zavrsetakRada,
+                            start: p.krajRada,
                             backgroundColor: "#b0b0b0",
                             textColor: "#000",
                             extendedProps: { ...p },
@@ -72,35 +72,88 @@ function Calendar() {
     }, []);
 
 
-    const handleEventClick = (info) => {
+
+    const handleEventClick = async (info) => {
         info.jsEvent.preventDefault();
-        setSelectedProject(info.event.extendedProps);
+
+
+        const projectData = { ...info.event.extendedProps };
+
+
+        if (projectData.lokacija && !projectData.lokacijaNaziv) {
+
+            setSelectedProject({ ...projectData, lokacijaNaziv: "Učitavanje lokacije..." });
+
+            const adresa = await reverseGeocode(projectData.lokacija);
+
+
+            setSelectedProject({ ...projectData, lokacijaNaziv: adresa });
+        } else {
+            setSelectedProject(projectData);
+        }
     };
 
     return (
         <div className="calendar-container">
-            {/*<div className={"button-container"}>*/}
-            {/*    <SmallButton className={"add-button"} type={"add"}/>*/}
-            {/*</div>*/}
-
             <FullCalendar
                 plugins={[dayGridPlugin]}
                 initialView="dayGridMonth"
-                locale={eng}
+                locale={{
+                    code: 'sr-latn',
+                    week: {
+                        dow: 1,
+                        doy: 4,
+                    },
+                    buttonText: {
+                        prev: 'Prethodna',
+                        next: 'Sljedeća',
+                        today: 'Danas',
+                        month: 'Mjesec',
+                        week: 'Nedelja',
+                        day: 'Dan',
+                        list: 'Planer',
+                    },
+                    weekText: 'Sed',
+                    allDayText: 'Cijeli dan',
+                    noEventsText: 'Nema događaja za prikaz',
+                    monthNames: ['Januar', 'Februar', 'Mart', 'April', 'Maj', 'Jun', 'Jul', 'Avgust', 'Septembar', 'Oktobar', 'Novembar', 'Decembar'],
+                    monthNamesShort: ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Avg', 'Sep', 'Okt', 'Nov', 'Dec'],
+                    dayNames: ['Nedelja', 'Ponedeljak', 'Utorak', 'Srijeda', 'Četvrtak', 'Petak', 'Subota'],
+                    dayNamesShort: ['Ned', 'Pon', 'Uto', 'Sri', 'Čet', 'Pet', 'Sub'],
+                    dayNamesMin: ['Ne', 'Po', 'Ut', 'Sr', 'Če', 'Pe', 'Su'],
+                }}
                 events={events}
                 height="95%"
                 eventDisplay="block"
                 eventClick={handleEventClick}
             />
 
+            <CenteredOverlay
+                isVisible={!!selectedProject}
+                onClose={() => setSelectedProject(null)}
+            >
             {selectedProject && (
                 <div className="modal-overlay">
                     <div className="modal fade-in">
                         <h3>Projekat: {selectedProject.naziv}</h3>
-                        <p><strong>Lokacija:</strong> {selectedProject.lokacija}</p>
-                        <p><strong>Početak:</strong> {new Date(selectedProject.pocetakRada).toLocaleDateString("hr-HR")}</p>
-                        <p><strong>Rok:</strong> {new Date(selectedProject.rok).toLocaleDateString("hr-HR")}</p>
-                        <p><strong>Završetak:</strong> {selectedProject.krajRada ? new Date(selectedProject.krajRada).toLocaleDateString("hr-HR") : "/"}</p>
+                        <p>
+                            <strong>Lokacija:</strong> {selectedProject.lokacijaNaziv || selectedProject.lokacija || "Nije definisana"}
+                        </p>
+                        <p>
+                            <strong>Početak:</strong> {
+                            selectedProject.pocetakRada
+                                ? new Date(selectedProject.pocetakRada).toLocaleDateString("hr-HR")
+                                : "Nije definisan"
+                        }
+                        </p>
+                        <p>
+                            <strong>Rok:</strong> {
+                            selectedProject.rok
+                                ? new Date(selectedProject.rok).toLocaleDateString("hr-HR")
+                                : "Nema roka"
+                        }
+                        </p>
+                        <p><strong>Završetak:</strong> {selectedProject.krajRada ? new Date(selectedProject.krajRada).toLocaleDateString("hr-HR") : "Nije definisan"}</p>
 
                         <button className="close-btn" onClick={() => setSelectedProject(null)}>
                             Zatvori
@@ -108,6 +161,7 @@ function Calendar() {
                     </div>
                 </div>
             )}
+            </CenteredOverlay>
         </div>
     );
 }
