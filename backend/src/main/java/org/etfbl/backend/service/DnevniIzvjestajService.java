@@ -34,6 +34,14 @@ public class DnevniIzvjestajService {
                 .toList();
     }
 
+    public List<DnevniIzvjestaj> getIzvjestajiZaProjekatUPeriodu(Integer idProjekta, LocalDate od, LocalDate doDatuma) {
+        return dnevniIzvjestajRepository
+                .findAllByPoslovodjaUpravljaProjektom_Projekat_IdProjektaAndDatumBetween(idProjekta, od, doDatuma)
+                .stream()
+                .map(this::mapToDto)
+                .toList();
+    }
+
     public DnevniIzvjestaj getById(Integer id) {
         DnevniIzvjestajEntity entity = dnevniIzvjestajRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Dnevni izvještaj nije pronađen: " + id));
