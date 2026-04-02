@@ -180,7 +180,12 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
         );
     }
 
-
+    if (tag === "dnevni_izvjestaji" && filterTehnicar) {
+        const ulogovaniJmb = getJmb();
+        dataArray = dataArray.filter(t =>
+            t.tehnicar.jmb === ulogovaniJmb
+        );
+    }
 
 
     switch (tag) {

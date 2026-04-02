@@ -316,6 +316,17 @@ export function Dashboard({sidebarContents, role}) {
                         />
                     )}
 
+                    {activeScreen === "daily-report-overview-manager" && (
+                        <List
+                            isEditable={false}
+                            listTitle={screenTitle}
+                            screenState="report-overview"
+                            tag="dnevni_izvjestaji"
+                            onClick={(data) => handleOpenDetails(data, "dnevni_izvjestaji")} // DODATO
+                            filterByTehnicar={true}
+                        />
+                    )}
+
                     {activeScreen === "new-request" && (
                         <List
                             isEditable={true}

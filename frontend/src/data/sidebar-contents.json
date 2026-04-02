@@ -145,6 +145,12 @@
       "icon": "add-report",
       "iconHover": "add-report-inverted",
       "tag": "add-report"
+    },
+    {
+      "label": "Dnevni izvještaji",
+      "icon": "report-overview",
+      "iconHover": "report-overview-inverted",
+      "tag": "daily-report-overview-manager"
     }
   ]
 }
