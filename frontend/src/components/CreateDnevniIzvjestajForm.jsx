@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import {
     Form, Select, DatePicker, InputNumber,
-    Input, Button, Card, Divider, Row, Col, Space
+    Input, Button, Card, Divider, Row, Col, Space, Checkbox, Alert
 } from "antd";
-import { PlusOutlined, DeleteOutlined, FileTextOutlined, BuildOutlined } from "@ant-design/icons";
+import { PlusOutlined, DeleteOutlined, FileTextOutlined,
+    BuildOutlined, SolutionOutlined, ImportOutlined } from "@ant-design/icons";
 import api from "../auth/axiosInstance.js";
 import { useNotification } from "./NotificationContext.jsx";
 
@@ -27,7 +28,11 @@ const CreateDnevniIzvjestajForm = ({ onClose, onSuccess }) => {
     const [materijali, setMaterijali] = useState([]);
     const [stavke, setStavke] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [pronadjeniZadaci, setPronadjeniZadaci] = useState([]);
+    const [odabraniZadaci, setOdabraniZadaci] = useState([]);
     const notify = useNotification();
+
+    const odabraniDatum = Form.useWatch('datum', form);
 
     useEffect(() => {
         api.service(true).get("http://localhost:8080/api/projekti")
@@ -35,12 +40,41 @@ const CreateDnevniIzvjestajForm = ({ onClose, onSuccess }) => {
             .catch(() => notify.error("Greška", "Učitavanje projekata nije uspjelo."));
 
         api.service(true).get("http://localhost:8080/api/materijal")
-            .then(res => {
-                const data = Array.isArray(res.data) ? res.data : [];
-                setMaterijali(data);
-            })
+            .then(res => setMaterijali(Array.isArray(res.data) ? res.data : []))
             .catch(() => notify.error("Greška", "Učitavanje materijala nije uspjelo."));
     }, []);
+
+    useEffect(() => {
+        if (odabraniDatum) {
+            const jmb = sessionStorage.getItem('jmb');
+            const dateStr = odabraniDatum.format("YYYY-MM-DD");
+
+            api.service(true).get(`http://localhost:8080/api/dnevni_zadaci/tehnicar/${jmb}/zavrseni?datum=${dateStr}`)
+                .then(res => {
+                    setPronadjeniZadaci(res.data || []);
+                    setOdabraniZadaci([]);
+                })
+                .catch(err => {
+                    console.error("Greška pri dohvatanju zadataka", err);
+                    setPronadjeniZadaci([]);
+                });
+        }
+    }, [odabraniDatum]);
+
+    const ubaciZadatkeUOpis = () => {
+        if (odabraniZadaci.length === 0) return;
+
+        const noviTekst = odabraniZadaci.join("\n");
+        const trenutniOpis = form.getFieldValue('opisRadova') || "";
+
+        form.setFieldsValue({
+            opisRadova: trenutniOpis ? `${trenutniOpis}\n${noviTekst}` : noviTekst
+        });
+
+        setPronadjeniZadaci([]);
+        //setOdabraniZadaci([]);
+        notify.success("Uspješno", "Zadaci dodati u opis.");
+    };
 
     const dodajStavku = () => setStavke(prev => [...prev, PRAZNA_STAVKA()]);
     const ukloniStavku = (localId) => setStavke(prev => prev.filter(s => s._localId !== localId));
@@ -121,6 +155,42 @@ const CreateDnevniIzvjestajForm = ({ onClose, onSuccess }) => {
                         </Form.Item>
                     </Col>
                 </Row>
+
+                {pronadjeniZadaci.length > 0 && (
+                    <div style={{ marginBottom: 24 }}>
+                        <Alert
+                            message={<Space><SolutionOutlined /> <strong>Pronađeni završeni zadaci</strong></Space>}
+                            description={
+                                <div style={{ marginTop: 10 }}>
+                                    <p>Označite zadatke koje želite da prebacite u opis radova:</p>
+                                    <Checkbox.Group
+                                        style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '8px' }}
+                                        onChange={(vals) => setOdabraniZadaci(vals)}
+                                        value={odabraniZadaci}
+                                    >
+                                        {pronadjeniZadaci.map(z => (
+                                            <Checkbox key={z.id} value={z.opis}>
+                                                {z.opis}
+                                            </Checkbox>
+                                        ))}
+                                    </Checkbox.Group>
+                                    <Button
+                                        type="primary"
+                                        size="small"
+                                        icon={<ImportOutlined />}
+                                        style={{ marginTop: 12, borderRadius: 2 }}
+                                        disabled={odabraniZadaci.length === 0}
+                                        onClick={ubaciZadatkeUOpis}
+                                    >
+                                        Umetni u opis
+                                    </Button>
+                                </div>
+                            }
+                            type="info"
+                            showIcon
+                        />
+                    </div>
+                )}
 
                 <Divider orientation="left" style={{ borderColor: "#d9d9d9" }}>Radni Sati</Divider>
 
