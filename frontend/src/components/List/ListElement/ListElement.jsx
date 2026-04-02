@@ -80,8 +80,8 @@ export function ListElement({
                             await updateZahtjevStatus(listElementData.id, "odobren");
                             notify.success("Status ažuriran");
                             if (onSuccess) await onSuccess();
-                        } catch (err) {
-                            notify.error("Greška pri ažuriranju");
+                        } catch (error) {
+                            notify.error("Greška pri ažuriranju ", error);
                         }
                     }
                     }
@@ -95,8 +95,8 @@ export function ListElement({
                             await updateZahtjevStatus(listElementData.id, "neodobren"); // Dodaj await
                             notify.success("Status ažuriran");
                             if (onSuccess) await onSuccess();
-                        } catch (err) {
-                            notify.error("Greška pri ažuriranju");
+                        } catch (error) {
+                            notify.error("Greška pri ažuriranju", error);
                         }
                     }}
                 />
@@ -182,7 +182,7 @@ export function ListElement({
 
                                          const response = await updateElement(tag, listElementData.id, formData);
 
-                                         notify.success("Uspješno ažuriranje", "Podaci su uspješno izmijenjeni.");
+                                         notify.success("Uspješno ažuriranje", "Podaci su uspješno izmijenjeni.", response);
 
                                          setUpdateForm(false);
                                          onSuccess && onSuccess();

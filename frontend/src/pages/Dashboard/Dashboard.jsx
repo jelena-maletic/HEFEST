@@ -383,7 +383,7 @@ export function Dashboard({sidebarContents, role}) {
                                     triggerRefresh();
                                     setIsDetailVisible(false);
                                 } catch (error) {
-                                    notify.error("Greška", "Nije uspjelo odobravanje zahtjeva.");
+                                    notify.error("Greška", "Nije uspjelo odobravanje zahtjeva.", error);
                                 }
                             }}
                             onDeny={async () => {
@@ -393,7 +393,7 @@ export function Dashboard({sidebarContents, role}) {
                                     if (refreshCurrentList) refreshCurrentList();
                                     setIsDetailVisible(false);
                                 } catch (error) {
-                                    notify.error("Greška", "Nije uspjelo odbijanje zahtjeva.");
+                                    notify.error("Greška", "Nije uspjelo odbijanje zahtjeva.", error);
                                 }
                             }}
                         />
