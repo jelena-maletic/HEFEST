@@ -6,6 +6,7 @@ import lombok.Value;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * DTO for {@link org.etfbl.backend.model.SumarniIzvjestajEntity}
@@ -22,4 +23,5 @@ public class SumarniIzvjestaj implements Serializable {
     private LocalDate krajnjiDatum;
     private BigDecimal ukupniSatiRada;
     private String opis;
+    private List<Integer> stavkeIds;
 }

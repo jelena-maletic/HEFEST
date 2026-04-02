@@ -5,7 +5,9 @@ import org.etfbl.backend.dto.Materijal;
 import org.etfbl.backend.dto.Poslovodja;
 import org.etfbl.backend.dto.Projekat;
 import org.etfbl.backend.dto.SumarniIzvjestaj;
+import org.etfbl.backend.model.DnevniIzvjestajEntity;
 import org.etfbl.backend.model.SumarniIzvjestajEntity;
+import org.etfbl.backend.repository.DnevniIzvjestajRepository;
 import org.etfbl.backend.repository.PoslovodjaUpravljaProjektomRepository;
 import org.etfbl.backend.repository.SumarniIzvjestajRepository;
 import org.modelmapper.ModelMapper;
@@ -20,11 +22,13 @@ public class SumarniIzvjestajService {
     private final ModelMapper modelMapper;
     private final SumarniIzvjestajRepository sumarniIzvjestajRepository;
     private final PoslovodjaUpravljaProjektomRepository pupRepository;
+    private final DnevniIzvjestajRepository dnevniIzvjestajRepository;
 
-    public SumarniIzvjestajService(ModelMapper modelMapper, SumarniIzvjestajRepository sumarniIzvjestajRepository, PoslovodjaUpravljaProjektomRepository pupRepository) {
+    public SumarniIzvjestajService(ModelMapper modelMapper, SumarniIzvjestajRepository sumarniIzvjestajRepository, PoslovodjaUpravljaProjektomRepository pupRepository, DnevniIzvjestajRepository dnevniIzvjestajRepository) {
         this.modelMapper = modelMapper;
         this.sumarniIzvjestajRepository = sumarniIzvjestajRepository;
         this.pupRepository = pupRepository;
+        this.dnevniIzvjestajRepository = dnevniIzvjestajRepository;
     }
     public List<SumarniIzvjestaj> getAll() {
         return sumarniIzvjestajRepository.findAll().stream()
@@ -51,6 +55,11 @@ public class SumarniIzvjestajService {
                 .orElseThrow(() -> new RuntimeException("Veza poslovođa-projekat ne postoji!"));
 
         entity.setPoslovodjaUpravljaProjektom(pup);
+
+        if (dto.getStavkeIds() != null && !dto.getStavkeIds().isEmpty()) {
+            List<DnevniIzvjestajEntity> dnevnici = dnevniIzvjestajRepository.findAllById(dto.getStavkeIds());
+            entity.setDnevniIzvjestaji(dnevnici);
+        }
 
         return mapToDto(sumarniIzvjestajRepository.save(entity));
     }

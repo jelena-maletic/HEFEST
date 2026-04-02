@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -26,5 +29,13 @@ public class SumarniIzvjestajEntity extends IzvjestajEntity {
 
     @Column(name = "Opis", nullable = false)
     private String opis;
+
+    @ManyToMany
+    @JoinTable(
+            name = "sumarni_i_dnevni_izvjestaji",
+            joinColumns = @JoinColumn(name = "Sumarni_Izvjestaj_Id"),
+            inverseJoinColumns = @JoinColumn(name = "Dnevni_Izvjestaj_Id")
+    )
+    private List<DnevniIzvjestajEntity> dnevniIzvjestaji;
 
 }
