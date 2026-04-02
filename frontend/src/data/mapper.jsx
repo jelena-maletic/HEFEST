@@ -216,7 +216,7 @@ const mapRequestDetails = (data, role) => {
             label: 'Stanje zahtjeva',
             value: data.stanjeZahtjeva?.toLowerCase() === "neobradjen" ? "neobrađen" : data.stanjeZahtjeva,
             key: 'status',
-            render: (v) => <Tag color={getStatusTagColor(v)}>{v}</Tag>
+            render: (v) => <Tag color={getStatusTagColor(v)}>{v.toUpperCase()}</Tag>
         },
         {
             section: 'Osobe',
@@ -338,7 +338,65 @@ const mapDailyReportDetails = (data) => {
     ]);
 };
 
+// --- MAPER ZA DNEVNI ZADATAK ---
 
+const mapTaskDetails = (data) => {
+    return groupItems([
+        {
+            section: 'Status i Vrijeme',
+            label: 'Status zadatka',
+            value: data.zavrsen ? 'Završen' : 'U toku',
+            key: 'task_status',
+            render: (v) => (
+                <Tag color={v === 'Završen' ? 'green' : 'orange'} style={{ fontSize: '14px', padding: '2px 10px' }}>
+                    {v.toUpperCase()}
+                </Tag>
+            )
+        },
+        {
+            section: 'Status i Vrijeme',
+            label: 'Datum',
+            value: formatDate(data.datum),
+            key: 'task_date'
+        },
+
+        {
+            section: 'Opis Zadatka',
+            label: 'Opis zadatka: ',
+            value: safeValue(data.opis),
+            key: 'task_desc',
+            span: 3
+            // render: (v) => (
+            //     <div style={{
+            //         padding: '12px',
+            //         background: '#fffbe6',
+            //         border: '1px solid #ffe58f',
+            //         borderRadius: '6px',
+            //         fontSize: '15px',
+            //         lineHeight: '1.6',
+            //         color: '#856404'
+            //     }}>
+            //         {v}
+            //     </div>
+            // )
+        },
+
+        {
+            section: 'Učesnici',
+            label: 'Zaduženi Tehničar',
+            value: data.tehnicar ? `${data.tehnicar.ime} ${data.tehnicar.prezime}` : 'Nije dodijeljen',
+            key: 'task_tech',
+            render: (v) => <strong>{v}</strong>
+        },
+        {
+            section: 'Učesnici',
+            label: 'Nadzorni Poslovođa',
+            value: data.poslovodja ? `${data.poslovodja.ime} ${data.poslovodja.prezime}` : 'Nema informacija',
+            key: 'task_mgr'
+        },
+
+    ]);
+};
 
 export const mappers = {
     PROJECT: { title: 'Detalji Projekta', mapper: mapProjectDetails },
@@ -347,7 +405,8 @@ export const mappers = {
     TOOL: { title: 'Detalji Opreme', mapper: mapToolDetails },
     MATERIAL: {title: 'Detalji Materijala', mapper: mapMaterialDetails },
     REQUEST: {title:'Detalji Zahtjeva za Resursima', mapper: mapRequestDetails},
-    REPORT: { title: 'Detalji Dnevnog Izvještaja', mapper: mapDailyReportDetails }
+    REPORT: { title: 'Detalji Dnevnog Izvještaja', mapper: mapDailyReportDetails },
+    TASK: {title:'Detalji Dnevnog Zadatka', mapper: mapTaskDetails }
 
 
 };
