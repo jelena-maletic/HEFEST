@@ -187,6 +187,13 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
         );
     }
 
+    if (tag === "sumarni_izvjestaji" && filterPoslovodja) {
+        const ulogovaniJmb = getJmb();
+        dataArray = dataArray.filter(t =>
+            t.jmbPoslovodja === ulogovaniJmb
+        );
+    }
+
 
     switch (tag) {
         case "radna-oprema": {
