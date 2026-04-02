@@ -233,7 +233,7 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
 
         case "knjigovodje":
         case "poslovodje":
-        case "tehnicari":
+        case "tehnicari/only":
         case "zaposleni": {
             return dataArray.flatMap((t) => {
                 const ime = t.ime || "Nema imena";

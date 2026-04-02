@@ -146,7 +146,7 @@ export function Dashboard({sidebarContents, role}) {
         {value: "knjigovodje", label: "Knjigovođe"},
         {value: "poslovodje", label: "Poslovođe"},
         {value: "magacioneri", label: "Magacioneri"},
-        {value: "tehnicari", label: "Tehničari"}
+        {value: "tehnicari/only", label: "Tehničari"}
     ];
 
     const handleRegisterRefresh = (refreshFn) => {
