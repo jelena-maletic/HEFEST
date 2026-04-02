@@ -2,6 +2,7 @@ package org.etfbl.backend.controller;
 
 import org.etfbl.backend.dto.DnevniIzvjestaj;
 import org.etfbl.backend.service.DnevniIzvjestajService;
+import org.etfbl.backend.service.PdfService;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -12,9 +13,11 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class DnevniIzvjestajController {
     private final DnevniIzvjestajService dnevniIzvjestajService;
+    private final PdfService pdfService;
 
-    public DnevniIzvjestajController(DnevniIzvjestajService dnevniIzvjestajService) {
+    public DnevniIzvjestajController(DnevniIzvjestajService dnevniIzvjestajService, PdfService pdfService) {
         this.dnevniIzvjestajService = dnevniIzvjestajService;
+        this.pdfService = pdfService;
     }
 
     @GetMapping
@@ -48,5 +51,17 @@ public class DnevniIzvjestajController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {
         dnevniIzvjestajService.delete(id);
+    }
+
+    @GetMapping("/{id}/pdf")
+    public org.springframework.http.ResponseEntity<byte[]> downloadPdf(@PathVariable Integer id) throws java.io.IOException {
+        DnevniIzvjestaj dto = dnevniIzvjestajService.getById(id);
+        byte[] pdfContent = pdfService.generisiDnevniIzvjestajPdf(dto);
+
+        org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+        headers.setContentType(org.springframework.http.MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "Izvjestaj_" + id + ".pdf");
+
+        return new org.springframework.http.ResponseEntity<>(pdfContent, headers, org.springframework.http.HttpStatus.OK);
     }
 }
