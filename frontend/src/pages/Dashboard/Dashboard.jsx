@@ -24,6 +24,7 @@ import {useEffect} from "react";
 import {reverseGeocode} from "../../utils/reverseGeocode.js";
 import {getJmb} from "../../auth/auth.js";
 import CreateDnevniIzvjestajForm from "../../components/CreateDnevniIzvjestajForm.jsx";
+import CreateSumarniIzvjestajForm from "../../components/CreateSumarniIzvjestajForm.jsx";
 
 
 export function Dashboard({sidebarContents, role}) {
@@ -352,6 +353,23 @@ export function Dashboard({sidebarContents, role}) {
                             onClose={() => handleScreen("home", "home")}
                             onSuccess={() => {
                                 handleScreen("home", "home");
+                            }}
+                        />
+                    </Modal>
+                    <Modal
+                        title={null}
+                        open={activeScreen === "add-summary-report"}
+                        onCancel={() => handleScreen("home", "home")}
+                        footer={null}
+                        width={1000}
+                        centered
+                        destroyOnClose
+                    >
+                        <CreateSumarniIzvjestajForm
+                            onClose={() => handleScreen("home", "home")}
+                            onSuccess={() => {
+                                handleScreen("home", "home");
+                                triggerRefresh();
                             }}
                         />
                     </Modal>

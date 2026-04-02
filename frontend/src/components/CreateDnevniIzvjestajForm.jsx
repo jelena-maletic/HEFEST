@@ -139,7 +139,7 @@ const CreateDnevniIzvjestajForm = ({ onClose, onSuccess }) => {
             title={<Space><FileTextOutlined /><span>Novi Dnevni Izvještaj</span></Space>}
             style={{ width: "100%", maxWidth: 900, margin: "0 auto", borderRadius: 4, boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
         >
-            <Form form={form} layout="vertical" requiredMark="optional">
+            <Form form={form} layout="vertical">
 
                 <Row gutter={24}>
                     <Col xs={24} md={16}>

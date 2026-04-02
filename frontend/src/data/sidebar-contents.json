@@ -97,6 +97,12 @@
       "tag": "add-report"
     },
     {
+      "label": "Kreiranje sumarnog izvještaja",
+      "icon": "add-report",
+      "iconHover": "add-report-inverted",
+      "tag": "add-summary-report"
+    },
+    {
       "label": "Mapa sa radilištima",
       "icon": "map",
       "iconHover": "map-inverted",
