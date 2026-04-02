@@ -65,7 +65,8 @@ const CreateSumarniIzvjestajForm = ({ onClose, onSuccess }) => {
                 krajnjiDatum: values.period[1].format("YYYY-MM-DD"),
                 ukupniSatiRada: values.ukupniSatiRada,
                 opis: values.opis,
-                jmbPoslovodja: sessionStorage.getItem('jmb')
+                jmbPoslovodja: sessionStorage.getItem('jmb'),
+                stavkeIds: dnevniIzvjestaji.map(izv => izv.idIzvjestaja || izv.id)
             };
 
             await api.service(true).post("http://localhost:8080/api/sumarni_izvjestaji", payload);
