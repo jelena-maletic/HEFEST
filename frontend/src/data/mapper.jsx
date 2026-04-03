@@ -398,6 +398,87 @@ const mapTaskDetails = (data) => {
     ]);
 };
 
+
+const mapSummaryReportDetails = (data) => {
+    return groupItems([
+        // ... tvoji ostali elementi (Projekat, Period, Sati) ostaju isti ...
+        {
+            section: 'Osnovne Informacije',
+            label: 'Projekat',
+            value: data.projekat?.naziv,
+            key: 'sum_proj',
+            render: (v) => <span style={{ fontWeight: 600, color: '#1890ff', fontSize: '15px' }}>{v}</span>
+        },
+        {
+            section: 'Osnovne Informacije',
+            label: 'Datum Kreiranja',
+            value: formatDate(data.datumKreiranja),
+            key: 'sum_created'
+        },
+        {
+            section: 'Obuhvaćeni Period',
+            label: 'Vremenski raspon',
+            value: `${formatDate(data.pocetniDatum)} - ${formatDate(data.krajnjiDatum)}`,
+            key: 'sum_period',
+            span: 2,
+            render: (v) => (
+                <Tag color="cyan" style={{ padding: '4px 12px', borderRadius: '4px', fontSize: '13px' }}>
+                    📅 {v}
+                </Tag>
+            )
+        },
+        {
+            section: 'Statistika i Učinak',
+            label: 'Ukupno radnih sati',
+            value: data.ukupniSatiRada,
+            key: 'sum_total_hours',
+            render: (v) => (
+                <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#096dd9' }}>
+                    {v || 0} <span style={{ fontSize: '13px', fontWeight: 'normal', color: '#595959' }}>h</span>
+                </div>
+            )
+        },
+        {
+            section: 'Statistika i Učinak',
+            label: 'Odgovorni Poslovođa',
+            value: data.poslovodja ? `${data.poslovodja.ime} ${data.poslovodja.prezime}` : data.jmbPoslovodja,
+            key: 'sum_mgr',
+            render: (v) => <strong>{v}</strong>
+        },
+
+        // --- SREĐENI OPIS ---
+        {
+            section: 'Zaključak / Opis',
+            label: 'Dnevne zabilješke u periodu',
+            value: data.opis,
+            key: 'sum_desc',
+            span: 3,
+            render: (v) => {
+                if (!v) return <i>Nema zabilješki</i>;
+
+                // Splitujemo po tačkici, filtriramo prazne redove i čistimo razmake
+                const lines = v.split('•').map(line => line.trim()).filter(line => line.length > 0);
+
+                return (
+                    <div style={{ marginTop: '12px' }}>
+                        {lines.map((line, index) => (
+                            <div key={index} style={{
+                                display: 'flex',
+                                marginBottom: '10px',
+                                paddingBottom: '8px',
+                                borderBottom: index !== lines.length - 1 ? '1px solid #f0f0f0' : 'none',
+                                lineHeight: '1.5'
+                            }}>
+                                <span style={{ color: '#1890ff', marginRight: '10px' }}>•</span>
+                                <span style={{ color: '#434343' }}>{line}</span>
+                            </div>
+                        ))}
+                    </div>
+                );
+            }
+        }
+    ]);
+};
 export const mappers = {
     PROJECT: { title: 'Detalji Projekta', mapper: mapProjectDetails },
     EMPLOYEE: { title: 'Detalji Zaposlenog', mapper: mapEmployeeDetails },
@@ -406,7 +487,9 @@ export const mappers = {
     MATERIAL: {title: 'Detalji Materijala', mapper: mapMaterialDetails },
     REQUEST: {title:'Detalji Zahtjeva za Resursima', mapper: mapRequestDetails},
     REPORT: { title: 'Detalji Dnevnog Izvještaja', mapper: mapDailyReportDetails },
-    TASK: {title:'Detalji Dnevnog Zadatka', mapper: mapTaskDetails }
+    TASK: {title:'Detalji Dnevnog Zadatka', mapper: mapTaskDetails },
+    SUMMARY_REPORT: {title:'Detalji Sumarnog Izvještaja', mapper: mapSummaryReportDetails }
+
 
 
 };

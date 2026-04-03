@@ -188,6 +188,7 @@ export function ListElement({
     const isActiveTehnicar = isTehnicar && !!(listElementData.isAktivan || listElementData.aktivan);
 
     console.log("Tag:", tag, "Podaci:", listElementData);
+
     return (
         <>
             <div
