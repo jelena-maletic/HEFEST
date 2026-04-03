@@ -2,13 +2,14 @@ import './ListElement.css';
 import React, {useState} from 'react';
 import {SmallButton} from "../../SmallButton.jsx";
 import {loadAssets} from "../../../utils/dataHelpers.js";
-import {deleteElement, updateElement, updateZahtjevStatus} from "../../../services/apiHelpers.js";
+import {deleteElement, updateElement, updateZahtjevStatus, api } from "../../../services/apiHelpers.js";
 import CenteredOverlay from "../../CenteredOverlay/CenteredOverlay.jsx";
 import DynamicForm from "../../DynamicForm.jsx";
 import {useNotification} from "../../NotificationContext.jsx";
 import ConfirmationDialog from "../../ConfirmationDialog.jsx";
 import {updateZadatakStatus} from "../../../services/apiHelpers.js";
-
+import { FilePdfOutlined } from '@ant-design/icons';
+import {BUTTON_TYPES} from "../../../constants/smallButtonTypes.js";
 
 export function ListElement({
                                 screenState,
@@ -38,9 +39,21 @@ export function ListElement({
     const notify = useNotification();
 
     const renderActionButtons = (editable, binaryChoice) => {
-        if (editable === true) {
+
+        const isIzvjestaj = tag && (tag.includes("izvjestaj") || tag.includes("izvjestaji"));
+        //if (editable === true) {
             return (
                 <div className="list-element-buttons">
+
+                    {isIzvjestaj && (
+                        <SmallButton
+                            type={BUTTON_TYPES.PDF}
+                            onClickHandler={handleDownloadPdf}
+                        />
+                    )}
+
+                    {editable === true && (
+                        <>
                     <SmallButton
                         className="nested-button"
                         type="edit"
@@ -61,10 +74,12 @@ export function ListElement({
                             setShowConfirm(true);
                         }}
                     />
+                        </>
+                    )}
                 </div>
             );
 
-        }
+        //}
         if (binaryChoice === true) {
             return (<div className="list-element-buttons">
                 <SmallButton
@@ -117,6 +132,50 @@ export function ListElement({
         } catch (error) {
             console.error("Greška pri ažuriranju statusa:", error);
             notify.error("Greška", "Nije moguće ažurirati status zadatka.");
+        }
+    };
+
+    const handleDownloadPdf = async (e) => {
+        e.stopPropagation();
+
+        const id = listElementData.idIzvjestaja;
+
+        if (!id) {
+            console.error("Podaci elementa:", listElementData);
+            notify.error("Greška", "ID izvještaja nije pronađen.");
+            return;
+        }
+
+        try {
+            const tip = tag.includes("dnevni") ? "dnevni_izvjestaji" : "sumarni_izvjestaji";
+
+            const response = await api.service(true).get(`/${tip}/${id}/pdf`, {
+                responseType: 'blob'
+            });
+
+            const blob = new Blob([response.data], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = url;
+
+            link.setAttribute('download', `${tip}_${id}.pdf`);
+
+            document.body.appendChild(link);
+            link.click();
+
+            link.remove();
+            window.URL.revokeObjectURL(url);
+
+            notify.success("Uspjeh", "Izvještaj se preuzima.");
+        } catch (error) {
+            console.error("Greška pri downloadu:", error);
+
+            if (error.response && error.response.status === 403) {
+                notify.error("Pristup odbijen", "Provjerite sesiju ili dozvole.");
+            } else {
+                notify.error("Greška", "Nije moguće generisati PDF.");
+            }
         }
     };
 

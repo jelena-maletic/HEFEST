@@ -1,4 +1,5 @@
-import api from "../auth/axiosInstance.js";
+//import api from "../auth/axiosInstance.js";
+import axiosInstance from "../auth/axiosInstance.js";
 import axios from "axios";
 import {getJmb} from "../auth/auth.js";
 import {getStatusTagColor} from "../utils/dataHelpers.js";
@@ -461,3 +462,5 @@ export const updateTehnicarAktivnost = async (jmb, noviStatus) => {
     });
     return response.status;
 };
+
+export const api = axiosInstance;

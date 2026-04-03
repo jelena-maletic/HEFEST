@@ -14,6 +14,8 @@ import cross from "../assets/cross.svg";
 import crossInverted from "../assets/cross-inverted.svg";
 import {BUTTON_TYPES} from "../constants/smallButtonTypes.js";
 import React from "react";
+import pdf from "../assets/pdf.svg";
+import pdfInverted from "../assets/pdf-inverted.svg";
 import './SmallButton.css'
 
 
@@ -30,7 +32,8 @@ export function SmallButton({type, onClickHandler}){
         [BUTTON_TYPES.GRID_VIEW]: {icon: grid, invertedIcon: gridInverted},
         [BUTTON_TYPES.LIST_VIEW]: {icon: list, invertedIcon: listInverted},
         [BUTTON_TYPES.CONFIRM]: {icon: check, invertedIcon: checkInverted},
-        [BUTTON_TYPES.DENY]: {icon: cross, invertedIcon: crossInverted}
+        [BUTTON_TYPES.DENY]: {icon: cross, invertedIcon: crossInverted},
+        [BUTTON_TYPES.PDF]: {icon: pdf, invertedIcon: pdfInverted}
     };
 
     const config = CONFIG_MAP[type];
