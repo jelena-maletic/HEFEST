@@ -10,6 +10,7 @@ import ConfirmationDialog from "../../ConfirmationDialog.jsx";
 import {updateZadatakStatus} from "../../../services/apiHelpers.js";
 import { FilePdfOutlined } from '@ant-design/icons';
 import {BUTTON_TYPES} from "../../../constants/smallButtonTypes.js";
+import { Tooltip } from 'antd';
 
 export function ListElement({
                                 screenState,
@@ -43,13 +44,18 @@ export function ListElement({
         const isIzvjestaj = tag && (tag.includes("izvjestaj") || tag.includes("izvjestaji"));
         //if (editable === true) {
             return (
+
                 <div className="list-element-buttons">
 
                     {isIzvjestaj && (
-                        <SmallButton
-                            type={BUTTON_TYPES.PDF}
-                            onClickHandler={handleDownloadPdf}
-                        />
+                        <Tooltip title="Generiši PDF" color="#BFBFBF" mouseEnterDelay={0.1}>
+                            <div className="pdf-button-wrapper">
+                                <SmallButton
+                                    type={BUTTON_TYPES.PDF}
+                                    onClickHandler={handleDownloadPdf}
+                                />
+                            </div>
+                        </Tooltip>
                     )}
 
                     {editable === true && (
