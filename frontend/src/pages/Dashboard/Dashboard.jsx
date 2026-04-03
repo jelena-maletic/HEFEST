@@ -294,7 +294,7 @@ export function Dashboard({sidebarContents, role}) {
                         <List
                             isEditable={role === "poslovodja"}
                             listTitle="Upravljanje zadacima"
-                            screenState="manage_tasks"
+                            screenState="tasks"
                             tag="dnevni_zadaci"
                             filterByPoslovodja={true}
                             onClick={(data) => handleOpenDetails(data, "dnevni_zadaci")}
