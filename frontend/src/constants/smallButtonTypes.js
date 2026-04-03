@@ -6,4 +6,5 @@ export const BUTTON_TYPES = {
     LIST_VIEW: 'list',
     CONFIRM: 'confirm',
     DENY: 'deny',
+    PDF: "pdf",
 };
