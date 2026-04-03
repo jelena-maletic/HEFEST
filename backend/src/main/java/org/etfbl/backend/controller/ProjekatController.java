@@ -62,4 +62,16 @@ public class ProjekatController {
         Projekat azuriran=projekatService.updateProjekat(id,projekat);
         return ResponseEntity.ok(azuriran);
     }
+
+    @GetMapping("/tehnicar/{jmb}")
+    public ResponseEntity<List<Projekat>> getProjektiTehnicar(@PathVariable String jmb) {
+        List<Projekat> projekti = projekatService.getProjektiZaTehnicara(jmb);
+        return ResponseEntity.ok(projekti);
+    }
+
+    @GetMapping("/poslovodja/{jmb}")
+    public ResponseEntity<List<Projekat>> getProjektiPoslovodja(@PathVariable String jmb) {
+        List<Projekat> projekti = projekatService.getProjektiZaPoslovodju(jmb);
+        return ResponseEntity.ok(projekti);
+    }
 }

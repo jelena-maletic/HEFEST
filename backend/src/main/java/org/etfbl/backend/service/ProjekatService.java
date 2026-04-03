@@ -132,6 +132,17 @@ public class ProjekatService {
                 .map(this::mapToDto)
                 .toList();
     }
+    public List<Projekat> getProjektiZaTehnicara(String jmb) {
+        return projekatRepository.findAllByTehnicarJmb(jmb).stream()
+                .map(this::mapToDto)
+                .toList();
+    }
+
+    public List<Projekat> getProjektiZaPoslovodju(String jmb) {
+        return projekatRepository.findAllByPoslovodjaJmb(jmb).stream()
+                .map(this::mapToDto)
+                .toList();
+    }
 
 
     public List<String> getPostojeceLokacije() {
