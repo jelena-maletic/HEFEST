@@ -353,6 +353,7 @@ export function Dashboard({sidebarContents, role}) {
                         destroyOnClose
                     >
                         <CreateDnevniIzvjestajForm
+                            role={role}
                             onClose={() => handleScreen("home", "home")}
                             onSuccess={() => {
                                 handleScreen("home", "home");

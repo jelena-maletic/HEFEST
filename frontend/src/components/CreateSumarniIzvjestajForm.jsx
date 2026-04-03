@@ -9,6 +9,7 @@ const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 
 const CreateSumarniIzvjestajForm = ({ onClose, onSuccess }) => {
+    const jmb = sessionStorage.getItem('jmb');
     const [form] = Form.useForm();
     const [projekti, setProjekti] = useState([]);
     const [dnevniIzvjestaji, setDnevniIzvjestaji] = useState([]);
@@ -19,7 +20,7 @@ const CreateSumarniIzvjestajForm = ({ onClose, onSuccess }) => {
     const period = Form.useWatch('period', form);
 
     useEffect(() => {
-        api.service(true).get("http://localhost:8080/api/projekti")
+        api.service(true).get(`http://localhost:8080/api/projekti/poslovodja/${jmb}`)
             .then(res => setProjekti(res.data || []))
             .catch(() => notify.error("Greška", "Učitavanje projekata nije uspjelo."));
     }, []);
