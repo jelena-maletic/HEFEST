@@ -76,50 +76,88 @@ public class ZaduzenjeService {
         ZaduzenjeEntity entity = new ZaduzenjeEntity();
 
         PoslovodjaEntity poslovodja = poslovodjaRepository.findById(dto.getPoslovodjaJMB())
-                .orElseThrow(() -> new RuntimeException("Greška: Poslovođa sa JMB " + dto.getPoslovodjaJMB() + " nije pronađen."));
+                .orElseThrow(() -> new RuntimeException("Poslovođa nije pronađen."));
 
         MagacionerEntity magacioner = magacionerRepository.findById(dto.getMagacionerJMB())
-                .orElseThrow(() -> new RuntimeException("Greška: Magacioner sa JMB " + dto.getMagacionerJMB() + " nije pronađen."));
+                .orElseThrow(() -> new RuntimeException("Magacioner nije pronađen."));
 
         ResursEntity resurs = resursRepository.findById(dto.getResursId())
-                .orElseThrow(() -> new RuntimeException("Greška: Resurs sa ID " + dto.getResursId() + " nije pronađen."));
+                .orElseThrow(() -> new RuntimeException("Resurs nije pronađen."));
+
+        BigDecimal zaduzeno = dto.getZaduzenaKolicina() != null ? dto.getZaduzenaKolicina() : BigDecimal.ZERO;
+        BigDecimal razduzeno = dto.getRazduzenaKolicina() != null ? dto.getRazduzenaKolicina() : BigDecimal.ZERO;
+        BigDecimal netoIzlaz = zaduzeno.subtract(razduzeno);
+
+        if (netoIzlaz.compareTo(BigDecimal.ZERO) > 0) {
+            if (resurs.getStanjeMagacina().compareTo(netoIzlaz) < 0) {
+                throw new RuntimeException("Nedovoljno na stanju! Pokušavate zadužiti (neto): " + netoIzlaz + ", a dostupno je: " + resurs.getStanjeMagacina());
+            }
+        }
+
+        resurs.setStanjeMagacina(resurs.getStanjeMagacina().subtract(netoIzlaz));
+        resursRepository.save(resurs);
 
         entity.setPoslovodja(poslovodja);
         entity.setMagacioner(magacioner);
         entity.setResurs(resurs);
-
-        if (dto.getIdZahtjeva() != null) {
-            Integer zahtjevId = dto.getIdZahtjeva();
-
-            zahtjevRepository.findById(zahtjevId).ifPresent(entity::setZahtjev);
-        }
-
+        entity.setZaduzenaKolicina(zaduzeno);
+        entity.setRazduzenaKolicina(razduzeno);
         entity.setDatumZaduzenja(dto.getDatumZaduzenja() != null ? dto.getDatumZaduzenja() : Instant.now());
-        entity.setZaduzenaKolicina(dto.getZaduzenaKolicina());
-
-        entity.setRazduzenaKolicina(dto.getRazduzenaKolicina() != null ? dto.getRazduzenaKolicina() : BigDecimal.ZERO);
         entity.setDatumRazduzenja(dto.getDatumRazduzenja());
 
-        ZaduzenjeEntity sacuvan = zaduzenjeRepository.save(entity);
+        if (dto.getIdZahtjeva() != null) {
+            zahtjevRepository.findById(dto.getIdZahtjeva()).ifPresent(entity::setZahtjev);
+        }
 
+        ZaduzenjeEntity sacuvan = zaduzenjeRepository.save(entity);
         return convertToDto(sacuvan);
     }
 
     public Zaduzenje updateZaduzenje(Integer idZaduzenja, Zaduzenje dto) throws NotFoundException {
         ZaduzenjeEntity postojeci = zaduzenjeRepository.findById(idZaduzenja)
                 .orElseThrow(() -> new NotFoundException("Zaduženje sa ID-om " + idZaduzenja + " nije pronađeno."));
-        postojeci.setZaduzenaKolicina(dto.getZaduzenaKolicina());
-        postojeci.setRazduzenaKolicina(dto.getRazduzenaKolicina() != null ? dto.getRazduzenaKolicina() : BigDecimal.ZERO);
+
+        ResursEntity resurs = postojeci.getResurs();
+
+        BigDecimal staroNeto = postojeci.getZaduzenaKolicina().subtract(
+                postojeci.getRazduzenaKolicina() != null ? postojeci.getRazduzenaKolicina() : BigDecimal.ZERO
+        );
+
+        BigDecimal novoZaduzeno = dto.getZaduzenaKolicina() != null ? dto.getZaduzenaKolicina() : postojeci.getZaduzenaKolicina();
+        BigDecimal novoRazduzeno = dto.getRazduzenaKolicina() != null ? dto.getRazduzenaKolicina() : BigDecimal.ZERO;
+        BigDecimal novoNeto = novoZaduzeno.subtract(novoRazduzeno);
+
+        BigDecimal korekcijaMagacina = novoNeto.subtract(staroNeto);
+
+        if (resurs.getStanjeMagacina().compareTo(korekcijaMagacina) < 0) {
+            throw new RuntimeException("Greška pri ažuriranju: Nedovoljno resursa na stanju za traženu promjenu.");
+        }
+
+        resurs.setStanjeMagacina(resurs.getStanjeMagacina().subtract(korekcijaMagacina));
+        resursRepository.save(resurs);
+
+        postojeci.setZaduzenaKolicina(novoZaduzeno);
+        postojeci.setRazduzenaKolicina(novoRazduzeno);
         postojeci.setDatumZaduzenja(dto.getDatumZaduzenja());
         postojeci.setDatumRazduzenja(dto.getDatumRazduzenja());
+
         ZaduzenjeEntity sacuvan = zaduzenjeRepository.save(postojeci);
         return convertToDto(sacuvan);
     }
 
     public void obrisiZaduzenje(Integer idZaduzenja) {
-        if (!zaduzenjeRepository.existsById(idZaduzenja)) {
-            throw new RuntimeException("Nemoguće obrisati. Zaduženje sa ID-om " + idZaduzenja + " ne postoji.");
-        }
-        zaduzenjeRepository.deleteById(idZaduzenja);
+        ZaduzenjeEntity entity = zaduzenjeRepository.findById(idZaduzenja)
+                .orElseThrow(() -> new RuntimeException("Zaduženje ne postoji."));
+
+        ResursEntity resurs = entity.getResurs();
+
+        BigDecimal trenutnoZaduzenoNeto = entity.getZaduzenaKolicina().subtract(
+                entity.getRazduzenaKolicina() != null ? entity.getRazduzenaKolicina() : BigDecimal.ZERO
+        );
+
+        resurs.setStanjeMagacina(resurs.getStanjeMagacina().add(trenutnoZaduzenoNeto));
+        resursRepository.save(resurs);
+
+        zaduzenjeRepository.delete(entity);
     }
 }
