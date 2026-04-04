@@ -314,7 +314,7 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
                 let temp = {
                     title: t.projekat.naziv,
                     detail: formatDateOnly(t.datum),
-                    subline: t.poslovodja.ime + " " + t.poslovodja.prezime
+                    subline: t.tehnicar.ime + " " + t.tehnicar.prezime
                 }
                 Object.assign(temp, t);
 
