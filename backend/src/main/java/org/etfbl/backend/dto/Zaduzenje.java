@@ -7,17 +7,17 @@ import java.time.Instant;
 
 @Data
 public class Zaduzenje implements Serializable {
-    // Polja koja odgovaraju frontu i tvom patternu
-    private String manager;      // JMB poslovodje
-    private Integer resursId;    // ID resursa
-    private String resourceType; // Tip (opciono, za front)
-
+    private Integer resursId;
+    private String resursNaziv;
+    private Integer idZaduzenja;
+    private Integer idZahtjeva;
+    private String poslovodjaJMB;
+    private String poslovodjaImePrezime;
+    private String magacionerJMB;
+    private String magacionerImePrezime;
     private Instant datumZaduzenja;
     private Instant datumRazduzenja;
     private BigDecimal zaduzenaKolicina;
     private BigDecimal razduzenaKolicina;
-
-    // Polja za prikaz u tabeli (ako zatreba nazivi)
-    private String poslovodjaImePrezime;
-    private String resursNaziv;
+    private String opisZahtjeva;
 }

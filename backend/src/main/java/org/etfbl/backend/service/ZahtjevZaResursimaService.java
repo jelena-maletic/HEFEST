@@ -7,6 +7,7 @@ import org.etfbl.backend.exceptions.NotFoundException;
 import org.etfbl.backend.model.*;
 import org.etfbl.backend.repository.MagacionerRepository;
 import org.etfbl.backend.repository.PoslovodjaRepository;
+import org.etfbl.backend.repository.ResursRepository;
 import org.etfbl.backend.repository.ZahtjevZaResursimaRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
@@ -23,85 +24,86 @@ public class ZahtjevZaResursimaService {
     private final ModelMapper modelMapper;
     private final PoslovodjaRepository poslovodjaRepository;
     private final MagacionerRepository magacionerRepository;
+    private final ResursRepository resursRepository;
 
-    public ZahtjevZaResursimaService(ZahtjevZaResursimaRepository zahtjevZaResursimaRepository, ModelMapper modelMapper, PoslovodjaRepository poslovodjaRepository, MagacionerRepository magacionerRepository) {
+    public ZahtjevZaResursimaService(ZahtjevZaResursimaRepository zahtjevZaResursimaRepository, ModelMapper modelMapper, PoslovodjaRepository poslovodjaRepository, MagacionerRepository magacionerRepository, ResursRepository resursRepository) {
         this.zahtjevZaResursimaRepository = zahtjevZaResursimaRepository;
         this.modelMapper = modelMapper;
         this.poslovodjaRepository = poslovodjaRepository;
         this.magacionerRepository = magacionerRepository;
+        this.resursRepository = resursRepository;
     }
 
     public List<ZahtjevZaResursima> getAllZahtjevi() {
+        return zahtjevZaResursimaRepository.findAll().stream()
+                .map(this::convertToDto)
+                .toList();
+    }
 
-        return zahtjevZaResursimaRepository.findAll().stream().map(z -> modelMapper.map(z, ZahtjevZaResursima.class )).toList();
+    private ZahtjevZaResursima convertToDto(ZahtjevZaResursimaEntity entity) {
+        ZahtjevZaResursima dto = modelMapper.map(entity, ZahtjevZaResursima.class);
+
+        dto.setPoslovodjaJMB(entity.getPoslovodja().getJmb());
+        dto.setPoslovodjaImePrezime(entity.getPoslovodja().getIme() + " " + entity.getPoslovodja().getPrezime());
+
+        dto.setMagacionerJMB(entity.getMagacioner().getJmb());
+        dto.setMagacionerImePrezime(entity.getMagacioner().getIme() + " " + entity.getMagacioner().getPrezime());
+
+        dto.setResursId(entity.getResurs().getId());
+        dto.setResursNaziv(entity.getResurs().getNaziv());
+
+        return dto;
     }
 
     public ZahtjevZaResursima getZahtjevById(Integer id) throws NotFoundException {
         ZahtjevZaResursimaEntity entity = zahtjevZaResursimaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Zahtjev sa ID-om " + id + " nije pronađen."));
-
-        return modelMapper.map(entity, ZahtjevZaResursima.class);
+        return convertToDto(entity);
     }
 
     public ZahtjevZaResursima sacuvajZahtjev(ZahtjevZaResursima dto) {
         ZahtjevZaResursimaEntity entity = new ZahtjevZaResursimaEntity();
 
+        PoslovodjaEntity poslovodja = poslovodjaRepository.findById(dto.getPoslovodjaJMB())
+                .orElseThrow(() -> new RuntimeException("Poslovođa nije pronađen"));
+
+        MagacionerEntity magacioner = magacionerRepository.findById(dto.getMagacionerJMB())
+                .orElseThrow(() -> new RuntimeException("Magacioner nije pronađen"));
+
+        ResursEntity resurs = resursRepository.findById(dto.getResursId())
+                .orElseThrow(() -> new RuntimeException("Resurs nije pronađen"));
+
+        entity.setPoslovodja(poslovodja);
+        entity.setMagacioner(magacioner);
+        entity.setResurs(resurs);
+        entity.setKolicina(dto.getKolicina());
         entity.setOpis(dto.getOpis());
         entity.setDatumSlanja(Instant.now());
         entity.setStanjeZahtjeva(StanjeZahtjeva.neobradjen);
 
-        if (dto.getPoslovodja() == null || dto.getPoslovodja().getJmb() == null) {
-            throw new RuntimeException("JMB poslovođe mora biti proslijeđen!");
-        }
-        String jmbPoslovodje = dto.getPoslovodja().getJmb();
-
-        if (dto.getMagacioner() == null || dto.getMagacioner().getJmb() == null) {
-            throw new RuntimeException("JMB magacionera mora biti proslijeđen!");
-        }
-        String jmbMagacionera = dto.getMagacioner().getJmb();
-
-        PoslovodjaEntity poslovodja = poslovodjaRepository.findById(jmbPoslovodje)
-                .orElseThrow(() -> new RuntimeException("Poslovođa sa JMB " + jmbPoslovodje + " ne postoji u bazi"));
-
-        MagacionerEntity magacioner = magacionerRepository.findById(jmbMagacionera)
-                .orElseThrow(() -> new RuntimeException("Magacioner sa JMB " + jmbMagacionera + " ne postoji u bazi"));
-
-        entity.setPoslovodja(poslovodja);
-        entity.setMagacioner(magacioner);
-
         ZahtjevZaResursimaEntity sacuvan = zahtjevZaResursimaRepository.save(entity);
-        return modelMapper.map(sacuvan, ZahtjevZaResursima.class);
+        return convertToDto(sacuvan);
     }
 
-    public List<ZahtjevZaResursima> getZahtjeviByPoslovodjaId(String poslovodjaId) throws NotFoundException {
-
-        List<ZahtjevZaResursimaEntity> entiteti = zahtjevZaResursimaRepository.findAllByPoslovodja_jmb(poslovodjaId);
-
-        if (entiteti.isEmpty()) {
-            throw new NotFoundException("Nisu pronađeni zahtjevi za poslovođu sa JMB: " + poslovodjaId);
-        }
-
-        return entiteti.stream()
-                .map(z -> modelMapper.map(z, ZahtjevZaResursima.class))
+    public List<ZahtjevZaResursima> getZahtjeviByPoslovodjaId(String jmb) {
+        return zahtjevZaResursimaRepository.findAllByPoslovodja_jmb(jmb).stream()
+                .map(this::convertToDto)
                 .toList();
     }
 
-    public ZahtjevZaResursima updateStanje(Integer id, StanjeZahtjeva stanjeZahtjeva) {
+    public ZahtjevZaResursima updateStanje(Integer id, StanjeZahtjeva novoStanje) {
         ZahtjevZaResursimaEntity entity = zahtjevZaResursimaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Zahtjev nije pronađen"));
 
-        entity.setStanjeZahtjeva(stanjeZahtjeva);
-        entity.setDatumObrade(Instant.now()); // Sets the processing time to 'now'
+        entity.setStanjeZahtjeva(novoStanje);
+        entity.setDatumObrade(Instant.now());
 
-        // Use saveAndFlush to catch database errors immediately during the call
-        ZahtjevZaResursimaEntity updated = zahtjevZaResursimaRepository.saveAndFlush(entity);
-
-        return modelMapper.map(updated, ZahtjevZaResursima.class);
+        return convertToDto(zahtjevZaResursimaRepository.save(entity));
     }
 
     public void obrisiZahtjev(Integer id) {
         if (!zahtjevZaResursimaRepository.existsById(id)) {
-            throw new RuntimeException("Zahtjev sa ID-om " + id + " ne postoji.");
+            throw new RuntimeException("Zahtjev ne postoji.");
         }
         zahtjevZaResursimaRepository.deleteById(id);
     }
@@ -110,18 +112,17 @@ public class ZahtjevZaResursimaService {
         ZahtjevZaResursimaEntity postojeci = zahtjevZaResursimaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Zahtjev ne postoji."));
 
-        // Poslovodja može mijenjati samo opis dok je zahtjev 'neobradjen'
         if (postojeci.getStanjeZahtjeva() == StanjeZahtjeva.neobradjen) {
             postojeci.setOpis(dto.getOpis());
+            postojeci.setKolicina(dto.getKolicina());
+
+            if (dto.getResursId() != null) {
+                ResursEntity noviResurs = resursRepository.findById(dto.getResursId())
+                        .orElseThrow(() -> new RuntimeException("Resurs nije pronađen"));
+                postojeci.setResurs(noviResurs);
+            }
         }
 
-        // Ako magacioner odobrava/odbija (ovo će ti trebati kasnije)
-        if (dto.getStanjeZahtjeva() != null) {
-            postojeci.setStanjeZahtjeva(dto.getStanjeZahtjeva());
-            postojeci.setDatumObrade(Instant.now());
-        }
-
-        ZahtjevZaResursimaEntity sacuvan = zahtjevZaResursimaRepository.save(postojeci);
-        return modelMapper.map(sacuvan, ZahtjevZaResursima.class);
+        return convertToDto(zahtjevZaResursimaRepository.save(postojeci));
     }
 }

@@ -1,11 +1,8 @@
 package org.etfbl.backend.controller;
 
 
-import org.etfbl.backend.dto.ResursUZahtjevu;
-import org.etfbl.backend.dto.Vozilo;
 import org.etfbl.backend.dto.Zaduzenje;
 import org.etfbl.backend.exceptions.NotFoundException;
-import org.etfbl.backend.repository.ZaduzenjeRepository;
 import org.etfbl.backend.service.ZaduzenjeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,18 +31,17 @@ public class ZaduzenjeController {
         return new ResponseEntity<>(novo, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{jmb}/{resursId}")
-    public ResponseEntity<Void> obrisiZaduzenje(@PathVariable String jmb, @PathVariable Integer resursId) {
-        zaduzenjeService.obrisiZaduzenje(jmb, resursId);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> obrisiZaduzenje(@PathVariable Integer id) {
+        zaduzenjeService.obrisiZaduzenje(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{jmb}/{resursId}")
+    @PutMapping("/{id}")
     public ResponseEntity<Zaduzenje> azurirajZaduzenje(
-            @PathVariable String jmb,
-            @PathVariable Integer resursId,
+            @PathVariable Integer id,
             @RequestBody Zaduzenje dto) throws NotFoundException {
-        Zaduzenje azurirano = zaduzenjeService.updateZaduzenje(jmb, resursId, dto);
+        Zaduzenje azurirano = zaduzenjeService.updateZaduzenje(id, dto);
         return ResponseEntity.ok(azurirano);
     }
 }

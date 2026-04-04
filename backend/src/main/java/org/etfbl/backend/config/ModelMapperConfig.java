@@ -1,7 +1,5 @@
 package org.etfbl.backend.config;
 
-import org.etfbl.backend.dto.ResursUZahtjevu;
-import org.etfbl.backend.model.ResursUZahtjevuEntity;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

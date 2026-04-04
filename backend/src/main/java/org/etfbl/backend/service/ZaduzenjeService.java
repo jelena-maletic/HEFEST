@@ -2,13 +2,11 @@ package org.etfbl.backend.service;
 
 import org.etfbl.backend.dto.Zaduzenje;
 import org.etfbl.backend.exceptions.NotFoundException;
+import org.etfbl.backend.model.MagacionerEntity;
 import org.etfbl.backend.model.ZaduzenjeEntity;
 import org.etfbl.backend.model.PoslovodjaEntity;
 import org.etfbl.backend.model.ResursEntity;
-import org.etfbl.backend.repository.ZaduzenjeRepository;
-import org.etfbl.backend.repository.PoslovodjaRepository;
-import org.etfbl.backend.repository.ResursRepository;
-import org.etfbl.backend.model.manytomanyid.ZaduzenjeId;
+import org.etfbl.backend.repository.*;
 import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -26,22 +24,22 @@ public class ZaduzenjeService {
     private final ModelMapper modelMapper;
     private final PoslovodjaRepository poslovodjaRepository;
     private final ResursRepository resursRepository;
+    private final MagacionerRepository magacionerRepository;
+    private final ZahtjevZaResursimaRepository zahtjevRepository;
 
     public ZaduzenjeService(ZaduzenjeRepository zaduzenjeRepository, ModelMapper modelMapper,
-                            PoslovodjaRepository poslovodjaRepository, ResursRepository resursRepository) {
+                            PoslovodjaRepository poslovodjaRepository, ResursRepository resursRepository, MagacionerRepository magacionerRepository, ZahtjevZaResursimaRepository zahtjevRepository) {
         this.zaduzenjeRepository = zaduzenjeRepository;
         this.modelMapper = modelMapper;
         this.poslovodjaRepository = poslovodjaRepository;
         this.resursRepository = resursRepository;
+        this.magacionerRepository = magacionerRepository;
+        this.zahtjevRepository = zahtjevRepository;
     }
 
-    // Pomoćna metoda za određivanje tipa resursa (da ne ponavljamo kod)
     private String resolveResourceType(ResursEntity resurs) {
         if (resurs == null) return "MATERIJAL";
-
-        // Hibernate.getClass() osigurava da dobijemo pravu klasu, a ne Proxy
         String className = Hibernate.getClass(resurs).getSimpleName();
-
         if (className.contains("Vozilo")) return "VOZILO";
         if (className.contains("RadnaOprema")) return "OPREMA";
         return "MATERIJAL";
@@ -49,81 +47,79 @@ public class ZaduzenjeService {
 
     public List<Zaduzenje> getAllZaduzenje() {
         return zaduzenjeRepository.findAll().stream()
-                .map(entity -> {
-                    Zaduzenje dto = modelMapper.map(entity, Zaduzenje.class);
-                    dto.setManager(entity.getPoslovodjaJMB());
-                    dto.setResursId(entity.getIdResursa());
+                .map(this::convertToDto)
+                .toList();
+    }
 
-                    if (entity.getResurs() != null) {
-                        dto.setResursNaziv(entity.getResurs().getNaziv());
-                        dto.setResourceType(resolveResourceType(entity.getResurs()));
-                    }
+    private Zaduzenje convertToDto(ZaduzenjeEntity entity) {
+        Zaduzenje dto = modelMapper.map(entity, Zaduzenje.class);
 
-                    if (entity.getPoslovodja() != null) {
-                        dto.setPoslovodjaImePrezime(entity.getPoslovodja().getIme() + " " + entity.getPoslovodja().getPrezime());
-                    }
-                    return dto;
-                }).toList();
+        dto.setIdZaduzenja(entity.getIdZaduzenja());
+        dto.setResursId(entity.getResurs().getId());
+        dto.setResursNaziv(entity.getResurs().getNaziv());
+
+        dto.setPoslovodjaJMB(entity.getPoslovodja().getJmb());
+        dto.setPoslovodjaImePrezime(entity.getPoslovodja().getIme() + " " + entity.getPoslovodja().getPrezime());
+
+        dto.setMagacionerJMB(entity.getMagacioner().getJmb());
+        dto.setMagacionerImePrezime(entity.getMagacioner().getIme() + " " + entity.getMagacioner().getPrezime());
+
+        if (entity.getZahtjev() != null) {
+            dto.setIdZahtjeva(entity.getZahtjev().getId());
+            dto.setOpisZahtjeva(entity.getZahtjev().getOpis());
+        }
+
+        return dto;
     }
 
     public Zaduzenje sacuvajZaduzenje(Zaduzenje dto) {
         ZaduzenjeEntity entity = new ZaduzenjeEntity();
-        entity.setPoslovodjaJMB(dto.getManager());
-        entity.setIdResursa(dto.getResursId());
 
-        PoslovodjaEntity poslovodja = poslovodjaRepository.findById(dto.getManager())
-                .orElseThrow(() -> new RuntimeException("Poslovođa nije pronađen"));
+        PoslovodjaEntity poslovodja = poslovodjaRepository.findById(dto.getPoslovodjaJMB())
+                .orElseThrow(() -> new RuntimeException("Greška: Poslovođa sa JMB " + dto.getPoslovodjaJMB() + " nije pronađen."));
+
+        MagacionerEntity magacioner = magacionerRepository.findById(dto.getMagacionerJMB())
+                .orElseThrow(() -> new RuntimeException("Greška: Magacioner sa JMB " + dto.getMagacionerJMB() + " nije pronađen."));
+
         ResursEntity resurs = resursRepository.findById(dto.getResursId())
-                .orElseThrow(() -> new RuntimeException("Resurs nije pronađen"));
+                .orElseThrow(() -> new RuntimeException("Greška: Resurs sa ID " + dto.getResursId() + " nije pronađen."));
 
         entity.setPoslovodja(poslovodja);
+        entity.setMagacioner(magacioner);
         entity.setResurs(resurs);
+
+        if (dto.getIdZahtjeva() != null) {
+            Integer zahtjevId = dto.getIdZahtjeva();
+
+            zahtjevRepository.findById(zahtjevId).ifPresent(entity::setZahtjev);
+        }
+
         entity.setDatumZaduzenja(dto.getDatumZaduzenja() != null ? dto.getDatumZaduzenja() : Instant.now());
         entity.setZaduzenaKolicina(dto.getZaduzenaKolicina());
+
         entity.setRazduzenaKolicina(dto.getRazduzenaKolicina() != null ? dto.getRazduzenaKolicina() : BigDecimal.ZERO);
+        entity.setDatumRazduzenja(dto.getDatumRazduzenja());
 
         ZaduzenjeEntity sacuvan = zaduzenjeRepository.save(entity);
 
-        Zaduzenje rezultat = modelMapper.map(sacuvan, Zaduzenje.class);
-        rezultat.setManager(sacuvan.getPoslovodjaJMB());
-        rezultat.setResursId(sacuvan.getIdResursa());
-        rezultat.setResursNaziv(resurs.getNaziv());
-        rezultat.setResourceType(resolveResourceType(resurs));
-        rezultat.setPoslovodjaImePrezime(poslovodja.getIme() + " " + poslovodja.getPrezime());
-
-        return rezultat;
+        return convertToDto(sacuvan);
     }
 
-    public Zaduzenje updateZaduzenje(String jmb, Integer resursId, Zaduzenje dto) throws NotFoundException {
-        ZaduzenjeId id = new ZaduzenjeId(jmb, resursId);
-
-        ZaduzenjeEntity postojeci = zaduzenjeRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Zaduženje nije pronađeno."));
-
+    public Zaduzenje updateZaduzenje(Integer idZaduzenja, Zaduzenje dto) throws NotFoundException {
+        ZaduzenjeEntity postojeci = zaduzenjeRepository.findById(idZaduzenja)
+                .orElseThrow(() -> new NotFoundException("Zaduženje sa ID-om " + idZaduzenja + " nije pronađeno."));
         postojeci.setZaduzenaKolicina(dto.getZaduzenaKolicina());
         postojeci.setRazduzenaKolicina(dto.getRazduzenaKolicina() != null ? dto.getRazduzenaKolicina() : BigDecimal.ZERO);
         postojeci.setDatumZaduzenja(dto.getDatumZaduzenja());
         postojeci.setDatumRazduzenja(dto.getDatumRazduzenja());
-
         ZaduzenjeEntity sacuvan = zaduzenjeRepository.save(postojeci);
-
-        Zaduzenje rezultat = modelMapper.map(sacuvan, Zaduzenje.class);
-        rezultat.setManager(jmb);
-        rezultat.setResursId(resursId);
-
-        if (sacuvan.getResurs() != null) {
-            rezultat.setResourceType(resolveResourceType(sacuvan.getResurs()));
-            rezultat.setResursNaziv(sacuvan.getResurs().getNaziv());
-        }
-
-        return rezultat;
+        return convertToDto(sacuvan);
     }
 
-    public void obrisiZaduzenje(String jmb, Integer resursId) {
-        ZaduzenjeId id = new ZaduzenjeId(jmb, resursId);
-        if (!zaduzenjeRepository.existsById(id)) {
-            throw new RuntimeException("Zaduženje ne postoji.");
+    public void obrisiZaduzenje(Integer idZaduzenja) {
+        if (!zaduzenjeRepository.existsById(idZaduzenja)) {
+            throw new RuntimeException("Nemoguće obrisati. Zaduženje sa ID-om " + idZaduzenja + " ne postoji.");
         }
-        zaduzenjeRepository.deleteById(id);
+        zaduzenjeRepository.deleteById(idZaduzenja);
     }
 }

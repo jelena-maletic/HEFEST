@@ -5,6 +5,7 @@ import lombok.Value;
 import org.etfbl.backend.model.StanjeZahtjeva;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Set;
 
@@ -13,11 +14,16 @@ import java.util.Set;
  */
 @Data
 public class ZahtjevZaResursima implements Serializable {
-    Integer id; // OVO DODAJ
-    Instant datumSlanja;
-    Instant datumObrade;
-    String opis;
-    StanjeZahtjeva stanjeZahtjeva;
-    Poslovodja poslovodja;
-    Magacioner magacioner;
+    private Integer id;
+    private Instant datumSlanja;
+    private Instant datumObrade;
+    private BigDecimal kolicina;
+    private String opis;
+    private StanjeZahtjeva stanjeZahtjeva;
+    private String poslovodjaJMB;
+    private String magacionerJMB;
+    private Integer resursId;
+    private String poslovodjaImePrezime;
+    private String magacionerImePrezime;
+    private String resursNaziv;
 }

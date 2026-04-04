@@ -1,15 +1,16 @@
 package org.etfbl.backend.repository;
 
 import org.etfbl.backend.model.ZaduzenjeEntity;
-import org.etfbl.backend.model.ZahtjevZaResursimaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import org.etfbl.backend.model.manytomanyid.ZaduzenjeId;
 
 import java.util.List;
 
 @Repository
-public interface ZaduzenjeRepository extends JpaRepository<ZaduzenjeEntity, ZaduzenjeId> {
-    List<ZaduzenjeEntity> findAllByPoslovodjaJMB(String poslovodjaJMB);
+public interface ZaduzenjeRepository extends JpaRepository<ZaduzenjeEntity, Integer> {
+    List<ZaduzenjeEntity> findAllByPoslovodjaJmb(String jmb);
+
+    List<ZaduzenjeEntity> findAllByMagacionerJmb(String jmb);
+
+    //List<ZaduzenjeEntity> findAllByZahtjev_IdZahtjeva(String idZahtjeva);
 }

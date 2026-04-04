@@ -3,6 +3,7 @@ package org.etfbl.backend.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
@@ -23,13 +24,15 @@ public class ZahtjevZaResursimaEntity {
     @Column(name = "DatumObrade")
     private Instant datumObrade;
 
+    @Column(name = "Kolicina", nullable = false, precision = 5, scale = 2)
+    private BigDecimal kolicina;
+
     @Column(name = "Opis", nullable = false)
     private String opis;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "StanjeZahtjeva", nullable = false)
     private StanjeZahtjeva stanjeZahtjeva;
-
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "Poslovodja_JMB", nullable = false)
@@ -39,7 +42,8 @@ public class ZahtjevZaResursimaEntity {
     @JoinColumn(name = "Magacioner_JMB", nullable = false)
     private MagacionerEntity magacioner;
 
-   /* @OneToMany(mappedBy = "zahtjev")
-    private Set<ResursUZahtjevuEntity> resursUZahtjevu = new LinkedHashSet<>();
-    //prilikom ucitavanja zahtjeva se mogu ucitati i svi resursi koji su trazeni u zahtjevu*/
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "IdResursa", nullable = false)
+    private ResursEntity resurs;
+
 }
