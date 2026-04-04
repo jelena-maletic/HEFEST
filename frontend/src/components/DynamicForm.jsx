@@ -98,6 +98,39 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
 
     const resourceType = Form.useWatch('resourceType', form);
 
+    const pocetakRada = Form.useWatch('pocetakRada', form);
+    const krajRada = Form.useWatch('krajRada', form);
+
+    useEffect(() => {
+        if (schema.title === "Podaci o projektu") {
+            const danas = dayjs();
+            let noviStatus = form.getFieldValue('status');
+            let shouldDisable = false;
+
+            if (pocetakRada && dayjs(pocetakRada).isAfter(danas, 'day')) {
+                noviStatus = "DOGOVOREN";
+                shouldDisable = true;
+            } else if (krajRada && dayjs(krajRada).isBefore(danas, 'day')) {
+                noviStatus = "ZAVRŠEN";
+                shouldDisable = true;
+            } else {
+                const trenutni = form.getFieldValue('status');
+                if (trenutni === "DOGOVOREN" || trenutni === "ZAVRŠEN" || !trenutni) {
+                    form.setFieldsValue({ status: "AKTIVAN" });
+                }
+                setIsStatusDisabled(false);
+            }
+
+            form.setFieldsValue({ status: noviStatus });
+
+            // Spremamo informaciju o tome da li polje treba biti zaključano
+            // (Ovo ćemo proslijediti renderField funkciji)
+            setIsStatusDisabled(shouldDisable);
+        }
+    }, [pocetakRada, krajRada, form, schema.title]);
+
+    const [isStatusDisabled, setIsStatusDisabled] = useState(false);
+
     // 3. Efekat za zavisna polja (resourceType)
     useEffect(() => {
         const dependentField = schema?.fields?.find(f => f.dependsOn === 'resourceType');
@@ -131,7 +164,16 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
         }
 
         if (field.type === "select") {
-            const options = dynamicOptions[field.name] || field.options || [];
+            let options = dynamicOptions[field.name] || field.options || [];
+
+            const disabled = field.name === "status" && isStatusDisabled;
+
+            if (field.name === "status" && !isStatusDisabled) {
+                options = options.filter(opt =>
+                    opt.value === "AKTIVAN" || opt.value === "NEAKTIVAN"
+                );
+            }
+
             return (
                 <Select
                     mode={field.mode}
@@ -139,6 +181,7 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
                     allowClear
                     showSearch
                     optionFilterProp="children"
+                    disabled={disabled}
                 >
                     {options.map((option, index) => {
                         let label = "";
@@ -152,7 +195,8 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
                             label = option.label || `Opcija ${index}`;
                         }
 
-                        const rawValue = option.jmb || option.id || option.value || index;
+                        const rawValue = option.value || option.jmb || option.id || index;
+
                         return (
                             <Option key={String(rawValue)} value={String(rawValue)}>
                                 {label}
