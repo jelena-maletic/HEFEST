@@ -42,33 +42,31 @@ export function ListElement({
     const renderActionButtons = (editable, binaryChoice) => {
 
         const isIzvjestaj = tag && (tag.includes("izvjestaj") || tag.includes("izvjestaji"));
-        //if (editable === true) {
+
+        if (isIzvjestaj) {
             return (
-
                 <div className="list-element-buttons">
-
-                    {isIzvjestaj && (
-                        <Tooltip title="Generiši PDF" color="#BFBFBF" mouseEnterDelay={0.1}>
-                            <div className="pdf-button-wrapper">
-                                <SmallButton
-                                    type={BUTTON_TYPES.PDF}
-                                    onClickHandler={handleDownloadPdf}
-                                />
-                            </div>
-                        </Tooltip>
-                    )}
-
-                    {editable === true && (
-                        <>
+                    <Tooltip title="Generiši PDF" color="#BFBFBF" mouseEnterDelay={0.1}>
+                        <div className="pdf-button-wrapper">
+                            <SmallButton
+                                type={BUTTON_TYPES.PDF}
+                                onClickHandler={handleDownloadPdf}
+                            />
+                        </div>
+                    </Tooltip>
+                </div>
+            );
+        }
+        if (editable === true) {
+            return (
+                <div className="list-element-buttons">
                     <SmallButton
                         className="nested-button"
                         type="edit"
                         onClickHandler={(e) => {
                             e.stopPropagation();
                             setIsHovered(false);
-                            console.log("Edit kliknut za:", listElementData.id);
-                            console.log(listElementData);
-                            setUpdateForm(true)
+                            setUpdateForm(true);
                         }}
                     />
                     <SmallButton
@@ -80,12 +78,11 @@ export function ListElement({
                             setShowConfirm(true);
                         }}
                     />
-                        </>
-                    )}
                 </div>
             );
+        }
 
-        //}
+
         if (binaryChoice === true) {
             return (<div className="list-element-buttons">
                 <SmallButton
