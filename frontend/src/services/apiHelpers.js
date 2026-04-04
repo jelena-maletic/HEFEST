@@ -201,9 +201,15 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
             return dataArray.flatMap((t) => {
                 const oprema = [];
 
+                const lowStock = t.stanjeMagacina <= t.minimalnaKolicina * 1.1;
                 let temp = {
+                    isLowStock: lowStock,
                     title: t.naziv,
-                    detail: "Stanje magacina: " + t.stanjeMagacina,
+
+                    detail: lowStock
+                        ? "Stanje magacina: " + t.stanjeMagacina + " (min: " + t.minimalnaKolicina + ")"
+                        : "Stanje magacina: " + t.stanjeMagacina,
+
                     subline: "Kategorija: " + t.kategorija
                 };
                 Object.assign(temp, t);
@@ -230,9 +236,15 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
             return dataArray.flatMap((t) => {
                 const materijal = [];
 
+                const lowStock = t.stanjeMagacina <= t.minimalnaKolicina * 1.1;
                 let temp = {
+                    isLowStock: lowStock,
                     title: t.naziv,
-                    detail: "Stanje magacina: " + t.stanjeMagacina + " " + t.jedinicaMjere,
+
+                    detail: lowStock
+                        ? "Stanje magacina: " + t.stanjeMagacina + " (min: " + t.minimalnaKolicina + ")"
+                        : "Stanje magacina: " + t.stanjeMagacina,
+
                     subline: "Kategorija: " + t.kategorija
                 };
 

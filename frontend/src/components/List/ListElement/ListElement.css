@@ -200,3 +200,17 @@
 .form-overlay .centered-centered-overlay-backdrop{
     width: 35em;
 }
+
+.low-stock-text {
+    color: #800020 !important;
+    font-weight: bold !important;
+    transition: color 0.25s ease;
+}
+
+.list-element:hover .low-stock-text {
+    color: #ff4d4f !important;
+}
+
+.grid-element:hover .low-stock-text {
+    color: #ff4d4f !important;
+}

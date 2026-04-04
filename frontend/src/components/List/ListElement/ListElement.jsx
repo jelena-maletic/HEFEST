@@ -222,7 +222,7 @@ export function ListElement({
                 <span className="list-element-title">
                {truncateText(listElementData.title || "Bez naslova", titleLimit)}
         </span>
-                    <span className="list-element-detail">
+                    <span className={`list-element-detail ${listElementData.isLowStock ? 'low-stock-text' : ''}`}>
             {truncateText(listElementData.detail, detailLimit)}
         </span>
                     <span className="list-element-subline">
