@@ -187,9 +187,17 @@ export function Dashboard({sidebarContents, role}) {
             <TopBar activeScreen={activeScreen} screenTitle={screenTitle} screenHandle={handleScreen} userName={userName}/>
 
             <div className="content-area">
-
-                <Sidebar contents={sidebarContents[role]} screenHandle={handleScreen}
-                         activeHandle={toggleStatus} active={isActive} userRole={role}/>
+                {sidebarContents && role ? (
+                    <Sidebar
+                        contents={sidebarContents[role]}
+                        screenHandle={handleScreen}
+                        activeHandle={toggleStatus}
+                        active={isActive}
+                        userRole={role}
+                    />
+                ) : (
+                    <div className="sidebar-placeholder">Učitavanje menija...</div>
+                )}
 
                 <main className={`home-screen ${activeScreen !== "home" ? "content-active" : ""}`}
                       style={{

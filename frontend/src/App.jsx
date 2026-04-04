@@ -9,10 +9,12 @@ import {ConfigProvider} from 'antd';
 import srRS from 'antd/locale/sr_RS';
 
 function App() {
-    const [role, setRole] = useState("def");
+    const [role, setRole] = useState(sessionStorage.getItem("role") || "def");
+
     const handleRole = (data) => {
-        setRole(data)
-    }
+        setRole(data);
+        sessionStorage.setItem("role", data);
+    };
 
     return (
         <ConfigProvider
@@ -52,18 +54,21 @@ function App() {
                 <BrowserRouter>
                     <Routes>
                         <Route path="/" element={<Login roleHandle={handleRole}/>}/>
+
                         <Route path="/dashboard" element={
-
-                            <Dashboard sidebarContents={sidebarContents} role={role}/>
-
+                            role !== "def" ? (
+                                <Dashboard sidebarContents={sidebarContents} role={role}/>
+                            ) : (
+                                <Navigate to="/" replace />
+                            )
                         }/>
+
                         <Route path="*" element={<Navigate to="/" replace/>}/>
                     </Routes>
                 </BrowserRouter>
             </NotificationProvider>
         </ConfigProvider>
-
-    )
+    );
 }
 
 export default App

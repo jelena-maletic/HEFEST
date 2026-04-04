@@ -24,7 +24,7 @@ export function Sidebar({contents, screenHandle, activeHandle, active, userRole}
         <>
             <aside className="sidebar">
                 <nav className="menu">
-                    {contents.map((item, index) => (
+                    {(contents || []).map((item, index) => (
                         <button
                             key={index}
                             className={`menu-btn ${activeScreen === item.label ? "active" : ""}`}
@@ -32,8 +32,14 @@ export function Sidebar({contents, screenHandle, activeHandle, active, userRole}
                                 screenHandle(item.tag, item.label);
                                 setActiveScreen(item.tag);
                             }}
-                            onMouseEnter={(e) => e.currentTarget.querySelector("img").src = images[`${item.iconHover}`]}
-                            onMouseLeave={(e) => e.currentTarget.querySelector("img").src = images[`${item.icon}`]}
+                            onMouseEnter={(e) => {
+                                const img = images[`${item.iconHover}`];
+                                if (img) e.currentTarget.querySelector("img").src = img;
+                            }}
+                            onMouseLeave={(e) => {
+                                const img = images[`${item.icon}`];
+                                if (img) e.currentTarget.querySelector("img").src = img;
+                            }}
                         >
                             <img src={images[`${item.icon}`]} alt={item.label} className="menu-icon"/>
                             <span>{item.label}</span>
