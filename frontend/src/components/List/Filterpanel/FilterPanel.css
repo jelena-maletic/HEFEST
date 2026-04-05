@@ -1,0 +1,204 @@
+.filter-panel-wrapper {
+    position: relative;
+}
+
+/* ── Toggle button ── */
+
+.filter-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-color: #DDDDDD;
+    color: #2E2F2E;
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.25s;
+    position: relative;
+    white-space: nowrap;
+}
+
+.filter-toggle-btn:hover {
+    border-color: #BBBBBB;
+}
+
+.filter-toggle-btn.has-filters {
+    border-color: #2E2F2E;
+}
+
+.filter-badge {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    background-color: #2E2F2E;
+    color: #DDDDDD;
+    font-size: 10px;
+    font-weight: 600;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ── Dropdown panel ── */
+
+.filter-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 200;
+    background-color: #ffffff;
+    border: 2px solid #2E2F2E;
+    border-radius: 10px;
+    padding: 6px 14px 10px;
+    min-width: 340px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Filter rows ── */
+
+.filter-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #EBEBEB;
+}
+
+.filter-row:last-of-type {
+    border-bottom: none;
+}
+
+.filter-row-label {
+    font-size: 13px;
+    color: #8F8F8F;
+    min-width: 130px;
+    flex-shrink: 0;
+}
+
+.filter-row-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.filter-row-select {
+    flex: 1;
+    padding: 7px 28px 7px 10px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-color: #DDDDDD;
+    color: #2E2F2E;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    outline: none;
+    transition: 0.25s;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%232E2F2E%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px top 50%;
+    background-size: 10px auto;
+}
+
+.filter-row-select:hover {
+    border-color: #BBBBBB;
+}
+
+.filter-row-select:focus {
+    background-color: #f5f5f5;
+    border-color: #2E2F2E;
+}
+
+.filter-row-select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.filter-api-badge {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background-color: #E6F1FB;
+    color: #185FA5;
+    flex-shrink: 0;
+}
+
+/* ── Footer ── */
+
+.filter-panel-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+    margin-top: 6px;
+    border-top: 1px solid #EBEBEB;
+}
+
+.filter-active-label {
+    font-size: 12px;
+    color: #8F8F8F;
+}
+
+.filter-clear-btn {
+    font-size: 12px;
+    color: #8F8F8F;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-family: inherit;
+    transition: 0.15s;
+}
+
+.filter-clear-btn:hover {
+    background-color: #DDDDDD;
+    color: #2E2F2E;
+}
+
+/* ── Active filter chips (rendered in List.jsx) ── */
+
+.filter-chips-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0.4em 0 0.2em;
+    width: 60%;
+    align-self: center;
+}
+
+.filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-family: inherit;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background-color: #2E2F2E;
+    color: #DDDDDD;
+}
+
+.filter-chip-remove {
+    background: none;
+    border: none;
+    color: #DDDDDD;
+    cursor: pointer;
+    font-size: 15px;
+    line-height: 1;
+    padding: 0;
+    opacity: 0.65;
+    transition: opacity 0.15s;
+}
+
+.filter-chip-remove:hover {
+    opacity: 1;
+}

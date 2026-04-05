@@ -1,0 +1,133 @@
+{
+  "zaposleni": [
+    {
+      "property": "tag_override",
+      "label": "Uloga",
+      "options": [
+        { "value": "zaposleni",      "label": "Svi zaposleni" },
+        { "value": "knjigovodje",    "label": "Knjigovođe" },
+        { "value": "poslovodje",     "label": "Poslovođe" },
+        { "value": "tehnicari/only", "label": "Tehničari" }
+      ]
+    }
+  ],
+
+  "projekti": [
+    {
+      "property": "status",
+      "label": "Status",
+      "options": [
+        { "value": "",          "label": "Svi statusi" },
+        { "value": "DOGOVOREN", "label": "Dogovoren" },
+        { "value": "AKTIVAN", "label": "Aktivan" },
+        { "value": "NEAKTIVAN", "label": "Neaktivan" },
+        { "value": "ZAVRŠEN", "label": "Završen" }
+      ]
+    },
+    {
+      "property": "klijent",
+      "label": "Klijent",
+      "endpoint": "http://localhost:8080/api/projekti",
+      "labelKey": "klijent",
+      "valueKey": "klijent",
+      "allLabel": "Svi klijenti"
+    },
+    {
+      "property": "manager",
+      "label": "Poslovođa",
+      "endpoint": "http://localhost:8080/api/poslovodje",
+      "labelKeys": ["ime", "prezime"],
+      "labelSeparator": " ",
+      "valueKey": "jmb",
+      "allLabel": "Svi poslovođe"
+    }
+  ],
+  "sumarni_izvjestaji": [
+    {
+      "property": "jmbPoslovodja",
+      "label": "Poslovođa",
+      "endpoint": "http://localhost:8080/api/poslovodje",
+      "labelKeys": [
+        "ime",
+        "prezime"
+      ],
+      "valueKey": "jmb",
+      "allLabel": "Svi poslovođe"
+    },
+    {
+      "property": "idProjekta",
+      "label": "Projekat",
+      "endpoint": "http://localhost:8080/api/projekti",
+      "labelKey": "naziv",
+      "valueKey": "id",
+      "allLabel": "Svi projekti"
+    }
+  ],
+  "dnevni_izvjestaji": [
+    {
+      "property": "jmbPoslovodja",
+      "label": "Poslovođa",
+      "endpoint": "http://localhost:8080/api/poslovodje",
+      "labelKeys": [
+        "ime",
+        "prezime"
+      ],
+      "valueKey": "jmb",
+      "allLabel": "Svi poslovođe"
+    },
+    {
+      "property": "idProjekta",
+      "label": "Projekat",
+      "endpoint": "http://localhost:8080/api/projekti",
+      "labelKey": "naziv",
+      "valueKey": "id",
+      "allLabel": "Svi projekti"
+    }
+  ],
+  "vozila": [
+    {
+      "property": "tipVozila",
+      "label": "Tip vozila",
+      "endpoint": "http://localhost:8080/api/vozila",
+      "labelKey": "tipVozila",
+      "valueKey": "tipVozila",
+      "allLabel": "Svi tipovi"
+    },
+    {
+      "property": "brojPutnika",
+      "label": "Broj putnika",
+      "endpoint": "http://localhost:8080/api/vozila",
+      "labelKey": "brojPutnika",
+      "valueKey": "brojPutnika",
+      "allLabel": "Svi kapaciteti"
+    }
+  ],
+  "radna-oprema": [
+    {
+      "property": "kategorija",
+      "label": "Kategorija",
+      "endpoint": "http://localhost:8080/api/radna-oprema",
+      "labelKey": "kategorija",
+      "valueKey": "kategorija",
+      "allLabel": "Sve kategorije"
+    }
+  ],
+  "materijal": [
+    {
+      "property": "kategorija",
+      "label": "Kategorija",
+      "endpoint": "http://localhost:8080/api/materijal",
+      "labelKey": "kategorija",
+      "valueKey": "kategorija",
+      "allLabel": "Sve kategorije"
+    },
+    {
+      "property": "jedinicaMjere",
+      "label": "Jedinica mjere",
+      "endpoint": "http://localhost:8080/api/materijal",
+      "labelKey": "jedinicaMjere",
+      "valueKey": "jedinicaMjere",
+      "allLabel": "Sve jedinice"
+    }
+  ]
+}

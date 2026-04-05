@@ -1,13 +1,15 @@
-import {ListElement} from "./ListElement/ListElement.jsx";
-import {SmallButton} from "../SmallButton.jsx";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { ListElement } from "./ListElement/ListElement.jsx";
+import { SmallButton } from "../SmallButton.jsx";
+import { FilterPanel } from "./FilterPanel/FilterPanel.jsx";
 import "./List.css";
-import {useEffect, useState} from "react";
-import {createElement, fetchData} from "../../services/apiHelpers.js";
+import "./FilterPanel/FilterPanel.css";
+import { createElement, fetchData, api } from "../../services/apiHelpers.js";
 import { schemaMap } from "../../data/SchemaMap.jsx";
 import DynamicForm from "../DynamicForm.jsx";
 import CenteredOverlay from "../CenteredOverlay/CenteredOverlay.jsx";
-import { NotificationProvider, useNotification } from "../NotificationContext.jsx";
-import {getJmb} from "../../auth/auth.js";
+import { useNotification } from "../NotificationContext.jsx";
+import filterConfig from "../../data/filter-config.json";
 
 const noop = () => {};
 
@@ -18,95 +20,171 @@ export function List({
                          isEditable,
                          binaryChoice,
                          dividerWidth = "60%",
-                         tag,
+                         tag: initialTag,
                          filterByPoslovodja,
                          filterByTehnicar,
                          filterByMagacioner,
-                         onSuccess
+                         onSuccess,
                      }) {
-
     const notify = useNotification();
-    //console.log("notify object:", notify);
+
     const [showForm, setShowForm] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [activeFilters, setActiveFilters] = useState({});
+    const [viewState, setViewState] = useState("list");
+    const [listData, setListData] = useState([]);
+    const [activeTag, setActiveTag] = useState(initialTag);
 
-    const selectedSchema = schemaMap[tag];
+    const [endpointOptionsCache, setEndpointOptionsCache] = useState({});
 
-    const reloadData = async () => {
-        const data = await fetchData(tag, filterByPoslovodja, filterByTehnicar, filterByMagacioner);
+    const currentFilters = filterConfig[activeTag] || filterConfig[initialTag] || [];
+    const selectedSchema = schemaMap[activeTag];
+
+    const fetchFilterOptions = useCallback(async (endpoint) => {
+        const response = await api.service(true).get(endpoint);
+        return response.data;
+    }, []);
+
+    const reloadData = useCallback(async () => {
+        const data = await fetchData(activeTag, filterByPoslovodja, filterByTehnicar, filterByMagacioner);
         setListData(data || []);
+    }, [activeTag, filterByPoslovodja, filterByTehnicar, filterByMagacioner]);
+
+    useEffect(() => {
+        setActiveTag(initialTag);
+    }, [initialTag]);
+
+    useEffect(() => {
+        reloadData();
+        setActiveFilters({});
+        setSearchQuery("");
+        setEndpointOptionsCache({});
+        if (onSuccess) onSuccess(reloadData);
+    }, [activeTag, reloadData]);
+
+    const handleFilterChange = (property, value) => {
+        if (property === "tag_override") {
+            setActiveTag(value);
+        } else {
+            setActiveFilters((prev) => ({ ...prev, [property]: value }));
+        }
     };
 
-    useEffect(() => {
-        if (onSuccess) onSuccess(reloadData);
-        reloadData();
-    }, [tag]);
+    const handleClearFilters = () => {
+        setActiveFilters({});
+    };
+
+    const handleOptionsLoaded = (property, options) => {
+        setEndpointOptionsCache((prev) => ({ ...prev, [property]: options }));
+    };
+
+    const activeChips = useMemo(() => {
+        return currentFilters
+            .filter((f) => f.property !== "tag_override" && activeFilters[f.property])
+            .map((filter) => {
+                const value = activeFilters[filter.property];
+                let displayLabel = value;
+
+                if (filter.endpoint) {
+                    const cached = endpointOptionsCache[filter.property] || [];
+                    displayLabel = cached.find((o) => o.value === value)?.label ?? value;
+                } else {
+                    displayLabel =
+                        filter.options?.find((o) => String(o.value) === String(value))?.label ?? value;
+                }
+
+                return { property: filter.property, filterLabel: filter.label, displayLabel };
+            });
+    }, [currentFilters, activeFilters, endpointOptionsCache]);
+
+    const filteredData = useMemo(() => {
+        return listData.filter((item) => {
+            if (!item.title?.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+
+            for (const filter of currentFilters) {
+                if (filter.property === "tag_override") continue;
+                const selected = activeFilters[filter.property];
+                if (selected && String(item[filter.property]) !== String(selected)) return false;
+            }
+
+            return true;
+        });
+    }, [listData, searchQuery, activeFilters, currentFilters]);
 
     const addButton = (editable) => {
-        if(editable === true){
-            return(
-                <SmallButton
-                    style={'padding:20px'}
-                    type="add"
-                    onClickHandler={() => setShowForm(true)}
-                />
-            )
-        }
-    }
+        if (editable !== true) return null;
+        return (
+            <SmallButton
+                type="add"
+                onClickHandler={() => setShowForm(true)}
+            />
+        );
+    };
 
-    const [viewState, setViewState] = useState("list");
-
-    const [listData, setListData] = useState([]);
-
-    useEffect(() => {
-        const getData = async () => {
-            const data = await fetchData(tag, filterByPoslovodja, filterByTehnicar, filterByMagacioner);
-            setListData(data || []);
-        };
-
-        getData();
-    }, [tag]);
-
-    const viewButton = (viewState) => {
-        if(viewState === "list"){
-            return(<SmallButton style={'padding:20px'} type={viewState} onClickHandler={() => setViewState("grid")}/>)
-        }
-        else if(viewState === "grid"){
-            return(<SmallButton style={'padding:20px'} type={viewState} onClickHandler={() => setViewState("list")}/>)
-        }
-    }
-
-    //
-    // const element = (numElements, index, data)=>{
-    //     if(index < numElements){
-    //         return (<ListElement key={index} screenState={screenState} listElementData={data} onClickFunc={() => onClick()} isEditable={isEditable}/>)
-    //     }
-    // }
+    const viewButton = (state) => {
+        const next = state === "list" ? "grid" : "list";
+        return <SmallButton type={state} onClickHandler={() => setViewState(next)} />;
+    };
 
     return (
         <div className="list">
             <div className="list-header">
-                <span className="list-title">
-                    {listTitle}
-                </span>
-                <div className="small-buttons">
-                    {viewButton(viewState)}
-                    {addButton(isEditable)}
+                <span className="list-title">{listTitle}</span>
+                <div className="header-actions">
+                    <input
+                        type="text"
+                        className="search-input"
+                        placeholder="Pretraži..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    {currentFilters.length > 0 && (
+                        <FilterPanel
+                            filters={currentFilters}
+                            activeFilters={activeFilters}
+                            activeTag={activeTag}
+                            onFilterChange={handleFilterChange}
+                            onClear={handleClearFilters}
+                            onOptionsLoaded={handleOptionsLoaded}
+                            fetchOptions={fetchFilterOptions}
+                        />
+                    )}
+                    <div className="small-buttons">
+                        {viewButton(viewState)}
+                        {addButton(isEditable)}
+                    </div>
                 </div>
             </div>
+
+            {activeChips.length > 0 && (
+                <div className="filter-chips-bar">
+                    {activeChips.map((chip) => (
+                        <span key={chip.property} className="filter-chip">
+                            {chip.filterLabel}: {chip.displayLabel}
+                            <button
+                                className="filter-chip-remove"
+                                onClick={() => handleFilterChange(chip.property, "")}
+                            >
+                                ×
+                            </button>
+                        </span>
+                    ))}
+                </div>
+            )}
 
             <hr className="divider" style={{ width: dividerWidth }} />
 
             <div className={`list-content ${viewState}`}>
-                {listData.map((data, index) => (
+                {filteredData.map((data) => (
                     <ListElement
-                        key={index}
+                        key={data.id}
                         screenState={screenState}
                         listElementData={data}
                         onClickFunc={(clickedData) => onClick(clickedData)}
                         isEditable={isEditable}
                         binaryChoice={binaryChoice}
                         className={viewState === "grid" ? "grid-element" : "list-element"}
-                        tag = {tag}
+                        tag={activeTag}
                         selectedSchema={selectedSchema}
                         onSuccess={reloadData}
                     />
@@ -114,63 +192,45 @@ export function List({
             </div>
 
             {showForm && (
-                <CenteredOverlay className="form-overlay" isVisible={showForm} onClose={() => setShowForm(false)}>
+                <CenteredOverlay
+                    className="form-overlay"
+                    isVisible={showForm}
+                    onClose={() => setShowForm(false)}
+                >
                     <DynamicForm
                         schema={selectedSchema}
                         onClose={() => setShowForm(false)}
-                        //onSubmit={(data) => createProjekat(data)}
                         onSubmit={async (data) => {
-                            console.log("Podaci iz forme koji idu ka servisu:", data);
-
                             let finalData = { ...data };
-                            const loggedInJmb = sessionStorage.getItem("jmb") || getJmb();
-                            if (tag === "moji_dnevni_zadaci") {
-                                //const loggedInJmb = sessionStorage.getItem("jmb");
+
+                            if (activeTag === "moji_dnevni_zadaci") {
+                                const loggedInJmb = sessionStorage.getItem("jmb");
                                 finalData.tehnicarJmb = loggedInJmb;
                                 finalData.ulogovaniJmb = loggedInJmb;
                             }
-                            if (tag === "zaduzenja") {
-                                finalData.magacionerJMB = loggedInJmb;
 
-                                if (finalData.resursId) {
-                                    finalData.resursId = Number(finalData.resursId);
-                                }
-
-                                finalData.razduzenaKolicina = finalData.razduzenaKolicina || 0;
-                            }
-                            if (tag === "zahtjevi") {
-                                finalData = {
-                                    opis: data.opis,
-                                    kolicina: Number(data.kolicina),
-                                    resursId: Number(data.resursId),
-                                    magacionerJMB: data.magacionerJmb,
-                                    poslovodjaJMB: loggedInJmb,
-                                    stanjeZahtjeva: "neobradjen",
-                                    datumSlanja: new Date().toISOString()
-                                };
-                            }
                             try {
-                                const apiTag = tag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : tag;
+                                const apiTag =
+                                    activeTag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : activeTag;
                                 const responseStatus = await createElement(apiTag, finalData);
-                                console.log("Response status:", responseStatus);
 
                                 if (responseStatus >= 200 && responseStatus < 300) {
-                                     notify.success("Element je uspješno dodat", "Podaci su sačuvani");
+                                    notify.success("Element je uspješno dodat", "Podaci su sačuvani");
                                     await reloadData();
                                 }
-
-                                setShowForm(false);
                             } catch (error) {
                                 console.error("Greška pri kreiranju elementa:", error);
-                                notify.error("Neuspješno dodavanje elementa", "Došlo je do greške, pokušajte ponovo")
+                                notify.error(
+                                    "Neuspješno dodavanje elementa",
+                                    "Došlo je do greške, pokušajte ponovo"
+                                );
+                            } finally {
+                                setShowForm(false);
                             }
-
-                            setShowForm(false);
                         }}
                     />
                 </CenteredOverlay>
             )}
-
         </div>
     );
 }
