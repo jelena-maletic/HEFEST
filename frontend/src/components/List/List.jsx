@@ -35,31 +35,25 @@ export function List({
     const [listData, setListData] = useState([]);
     const [activeTag, setActiveTag] = useState(initialTag);
 
-    // Cache for options fetched from endpoints, used to resolve chip display labels
     const [endpointOptionsCache, setEndpointOptionsCache] = useState({});
 
     const currentFilters = filterConfig[activeTag] || filterConfig[initialTag] || [];
     const selectedSchema = schemaMap[activeTag];
 
-    // Authenticated fetch for FilterPanel endpoint options.
-    // Receives the endpoint string and returns the parsed data array.
     const fetchFilterOptions = useCallback(async (endpoint) => {
         const response = await api.service(true).get(endpoint);
         return response.data;
     }, []);
 
-    // Stable fetch function — only recreated when its dependencies change
     const reloadData = useCallback(async () => {
         const data = await fetchData(activeTag, filterByPoslovodja, filterByTehnicar, filterByMagacioner);
         setListData(data || []);
     }, [activeTag, filterByPoslovodja, filterByTehnicar, filterByMagacioner]);
 
-    // Sync activeTag when the prop changes from outside
     useEffect(() => {
         setActiveTag(initialTag);
     }, [initialTag]);
 
-    // Single effect: fetch data and reset UI state whenever the active tag changes
     useEffect(() => {
         reloadData();
         setActiveFilters({});
@@ -84,7 +78,6 @@ export function List({
         setEndpointOptionsCache((prev) => ({ ...prev, [property]: options }));
     };
 
-    // Build the list of active filter chips for display
     const activeChips = useMemo(() => {
         return currentFilters
             .filter((f) => f.property !== "tag_override" && activeFilters[f.property])
@@ -104,7 +97,6 @@ export function List({
             });
     }, [currentFilters, activeFilters, endpointOptionsCache]);
 
-    // Filter list data — memoized to avoid recomputing on every render
     const filteredData = useMemo(() => {
         return listData.filter((item) => {
             if (!item.title?.toLowerCase().includes(searchQuery.toLowerCase())) return false;
@@ -164,7 +156,6 @@ export function List({
                 </div>
             </div>
 
-            {/* Active filter chips — shown between header and divider */}
             {activeChips.length > 0 && (
                 <div className="filter-chips-bar">
                     {activeChips.map((chip) => (

@@ -8,7 +8,6 @@ export function FilterPanel({ filters, activeFilters, activeTag, onFilterChange,
     const panelRef = useRef(null);
     const fetchedRef = useRef({});
 
-    // Count active filters — tag_override is active when it differs from the first option
     const activeCount = filters.reduce((count, filter) => {
         if (filter.property === "tag_override") {
             const defaultValue = filter.options?.[0]?.value ?? "";
@@ -18,7 +17,6 @@ export function FilterPanel({ filters, activeFilters, activeTag, onFilterChange,
         return val && val !== "" ? count + 1 : count;
     }, 0);
 
-    // Close panel when clicking outside
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (panelRef.current && !panelRef.current.contains(e.target)) {
@@ -29,7 +27,6 @@ export function FilterPanel({ filters, activeFilters, activeTag, onFilterChange,
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    // Fetch endpoint options when panel opens — once per property per session
     useEffect(() => {
         if (!isOpen) return;
         filters.forEach((filter) => {
@@ -38,13 +35,11 @@ export function FilterPanel({ filters, activeFilters, activeTag, onFilterChange,
                 fetchEndpointOptions(filter);
             }
         });
-    }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [isOpen]);
 
     const fetchEndpointOptions = async (filter) => {
         setLoadingKeys((prev) => ({ ...prev, [filter.property]: true }));
         try {
-            // Use the passed fetchOptions function (which includes auth) if provided,
-            // otherwise fall back to a plain fetch
             let data;
             if (fetchOptions) {
                 data = await fetchOptions(filter.endpoint);
@@ -70,13 +65,12 @@ export function FilterPanel({ filters, activeFilters, activeTag, onFilterChange,
             onOptionsLoaded?.(filter.property, options);
         } catch (error) {
             console.error(`Failed to fetch filter options for "${filter.property}":`, error);
-            fetchedRef.current[filter.property] = false; // allow retry on next open
+            fetchedRef.current[filter.property] = false;
         } finally {
             setLoadingKeys((prev) => ({ ...prev, [filter.property]: false }));
         }
     };
 
-    // tag_override reads activeTag (controlled by parent); all others read activeFilters
     const getSelectValue = (filter) => {
         if (filter.property === "tag_override") return activeTag ?? filter.options?.[0]?.value ?? "";
         return activeFilters[filter.property] || "";

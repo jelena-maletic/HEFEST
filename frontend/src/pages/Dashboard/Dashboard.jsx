@@ -143,14 +143,6 @@ export function Dashboard({sidebarContents, role}) {
 
     const [selectedEmployeeTag, setSelectedEmployeeTag] = useState("zaposleni");
 
-    const employeeOptions = [
-        {value: "zaposleni", label: "Svi zaposleni"},
-        {value: "knjigovodje", label: "Knjigovođe"},
-        {value: "poslovodje", label: "Poslovođe"},
-        {value: "magacioneri", label: "Magacioneri"},
-        {value: "tehnicari/only", label: "Tehničari"}
-    ];
-
     const handleRegisterRefresh = (refreshFn) => {
         setRefreshCurrentList((prevFn) => {
             if (prevFn === refreshFn) return prevFn;
@@ -172,6 +164,7 @@ export function Dashboard({sidebarContents, role}) {
                     }
                 } catch (err) {
                     // Ako API ne nađe JMB u 'zaposleni', možda je u drugoj tabeli ili je fallback uloga
+                    console.log(err);
                     setUserName(role);
                 }
             }
@@ -206,38 +199,76 @@ export function Dashboard({sidebarContents, role}) {
                 >
 
                     {activeScreen === "map" && <MapView role={role}/>}
+
                     {activeScreen === "calendar" && <Calendar/>}
 
                     {activeScreen === "report-overview" && <div className={"report-lists"}>
-                        <List isEditable={false} listTitle={"Dnevni " + screenTitle} screenState="report-overview"
-                              dividerWidth={"90%"} tag="dnevni_izvjestaji" onClick={(data) => handleOpenDetails(data, "dnevni_izvjestaji")}/>
-                        <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview"
-                              dividerWidth={"90%"} tag="sumarni_izvjestaji" onClick={(data) => handleOpenDetails(data, "sumarni_izvjestaji")} // DODATO
-                              />
-                    </div>}
+                        <List isEditable={false}
+                              listTitle={"Dnevni " + screenTitle}
+                              screenState="report-overview"
+                              dividerWidth={"90%"}
+                              tag="dnevni_izvjestaji"
+                              onClick={(data) => handleOpenDetails(data, "dnevni_izvjestaji")}
+                        />
+
+                        <List isEditable={false}
+                              listTitle={"Sumarni " + screenTitle}
+                              screenState="report-overview"
+                              dividerWidth={"90%"}
+                              tag="sumarni_izvjestaji"
+                              onClick={(data) => handleOpenDetails(data, "sumarni_izvjestaji")} // DODATO
+                        />
+                    </div>
+                    }
 
                     {activeScreen === "tools" &&
-                        <List isEditable={true} listTitle={screenTitle} screenState="tools" tag="radna-oprema"
+                        <List isEditable={true}
+                              listTitle={screenTitle}
+                              screenState="tools"
+                              tag="radna-oprema"
                               onSuccess={handleRegisterRefresh}
-                              onClick={(data) => handleOpenDetails(data, "radna-oprema")}/>}
-
+                              onClick={(data) => handleOpenDetails(data, "radna-oprema")}
+                        />
+                    }
 
                     {activeScreen === "vehicles" &&
-                        <List isEditable={true} listTitle={screenTitle} screenState="truck" tag="vozila"
+                        <List isEditable={true}
+                              listTitle={screenTitle}
+                              screenState="truck"
+                              tag="vozila"
                               onSuccess={handleRegisterRefresh}
-                              onClick={(data) => handleOpenDetails(data, "vozila")}/>}
+                              onClick={(data) => handleOpenDetails(data, "vozila")}
+                        />
+                    }
 
 
                     {activeScreen === "materials" &&
-                        <List isEditable={true} listTitle={screenTitle} screenState="material" tag="materijal"
+                        <List isEditable={true}
+                              listTitle={screenTitle}
+                              screenState="material"
+                              tag="materijal"
                               onSuccess={handleRegisterRefresh}
-                              onClick={(data) => handleOpenDetails(data, "materijal")}/>}
+                              onClick={(data) => handleOpenDetails(data, "materijal")}
+                        />
+                    }
+
                     {activeScreen === "taken-resources" &&
-                        <List isEditable={true} listTitle={screenTitle} screenState="taken-resources" tag="zaduzenja"/>}
+                        <List isEditable={true}
+                              listTitle={screenTitle}
+                              screenState="taken-resources"
+                              tag="zaduzenja"
+                        />
+                    }
+
                     {activeScreen === "taken-resources-manager" &&
-                        <List isEditable={false} listTitle={screenTitle} screenState="taken-resources"
-                              onClick={(data) => handleOpenDetails(data, "zaduzenja")} tag="zaduzenja"
-                              filterByPoslovodja={true}/>}
+                        <List isEditable={false}
+                              listTitle={screenTitle}
+                              screenState="taken-resources"
+                              onClick={(data) => handleOpenDetails(data, "zaduzenja")}
+                              tag="zaduzenja"
+                              filterByPoslovodja={true}
+                        />
+                    }
 
                     {activeScreen === "request-overview" && (
                         <List
@@ -263,28 +294,47 @@ export function Dashboard({sidebarContents, role}) {
                             filterByPoslovodja={role === "poslovodja"}
                         />
                     )}
-                    {activeScreen === "report-overview-manager" && <div className={"report-lists"}>
-                        <List
-                            isEditable={false}
-                            listTitle={"Dnevni " + screenTitle}
-                            screenState="report-overview"
-                            dividerWidth={"90%"}
-                            tag="dnevni_izvjestaji"
-                            onClick={(data) => handleOpenDetails(data, "dnevni_izvjestaji")} // DODATO
-                            filterByPoslovodja={true}
-                        />
-                        <List isEditable={false} listTitle={"Sumarni " + screenTitle} screenState="report-overview"
-                              dividerWidth={"90%"} tag="sumarni_izvjestaji" onClick={(data) => handleOpenDetails(data, "sumarni_izvjestaji")} // DODATO
-                              filterByPoslovodja={true}/>
-                    </div>}
+
+                    {activeScreen === "report-overview-manager" &&
+                        <div className={"report-lists"}>
+                            <List
+                                isEditable={false}
+                                listTitle={"Dnevni " + screenTitle}
+                                screenState="report-overview"
+                                dividerWidth={"90%"}
+                                tag="dnevni_izvjestaji"
+                                onClick={(data) => handleOpenDetails(data, "dnevni_izvjestaji")} // DODATO
+                                filterByPoslovodja={true}
+                            />
+
+                            <List isEditable={false}
+                                  listTitle={"Sumarni " + screenTitle}
+                                  screenState="report-overview"
+                                  dividerWidth={"90%"} tag="sumarni_izvjestaji"
+                                  onClick={(data) => handleOpenDetails(data, "sumarni_izvjestaji")} // DODATO
+                                  filterByPoslovodja={true}/>
+                        </div>
+                    }
+
                     {activeScreen === "projects" &&
-                        <List isEditable={true} listTitle={screenTitle} screenState="projects"
-                              onClick={(data) => handleOpenDetails(data, "projekti")} onSuccess={handleRegisterRefresh}
-                              tag="projekti"/>}
+                        <List isEditable={true}
+                              listTitle={screenTitle}
+                              screenState="projects"
+                              onClick={(data) => handleOpenDetails(data, "projekti")}
+                              onSuccess={handleRegisterRefresh}
+                              tag="projekti"
+                        />
+                    }
+
                     {activeScreen === "assigned-projects" &&
-                        <List isEditable={false} listTitle={screenTitle} screenState="projects"
-                              onClick={(data) => handleOpenDetails(data, "projekti")} tag="projekti"
-                              filterByPoslovodja={true}/>}
+                        <List isEditable={false}
+                              listTitle={screenTitle}
+                              screenState="projects"
+                              onClick={(data) => handleOpenDetails(data, "projekti")}
+                              tag="projekti"
+                              filterByPoslovodja={true}
+                        />
+                    }
 
                     {activeScreen === "tasks" && (
                         <List
@@ -309,19 +359,10 @@ export function Dashboard({sidebarContents, role}) {
                             onSuccess={handleRegisterRefresh}
                         />
                     )}
+
                     {activeScreen === "employees" && (
                         <List
                             isEditable={false}
-                            // listTitle={
-                            //     <Select
-                            //         defaultValue="zaposleni"
-                            //         variant="borderless"
-                            //         className="header-select"
-                            //         onChange={(value) => setSelectedEmployeeTag(value)}
-                            //         options={employeeOptions}
-                            //         dropdownMatchSelectWidth={false}
-                            //     />
-                            // }
                             listTitle = {screenTitle}
                             screenState="user"
                             tag={selectedEmployeeTag}
@@ -461,7 +502,7 @@ export function Dashboard({sidebarContents, role}) {
                                 setIsEditFormVisible(false);
                                 setIsDetailVisible(false);
                             } catch (error) {
-                                notify.error("Greška", "Ažuriranje nije uspjelo.");
+                                notify.error("Greška", "Ažuriranje nije uspjelo.", error);
                             }
                         }}
                     />
