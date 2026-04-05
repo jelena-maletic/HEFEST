@@ -371,6 +371,41 @@ export const requestSchema = {
             }
         },
         {
+            name: 'resourceType',
+            label: 'Tip resursa',
+            type: "select",
+            required: true,
+            span: 12,
+            options: [
+                { value: "VOZILO", label: "Vozilo" },
+                { value: "OPREMA", label: "Radna oprema" },
+                { value: "MATERIJAL", label: "Materijal" }
+            ],
+        },
+        {
+            name: 'resursId',
+            label: 'Resurs',
+            type: "select",
+            required: true,
+            span: 12,
+            dependsOn: "resourceType",
+            endpoints: {
+                VOZILO: "http://localhost:8080/api/vozila",
+                OPREMA: "http://localhost:8080/api/radna-oprema",
+                MATERIJAL: "http://localhost:8080/api/materijal"
+            },
+            optionLabel: "naziv",
+            optionValue: "id",
+        },
+        {
+            name: 'kolicina',
+            label: 'Količina',
+            type: "number",
+            required: true,
+            span: 12,
+            props: { min: 0.1 }
+        },
+        {
             name: 'magacionerJmb',
             label: 'Magacioner',
             type: "select",
@@ -437,7 +472,7 @@ export const assignmentSchema = {
     submitLabel: "Sačuvaj zaduženje",
     fields: [
         {
-            name: "manager",
+            name: "poslovodjaJMB",
             label: "Poslovođa",
             type: "select",
             required: true,

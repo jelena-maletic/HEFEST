@@ -7,6 +7,7 @@ import { schemaMap } from "../../data/SchemaMap.jsx";
 import DynamicForm from "../DynamicForm.jsx";
 import CenteredOverlay from "../CenteredOverlay/CenteredOverlay.jsx";
 import { NotificationProvider, useNotification } from "../NotificationContext.jsx";
+import {getJmb} from "../../auth/auth.js";
 
 const noop = () => {};
 
@@ -25,7 +26,7 @@ export function List({
                      }) {
 
     const notify = useNotification();
-    console.log("notify object:", notify);
+    //console.log("notify object:", notify);
     const [showForm, setShowForm] = useState(false);
 
     const selectedSchema = schemaMap[tag];
@@ -122,11 +123,31 @@ export function List({
                             console.log("Podaci iz forme koji idu ka servisu:", data);
 
                             let finalData = { ...data };
-
+                            const loggedInJmb = sessionStorage.getItem("jmb") || getJmb();
                             if (tag === "moji_dnevni_zadaci") {
-                                const loggedInJmb = sessionStorage.getItem("jmb");
+                                //const loggedInJmb = sessionStorage.getItem("jmb");
                                 finalData.tehnicarJmb = loggedInJmb;
                                 finalData.ulogovaniJmb = loggedInJmb;
+                            }
+                            if (tag === "zaduzenja") {
+                                finalData.magacionerJMB = loggedInJmb;
+
+                                if (finalData.resursId) {
+                                    finalData.resursId = Number(finalData.resursId);
+                                }
+
+                                finalData.razduzenaKolicina = finalData.razduzenaKolicina || 0;
+                            }
+                            if (tag === "zahtjevi") {
+                                finalData = {
+                                    opis: data.opis,
+                                    kolicina: Number(data.kolicina),
+                                    resursId: Number(data.resursId),
+                                    magacionerJMB: data.magacionerJmb,
+                                    poslovodjaJMB: loggedInJmb,
+                                    stanjeZahtjeva: "neobradjen",
+                                    datumSlanja: new Date().toISOString()
+                                };
                             }
                             try {
                                 const apiTag = tag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : tag;

@@ -21,23 +21,8 @@ export const fetchProjects = async () => {
 }
 
 export const createElement = async (tag, data) => {
-    const ulogovaniJmb = getJmb();
-    let payload = {...data};
-
-    // Posebna transformacija za zahtjeve da odgovara backend DTO-u
-    if (tag === "zahtjevi") {
-        payload = {
-            opis: data.opis,
-            poslovodja: {jmb: ulogovaniJmb},
-            magacioner: {jmb: data.magacionerJmb}
-        };
-    } else {
-        payload.ulogovaniJmb = ulogovaniJmb;
-    }
-
     try {
-        // Koristimo api.service(false) da bi se automatski dodao Bearer token
-        const response = await api.service(false).post(`/${tag}`, payload);
+        const response = await api.service(false).post(`/${tag}`, data);
         return response.status;
     } catch (error) {
         console.error(`Greška pri kreiranju elementa na tagu ${tag}:`, error);
@@ -55,13 +40,10 @@ export const updateElement = async (tag, id, data) => {
     const apiRoute = tag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : tag;
     let finalData = {...data};
 
-    // Transformacija za zahtjeve da odgovara DTO-u na backendu
     if (tag === "zahtjevi") {
         finalData = {
             opis: data.opis,
             magacioner: data.magacionerJmb ? { jmb: data.magacionerJmb } : null,
-            // poslovodja se obično ne mijenja pri ažuriranju zahtjeva,
-            // ali možeš dodati ako zatreba
         };
     }
 
@@ -125,12 +107,12 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
 
 
     if (tag === "zahtjevi" && filterPoslovodja) {
-        dataArray = dataArray.filter(t => t.poslovodja?.jmb === ulogovaniJmb);
+        dataArray = dataArray.filter(t => t.poslovodjaJMB === ulogovaniJmb);
     }
 
     if (tag === "zahtjevi" && filterByMagacioner) {
 
-        dataArray = dataArray.filter(t => t.magacioner?.jmb === ulogovaniJmb);
+        dataArray = dataArray.filter(t => t.magacionerJMB === ulogovaniJmb);
     }
 
     const isZadatakTag = (tag === "dnevni_zadaci" || tag === "moji_dnevni_zadaci");
@@ -362,13 +344,13 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
 
                 let dynamicTitle = "Nepoznat učesnik";
 
-                if (t.magacioner?.jmb === ulogovaniJmb) {
-                    dynamicTitle = t.poslovodja
-                        ? `Od: ${t.poslovodja.ime} ${t.poslovodja.prezime}`
+                if (t.magacionerJMB === ulogovaniJmb) {
+                    dynamicTitle = t.poslovodjaImePrezime
+                        ? `Od: ${t.poslovodjaImePrezime}`
                         : "Nepoznat poslovođa";
                 } else {
-                    dynamicTitle = t.magacioner
-                        ? `Za: ${t.magacioner.ime} ${t.magacioner.prezime}`
+                    dynamicTitle = t.magacionerImePrezime
+                        ? `Za: ${t.magacionerImePrezime}`
                         : "Za: Magacin (na čekanju)";
                 }
 
@@ -397,7 +379,7 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
                     });
                 };
                 let formValues = {
-                    id: `${t.manager}/${t.resursId}`,
+                    id: t.idZaduzenja,
 
                     manager: t.manager,
                     resourceType: t.resourceType,
@@ -414,6 +396,7 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
                     subline: "Zadužio: " + (t.poslovodjaImePrezime || t.manager)
                 };
 
+                console.log("Podaci za formu:", t);
                 return [{...t, ...formValues}];
             });
         }
