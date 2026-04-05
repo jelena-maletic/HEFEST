@@ -131,3 +131,17 @@
     background-color: #f5f5f5;
     border-color: #2E2F2E;
 }
+
+.pagination-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background: transparent;
+}
+
+.ant-pagination-item-active {
+    border-color: #475569 !important;
+}
+.ant-pagination-item-active a {
+    color: #475569 !important;
+}

@@ -11,6 +11,7 @@ import CenteredOverlay from "../CenteredOverlay/CenteredOverlay.jsx";
 import { useNotification } from "../NotificationContext.jsx";
 import filterConfig from "../../data/filter-config.json";
 import {getJmb} from "../../auth/auth.js";
+import { Pagination } from 'antd';
 
 const noop = () => {};
 
@@ -35,6 +36,8 @@ export function List({
     const [viewState, setViewState] = useState("list");
     const [listData, setListData] = useState([]);
     const [activeTag, setActiveTag] = useState(initialTag);
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 4; // Broj elemenata po stranici
 
     const [endpointOptionsCache, setEndpointOptionsCache] = useState({});
 
@@ -59,9 +62,14 @@ export function List({
         reloadData();
         setActiveFilters({});
         setSearchQuery("");
+        setCurrentPage(1);
         setEndpointOptionsCache({});
         if (onSuccess) onSuccess(reloadData);
     }, [activeTag, reloadData]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery, activeFilters]);
 
     const handleFilterChange = (property, value) => {
         if (property === "tag_override") {
@@ -127,6 +135,10 @@ export function List({
         return <SmallButton type={state} onClickHandler={() => setViewState(next)} />;
     };
 
+    const indexOfLastItem = currentPage * pageSize;
+    const indexOfFirstItem = indexOfLastItem - pageSize;
+    const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+
     return (
         <div className="list">
             <div className="list-header">
@@ -176,7 +188,7 @@ export function List({
             <hr className="divider" style={{ width: dividerWidth }} />
 
             <div className={`list-content ${viewState}`}>
-                {filteredData.map((data) => (
+                {currentItems.map((data) => (
                     <ListElement
                         key={data.id}
                         screenState={screenState}
@@ -191,6 +203,19 @@ export function List({
                     />
                 ))}
             </div>
+
+            {filteredData.length > pageSize && (
+                <div className="pagination-container" style={{ marginTop: '20px', paddingBottom: '20px' }}>
+                    <Pagination
+                        current={currentPage}
+                        pageSize={pageSize}
+                        total={filteredData.length}
+                        onChange={(page) => setCurrentPage(page)}
+                        showSizeChanger={false}
+                        align="center"
+                    />
+                </div>
+            )}
 
             {showForm && (
                 <CenteredOverlay
