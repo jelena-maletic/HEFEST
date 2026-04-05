@@ -10,6 +10,7 @@ import DynamicForm from "../DynamicForm.jsx";
 import CenteredOverlay from "../CenteredOverlay/CenteredOverlay.jsx";
 import { useNotification } from "../NotificationContext.jsx";
 import filterConfig from "../../data/filter-config.json";
+import {getJmb} from "../../auth/auth.js";
 
 const noop = () => {};
 
@@ -203,15 +204,37 @@ export function List({
                         onSubmit={async (data) => {
                             let finalData = { ...data };
 
-                            if (activeTag === "moji_dnevni_zadaci") {
-                                const loggedInJmb = sessionStorage.getItem("jmb");
+                            const currentTag = activeTag;
+                            const loggedInJmb = sessionStorage.getItem("jmb") || getJmb();
+
+                            if (currentTag === "moji_dnevni_zadaci") {
                                 finalData.tehnicarJmb = loggedInJmb;
                                 finalData.ulogovaniJmb = loggedInJmb;
                             }
 
+                            if (currentTag === "zaduzenja") {
+                                finalData.magacionerJMB = loggedInJmb;
+                                if (finalData.resursId) {
+                                    finalData.resursId = Number(finalData.resursId);
+                                }
+                                finalData.razduzenaKolicina = finalData.razduzenaKolicina || 0;
+                            }
+
+                            if (currentTag === "zahtjevi") {
+                                finalData = {
+                                    opis: data.opis,
+                                    kolicina: Number(data.kolicina),
+                                    resursId: Number(data.resursId),
+                                    magacionerJMB: data.magacionerJmb,
+                                    poslovodjaJMB: loggedInJmb,
+                                    stanjeZahtjeva: "neobradjen",
+                                    datumSlanja: new Date().toISOString()
+                                };
+                            }
+
                             try {
                                 const apiTag =
-                                    activeTag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : activeTag;
+                                    currentTag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : currentTag;
                                 const responseStatus = await createElement(apiTag, finalData);
 
                                 if (responseStatus >= 200 && responseStatus < 300) {
