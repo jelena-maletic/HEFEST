@@ -312,16 +312,17 @@ export function Dashboard({sidebarContents, role}) {
                     {activeScreen === "employees" && (
                         <List
                             isEditable={false}
-                            listTitle={
-                                <Select
-                                    defaultValue="zaposleni"
-                                    variant="borderless"
-                                    className="header-select"
-                                    onChange={(value) => setSelectedEmployeeTag(value)}
-                                    options={employeeOptions}
-                                    dropdownMatchSelectWidth={false}
-                                />
-                            }
+                            // listTitle={
+                            //     <Select
+                            //         defaultValue="zaposleni"
+                            //         variant="borderless"
+                            //         className="header-select"
+                            //         onChange={(value) => setSelectedEmployeeTag(value)}
+                            //         options={employeeOptions}
+                            //         dropdownMatchSelectWidth={false}
+                            //     />
+                            // }
+                            listTitle = {screenTitle}
                             screenState="user"
                             tag={selectedEmployeeTag}
                             onClick={(data) => handleOpenDetails(data, selectedEmployeeTag)}

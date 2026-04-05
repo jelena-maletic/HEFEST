@@ -23,6 +23,7 @@ export const fetchProjects = async () => {
 export const createElement = async (tag, data) => {
     const ulogovaniJmb = getJmb();
     let payload = {...data};
+    console.log("aaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", payload);
 
     // Posebna transformacija za zahtjeve da odgovara backend DTO-u
     if (tag === "zahtjevi") {

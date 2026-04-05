@@ -1,0 +1,14 @@
+{
+  "zaposleni": [
+    {
+      "property": "tag_override",
+      "label": "Uloga",
+      "options": [
+        { "value": "zaposleni", "label": "Svi zaposleni" },
+        { "value": "knjigovodje", "label": "Knjigovođe" },
+        { "value": "poslovodje", "label": "Poslovođe" },
+        { "value": "tehnicari/only", "label": "Tehničari" }
+      ]
+    }
+  ]
+}

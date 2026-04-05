@@ -7,6 +7,7 @@ import { schemaMap } from "../../data/SchemaMap.jsx";
 import DynamicForm from "../DynamicForm.jsx";
 import CenteredOverlay from "../CenteredOverlay/CenteredOverlay.jsx";
 import { NotificationProvider, useNotification } from "../NotificationContext.jsx";
+import filterConfig from "../../data/filter-config.json";
 
 const noop = () => {};
 
@@ -17,7 +18,7 @@ export function List({
                          isEditable,
                          binaryChoice,
                          dividerWidth = "60%",
-                         tag,
+                         tag: initialTag,
                          filterByPoslovodja,
                          filterByTehnicar,
                          filterByMagacioner,
@@ -26,19 +27,43 @@ export function List({
 
     const notify = useNotification();
     console.log("notify object:", notify);
-    const [showForm, setShowForm] = useState(false);
 
-    const selectedSchema = schemaMap[tag];
+    const [showForm, setShowForm] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [activeFilters, setActiveFilters] = useState({});
+    const [viewState, setViewState] = useState("list");
+    const [listData, setListData] = useState([]);
+    const [activeTag, setActiveTag] = useState(initialTag);
+
+    const currentFilters = filterConfig[activeTag] || filterConfig[initialTag] || [];;
+
+    const selectedSchema = schemaMap[activeTag];
 
     const reloadData = async () => {
-        const data = await fetchData(tag, filterByPoslovodja, filterByTehnicar, filterByMagacioner);
+        const data = await fetchData(activeTag, filterByPoslovodja, filterByTehnicar, filterByMagacioner);
         setListData(data || []);
     };
+
+    const handleFilterChange = (property, value) => {
+        if (property === "tag_override") {
+            setActiveTag(value); // This triggers the reloadData useEffect
+        } else {
+            setActiveFilters(prev => ({ ...prev, [property]: value }));
+        }
+    };
+
+    useEffect(() => {
+        setActiveTag(initialTag);
+    }, [initialTag]);
 
     useEffect(() => {
         if (onSuccess) onSuccess(reloadData);
         reloadData();
-    }, [tag]);
+
+        setActiveFilters({});
+        setSearchQuery("");
+    }, [activeTag]);
+
 
     const addButton = (editable) => {
         if(editable === true){
@@ -52,18 +77,19 @@ export function List({
         }
     }
 
-    const [viewState, setViewState] = useState("list");
-
-    const [listData, setListData] = useState([]);
 
     useEffect(() => {
         const getData = async () => {
-            const data = await fetchData(tag, filterByPoslovodja, filterByTehnicar, filterByMagacioner);
+            const data = await fetchData(activeTag, filterByPoslovodja, filterByTehnicar, filterByMagacioner);
             setListData(data || []);
         };
 
         getData();
-    }, [tag]);
+    }, [activeTag]);
+
+    useEffect(() => {
+        reloadData();
+    }, [activeTag]);
 
     const viewButton = (viewState) => {
         if(viewState === "list"){
@@ -81,22 +107,68 @@ export function List({
     //     }
     // }
 
+    const filteredData = listData.filter((item) =>{
+        const matchesSearch = item.title?.toLowerCase().includes(searchQuery.toLowerCase());
+        if (!matchesSearch) return false;
+
+        for (let filter of currentFilters) {
+            if (filter.property === "tag_override") continue;
+
+            const selectedValue = activeFilters[filter.property];
+            if (selectedValue !== undefined && selectedValue !== "") {
+                if (String(item[filter.property]) !== String(selectedValue)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    });
+
     return (
         <div className="list">
             <div className="list-header">
                 <span className="list-title">
                     {listTitle}
                 </span>
-                <div className="small-buttons">
-                    {viewButton(viewState)}
-                    {addButton(isEditable)}
+                <div className="header-actions">
+                    {currentFilters.length > 0 && (
+                        <div className="modular-filters">
+                            {currentFilters.map((filter, index) => (
+                                <select
+                                    key={index}
+                                    className="custom-filter-select"
+                                    value={filter.property === "tag_override" ? activeTag : (activeFilters[filter.property] || "")}
+                                    onChange={(e) => handleFilterChange(filter.property, e.target.value)}
+                                    title={filter.label}
+                                >
+                                    {filter.options.map((opt, optIndex) => (
+                                        <option key={optIndex} value={opt.value}>
+                                            {opt.label}
+                                        </option>
+                                    ))}
+                                </select>
+                            ))}
+                        </div>
+                    )}
+                    <input
+                        type="text"
+                        className="search-input"
+                        placeholder="Pretraži..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    <div className="small-buttons">
+                        {viewButton(viewState)}
+                        {addButton(isEditable)}
+                    </div>
                 </div>
             </div>
 
             <hr className="divider" style={{ width: dividerWidth }} />
 
             <div className={`list-content ${viewState}`}>
-                {listData.map((data, index) => (
+                {filteredData.map((data, index) => (
                     <ListElement
                         key={index}
                         screenState={screenState}
@@ -105,7 +177,7 @@ export function List({
                         isEditable={isEditable}
                         binaryChoice={binaryChoice}
                         className={viewState === "grid" ? "grid-element" : "list-element"}
-                        tag = {tag}
+                        tag = {activeTag}
                         selectedSchema={selectedSchema}
                         onSuccess={reloadData}
                     />
@@ -123,13 +195,13 @@ export function List({
 
                             let finalData = { ...data };
 
-                            if (tag === "moji_dnevni_zadaci") {
+                            if (activeTag === "moji_dnevni_zadaci") {
                                 const loggedInJmb = sessionStorage.getItem("jmb");
                                 finalData.tehnicarJmb = loggedInJmb;
                                 finalData.ulogovaniJmb = loggedInJmb;
                             }
                             try {
-                                const apiTag = tag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : tag;
+                                const apiTag = activeTag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : activeTag;
                                 const responseStatus = await createElement(apiTag, finalData);
                                 console.log("Response status:", responseStatus);
 
