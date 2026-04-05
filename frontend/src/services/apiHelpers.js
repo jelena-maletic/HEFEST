@@ -202,7 +202,7 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
             return dataArray.flatMap((t) => {
                 const oprema = [];
 
-                const lowStock = t.stanjeMagacina <= t.minimalnaKolicina * 1.1;
+                const lowStock = t.stanjeMagacina <= t.minimalnaKolicina * 1.2;
                 let temp = {
                     isLowStock: lowStock,
                     title: t.naziv,
@@ -237,7 +237,7 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
             return dataArray.flatMap((t) => {
                 const materijal = [];
 
-                const lowStock = t.stanjeMagacina <= t.minimalnaKolicina * 1.1;
+                const lowStock = t.stanjeMagacina <= t.minimalnaKolicina * 1.2;
                 let temp = {
                     isLowStock: lowStock,
                     title: t.naziv,

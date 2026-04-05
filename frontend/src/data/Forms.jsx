@@ -488,11 +488,19 @@ export const assignmentSchema = {
                     validator(_, value) {
                         const datumZaduzenja = getFieldValue('datumZaduzenja');
 
-                        if (!value || !datumZaduzenja || value.isSameOrAfter(datumZaduzenja)) {
+                        if (!value || !datumZaduzenja) {
                             return Promise.resolve();
                         }
 
-                        return Promise.reject(new Error('Datum razduženja ne može biti prije datuma zaduženja!'));
+                        if (!value.isValid() || !datumZaduzenja.isValid()) {
+                            return Promise.resolve();
+                        }
+
+                        if (value.isBefore(datumZaduzenja, 'day')) {
+                            return Promise.reject('Datum razduženja ne može biti prije datuma zaduženja!');
+                        }
+
+                        return Promise.resolve();
                     },
                 }),
             ],
