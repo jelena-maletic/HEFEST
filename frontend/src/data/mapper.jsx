@@ -1,7 +1,6 @@
 import React from 'react';
 import { Tag } from 'antd';
 import {formatDate, getStatusTagColor, getPriorityTagColor, calculateAgeFromJMBG} from '../utils/dataHelpers';
-import TimesheetViewer from '../components/TimesheetViewer/TimesheetViewer.jsx';
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import greenPinIcon from "../assets/green-pin.svg";
@@ -22,7 +21,6 @@ const isVisible = (userRole, allowedRoles) => {
     return allowedRoles.includes(userRole?.toLowerCase());
 };
 
-// Pomoćna funkcija za grupisanje sekcija
 const groupItems = (items) => {
     return items.reduce((acc, item) => {
         const lastSection = acc[acc.length - 1];
@@ -35,7 +33,7 @@ const groupItems = (items) => {
     }, []);
 };
 
-// --- MAPERI ZA SPECIFIČNE ENTITETE ---
+
 
 const mapProjectDetails = (data,role) => {
     const allItems=[
@@ -52,18 +50,15 @@ const mapProjectDetails = (data,role) => {
             span: 3,
             render: (textValue) => {
                 console.log("DEBUG LOKACIJA:", data.lokacija);
-                // 1. Izdvajanje koordinata (očekuje se "44.79..., 17.20...")
                 const rawLocation = data.lokacija;
                 let coords = null;
 
                 if (rawLocation && typeof rawLocation === 'string' && rawLocation.includes(',')) {
-                    // split(',') pravi niz ["44.79...", " 17.20..."]
-                    // trim() uklanja razmake, a Number() pretvara u čisti broj
+
                     const parts = rawLocation.split(',').map(p => p.trim());
                     const lat = Number(parts[0]);
                     const lng = Number(parts[1]);
 
-                    // Provjera da li su oba broja ispravna (nisu NaN)
                     if (!isNaN(lat) && !isNaN(lng)) {
                         coords = [lat, lng];
                     }
@@ -71,7 +66,6 @@ const mapProjectDetails = (data,role) => {
 
                 return (
                     <div style={{ width: '100%' }}>
-                        {/* Prikaz adrese (npr. Banja Luka, Kralja Petra...) */}
                         <div style={{ marginBottom: '10px', fontWeight: '500', color: 'rgba(0, 0, 0, 0.85)' }}>
                             {textValue || "Lokacija nije definisana"}
                         </div>
@@ -79,7 +73,6 @@ const mapProjectDetails = (data,role) => {
                         {coords ? (
                             <div style={{ height: '250px', width: '100%', borderRadius: '8px', border: '1px solid #d9d9d9', overflow: 'hidden' }}>
                                 <MapContainer
-                                    // key je obavezan da bi React "resetovao" mapu pri svakom novom otvaranju detalja
                                     key={`map-${coords[0]}-${coords[1]}`}
                                     center={coords}
                                     zoom={15}
@@ -120,9 +113,9 @@ const mapProjectDetails = (data,role) => {
         {
             section: 'Tim na projektu',
             label: 'Odgovorni Poslovođa',
-            value: data.managerIme || data.manager, // Mapira se sa @JsonProperty("manager")
+            value: data.managerIme || data.manager,
             key: 'poslovodja_prikaz',
-            roles: ['direktor'], // Samo direktor vidi ko je poslovođa
+            roles: ['direktor'],
             render: (v) => v ? <strong>{v}</strong> : 'Nije dodijeljen'
         },
         {
@@ -134,7 +127,7 @@ const mapProjectDetails = (data,role) => {
             render: (imena) => (
                 <div style={{ fontWeight: 'normal', color: 'rgba(0, 0, 0, 0.85)' }}>
                     {imena && imena.length > 0
-                        ? imena.join(', ') // Ispisuje imena jedno pored drugog odvojena zarezom
+                        ? imena.join(', ')
                         : 'Nema dodijeljenih tehničara'}
                 </div>
             )
@@ -172,8 +165,6 @@ const mapEmployeeDetails = (data) => {
         { section: 'Lične Informacije', label: 'Telefon', value: data.brojTelefona, key: 'tel' },
 
 
-       /* { section: 'Evidencija Rada', value: data.timesheet, key: 'ts', span: 3,
-            render: (ts) => <TimesheetViewer timesheet={ts} /> }*/
     ]);
 };
 
@@ -206,57 +197,71 @@ const mapMaterialDetails = (data) => {
     ]);
 };
 
-const mapRequestDetails = (data, role) => {
-
-    const managerLabel = role?.toLowerCase() === 'magacioner' ? 'Poslao poslovođa' : 'Zahtjev podnio';
-
+const mapRequestDetails = (data) => {
     return groupItems([
         {
-            section: 'Informacije o Zahtjevu',
-            label: 'Stanje zahtjeva',
-            value: data.stanjeZahtjeva?.toLowerCase() === "neobradjen" ? "neobrađen" : data.stanjeZahtjeva,
-            key: 'status',
-            render: (v) => <Tag color={getStatusTagColor(v)}>{v.toUpperCase()}</Tag>
+            section: 'Osnovne Informacije',
+            label: 'Naziv Resursa',
+            value: data.resursNaziv,
+            key: 'req_res_name',
+            render: (v) => <strong style={{ fontSize: '15px', color: '#1890ff' }}>{safeValue(v)}</strong>
         },
         {
+            section: 'Osnovne Informacije',
+            label: 'Količina',
+            value: data.kolicina,
+            key: 'req_qty',
+            render: (v) => <strong>{v || 0}</strong>
+        },
+        {
+            section: 'Osnovne Informacije',
+            label: 'Stanje zahtjeva',
+            value: data.stanjeZahtjeva,
+            key: 'req_state',
+            render: (v) => {
+                const val = v?.toLowerCase() === "neobradjen" ? "NEOBRAĐEN" : v;
+                return <Tag color={getStatusTagColor(val)}>{val?.toUpperCase() || 'NEMA INFORMACIJA'}</Tag>
+            }
+        },
+
+        {
             section: 'Osobe',
-            label: managerLabel,
-            value: data.poslovodjaIme || data.poslovodja.ime+" "+data.poslovodja.prezime,
-            key: 'manager',
+            label: 'Zahtjev podnio',
+            value: data.poslovodjaImePrezime,
+            key: 'req_mgr',
             render: (v) => <strong>{safeValue(v)}</strong>
         },
         {
             section: 'Osobe',
-            label: 'Magacioner ',
-            value: data.magacioner
-                ? `${data.magacioner.ime} ${data.magacioner.prezime}`
-                : (data.magacionerIme || 'Čeka na obradu'),
-            key: 'warehouse_staff',
-            render: (v) => <span>{v}</span>
+            label: 'Magacioner',
+            value: data.magacionerImePrezime,
+            key: 'req_wh',
+            render: (v) => <span>{safeValue(v)}</span>
         },
-        {
-            section: 'Sadržaj',
-            label: 'Opis zahtjeva',
-            value: safeValue(data.opis, 'Nema opisa'),
-            key: 'desc',
-            span: 3
-        },
+
         {
             section: 'Vremenski okvir',
             label: 'Datum slanja',
             value: formatDate(data.datumSlanja),
-            key: 'date_sent'
+            key: 'req_date_sent'
         },
         {
             section: 'Vremenski okvir',
             label: 'Datum obrade',
-            value: data.datumObrade ? formatDate(data.datumObrade) : 'Čeka na obradu',
-            key: 'date_processed'
+            value: data.datumObrade ? formatDate(data.datumObrade) : 'Zahtjev nije obrađen.',
+            key: 'req_date_proc'
+        },
+
+        {
+            section: 'Opis zahtjeva',
+            value: safeValue(data.opis, 'Nema informacija'),
+            key: 'req_desc',
+            span: 3
         }
     ]);
 };
 
-// --- MAPER ZA DNEVNI IZVJEŠTAJ ---
+
 
 const mapDailyReportDetails = (data) => {
     return groupItems([
@@ -278,7 +283,7 @@ const mapDailyReportDetails = (data) => {
             label: 'Opis Radova',
             value: safeValue(data.opisRadova),
             key: 'desc',
-            span: 3, // Zauzima cijeli red za bolju čitljivost dugih tekstova
+            span: 3,
             render: (v) => <div style={{ fontStyle: 'italic', color: '#595959', padding: '8px', background: '#f5f5f5', borderRadius: '4px' }}>{v}</div>
         },
 
@@ -338,7 +343,6 @@ const mapDailyReportDetails = (data) => {
     ]);
 };
 
-// --- MAPER ZA DNEVNI ZADATAK ---
 
 const mapTaskDetails = (data) => {
     return groupItems([
@@ -366,19 +370,6 @@ const mapTaskDetails = (data) => {
             value: safeValue(data.opis),
             key: 'task_desc',
             span: 3
-            // render: (v) => (
-            //     <div style={{
-            //         padding: '12px',
-            //         background: '#fffbe6',
-            //         border: '1px solid #ffe58f',
-            //         borderRadius: '6px',
-            //         fontSize: '15px',
-            //         lineHeight: '1.6',
-            //         color: '#856404'
-            //     }}>
-            //         {v}
-            //     </div>
-            // )
         },
 
         {
@@ -401,7 +392,7 @@ const mapTaskDetails = (data) => {
 
 const mapSummaryReportDetails = (data) => {
     return groupItems([
-        // ... tvoji ostali elementi (Projekat, Period, Sati) ostaju isti ...
+
         {
             section: 'Osnovne Informacije',
             label: 'Projekat',
@@ -446,7 +437,6 @@ const mapSummaryReportDetails = (data) => {
             render: (v) => <strong>{v}</strong>
         },
 
-        // --- SREĐENI OPIS ---
         {
             section: 'Zaključak / Opis',
             label: 'Dnevne zabilješke u periodu',
@@ -456,7 +446,6 @@ const mapSummaryReportDetails = (data) => {
             render: (v) => {
                 if (!v) return <i>Nema zabilješki</i>;
 
-                // Splitujemo po tačkici, filtriramo prazne redove i čistimo razmake
                 const lines = v.split('•').map(line => line.trim()).filter(line => line.length > 0);
 
                 return (
@@ -479,6 +468,72 @@ const mapSummaryReportDetails = (data) => {
         }
     ]);
 };
+
+
+const mapAssignmentDetails = (data) => {
+    return groupItems([
+        {
+            section: 'Osnovne Informacije',
+            label: 'Naziv Resursa',
+            value: data.resursNaziv,
+            key: 'resurs_ime',
+            render: (v) => <strong style={{ fontSize: '15px' }}>{safeValue(v)}</strong>
+        },
+        {
+            section: 'Osnovne Informacije',
+            label: 'Zadužena Količina',
+            value: data.zaduzenaKolicina,
+            key: 'qty_assigned',
+            render: (v) => <Tag color="blue">{v || 0}</Tag>
+        },
+        {
+            section: 'Osnovne Informacije',
+            label: 'Razdužena Količina',
+            value: data.razduzenaKolicina,
+            key: 'qty_returned',
+            render: (v) => (
+                <Tag color={v === data.zaduzenaKolicina ? 'green' : 'orange'}>
+                    {v || 0}
+                </Tag>
+            )
+        },
+
+        {
+            section: 'Osobe',
+            label: 'Odgovorni Poslovođa',
+            value: data.poslovodjaImePrezime,
+            key: 'assign_mgr',
+            render: (v) => <strong>{safeValue(v)}</strong>
+        },
+        {
+            section: 'Osobe',
+            label: 'Izdao Magacioner',
+            value: data.magacionerImePrezime,
+            key: 'assign_wh'
+        },
+
+        {
+            section: 'Vremenski Okvir',
+            label: 'Datum Zaduženja',
+            value: formatDate(data.datumZaduzenja),
+            key: 'date_assign'
+        },
+        {
+            section: 'Vremenski Okvir',
+            label: 'Datum Razduženja',
+            value: data.datumRazduzenja ? formatDate(data.datumRazduzenja) : 'Još uvijek zaduženo',
+            key: 'date_return',
+            render: (v) => (
+                <span style={{ color: v === 'Još uvijek zaduženo' ? '#faad14' : 'inherit', fontWeight: 500 }}>
+                    {v}
+                </span>
+            )
+        },
+
+    ]);
+};
+
+
 export const mappers = {
     PROJECT: { title: 'Detalji Projekta', mapper: mapProjectDetails },
     EMPLOYEE: { title: 'Detalji Zaposlenog', mapper: mapEmployeeDetails },
@@ -488,7 +543,8 @@ export const mappers = {
     REQUEST: {title:'Detalji Zahtjeva za Resursima', mapper: mapRequestDetails},
     REPORT: { title: 'Detalji Dnevnog Izvještaja', mapper: mapDailyReportDetails },
     TASK: {title:'Detalji Dnevnog Zadatka', mapper: mapTaskDetails },
-    SUMMARY_REPORT: {title:'Detalji Sumarnog Izvještaja', mapper: mapSummaryReportDetails }
+    SUMMARY_REPORT: {title:'Detalji Sumarnog Izvještaja', mapper: mapSummaryReportDetails},
+    ASSIGNMENT: { title: 'Detalji Zaduženja', mapper: mapAssignmentDetails }
 
 
 
