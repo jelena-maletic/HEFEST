@@ -40,7 +40,6 @@ export function ListElement({
     const notify = useNotification();
 
     const renderActionButtons = (editable, binaryChoice) => {
-
         const isIzvjestaj = tag && (tag.includes("izvjestaj") || tag.includes("izvjestaji"));
 
         if (isIzvjestaj) {
@@ -58,6 +57,11 @@ export function ListElement({
             );
         }
         if (editable === true) {
+            const isZahtjev = tag && tag.toLowerCase().includes("zahtjev");
+            const canBeChanged = listElementData.stanjeZahtjeva === "neobradjen";
+            if (isZahtjev && !canBeChanged) {
+                return null;
+            }
             return (
                 <div className="list-element-buttons">
                     <SmallButton
