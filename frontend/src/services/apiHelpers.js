@@ -152,7 +152,7 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
     if (tag === "zaduzenja" && filterPoslovodja) {
         const ulogovaniJmb = getJmb();
         dataArray = dataArray.filter(t =>
-            t.manager === ulogovaniJmb
+            t.poslovodjaJMB === ulogovaniJmb
         );
     }
     if (tag === "dnevni_izvjestaji" && filterPoslovodja) {
