@@ -20,4 +20,5 @@ public class Zaduzenje implements Serializable {
     private BigDecimal zaduzenaKolicina;
     private BigDecimal razduzenaKolicina;
     private String opisZahtjeva;
+    private String resourceType;
 }

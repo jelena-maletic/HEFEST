@@ -58,6 +58,8 @@ public class ZaduzenjeService {
         dto.setResursId(entity.getResurs().getId());
         dto.setResursNaziv(entity.getResurs().getNaziv());
 
+        dto.setResourceType(resolveResourceType(entity.getResurs()));
+
         dto.setPoslovodjaJMB(entity.getPoslovodja().getJmb());
         dto.setPoslovodjaImePrezime(entity.getPoslovodja().getIme() + " " + entity.getPoslovodja().getPrezime());
 
