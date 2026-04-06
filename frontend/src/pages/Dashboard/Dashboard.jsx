@@ -82,7 +82,8 @@ export function Dashboard({sidebarContents, role}) {
         "dnevni_zadaci": "TASK",
         "zahtjevi": "REQUEST",
         "new-request": "REQUEST",
-        "sumarni_izvjestaji":"SUMMARY_REPORT"
+        "sumarni_izvjestaji":"SUMMARY_REPORT",
+        "zaduzenja":"ASSIGNMENT"
     };
 
     const handleOpenDetails = async (rawData, tag) => {
@@ -257,6 +258,7 @@ export function Dashboard({sidebarContents, role}) {
                               listTitle={screenTitle}
                               screenState="taken-resources"
                               tag="zaduzenja"
+                              onClick={(data) => handleOpenDetails(data, "zaduzenja")}
                         />
                     }
 
