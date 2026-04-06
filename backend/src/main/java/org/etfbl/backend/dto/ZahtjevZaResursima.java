@@ -26,4 +26,5 @@ public class ZahtjevZaResursima implements Serializable {
     private String poslovodjaImePrezime;
     private String magacionerImePrezime;
     private String resursNaziv;
+    private String resourceType;
 }

@@ -9,6 +9,7 @@ import org.etfbl.backend.repository.MagacionerRepository;
 import org.etfbl.backend.repository.PoslovodjaRepository;
 import org.etfbl.backend.repository.ResursRepository;
 import org.etfbl.backend.repository.ZahtjevZaResursimaRepository;
+import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,14 @@ public class ZahtjevZaResursimaService {
                 .toList();
     }
 
+    private String resolveResourceType(ResursEntity resurs) {
+        if (resurs == null) return "MATERIJAL";
+        String className = Hibernate.getClass(resurs).getSimpleName();
+        if (className.contains("Vozilo")) return "VOZILO";
+        if (className.contains("RadnaOprema")) return "OPREMA";
+        return "MATERIJAL";
+    }
+
     private ZahtjevZaResursima convertToDto(ZahtjevZaResursimaEntity entity) {
         ZahtjevZaResursima dto = modelMapper.map(entity, ZahtjevZaResursima.class);
 
@@ -51,6 +60,7 @@ public class ZahtjevZaResursimaService {
 
         dto.setResursId(entity.getResurs().getId());
         dto.setResursNaziv(entity.getResurs().getNaziv());
+        dto.setResourceType(resolveResourceType(entity.getResurs()));
 
         return dto;
     }
