@@ -11,6 +11,9 @@ import {updateZadatakStatus} from "../../../services/apiHelpers.js";
 import { FilePdfOutlined } from '@ant-design/icons';
 import {BUTTON_TYPES} from "../../../constants/smallButtonTypes.js";
 import { Tooltip } from 'antd';
+import dayjs from "dayjs";
+import {assignmentSchema} from "../../../data/Forms.jsx";
+import {getJmb} from "../../../auth/auth.js";
 
 export function ListElement({
                                 screenState,
@@ -26,6 +29,7 @@ export function ListElement({
     const [isHovered, setIsHovered] = useState(false);
     const [updateForm, setUpdateForm] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    const [zahtjevDataForZaduzenje, setZahtjevDataForZaduzenje] = useState(null);
     const statusClass = listElementData.statusColor ? `status-${listElementData.statusColor}` : '';
     const truncateText = (text, maxLength) => {
         if (!text) return "";
@@ -93,15 +97,25 @@ export function ListElement({
                     className="nested-button"
                     type="confirm"
                     onClickHandler={ async (e) => {
-                        /*e.stopPropagation();
-                        console.log(listElementData);
-                        updateZahtjevStatus(listElementData.id, "odobren");
-                        onSuccess && onSuccess();*/
                         e.stopPropagation();
                         try {
+                            const ulogovaniMagacionerJmb = getJmb();
                             await updateZahtjevStatus(listElementData.id, "odobren");
                             notify.success("Status ažuriran");
-                            if (onSuccess) await onSuccess();
+                            //if (onSuccess) await onSuccess();
+                            const preparedData = {
+                                idZahtjeva: listElementData.id,
+                                resursId: listElementData.resursId,
+                                resourceType: listElementData.resourceType,
+                                zaduzenaKolicina: listElementData.kolicina,
+                                poslovodjaJMB: listElementData.poslovodjaJMB,
+                                magacionerJMB: ulogovaniMagacionerJmb,
+                                datumZaduzenja: dayjs(),
+                                opisZahtjeva: listElementData.opis
+                            };
+
+                            setZahtjevDataForZaduzenje(preparedData);
+                            setUpdateForm(true);
                         } catch (error) {
                             notify.error("Greška pri ažuriranju ", error);
                         }
@@ -237,19 +251,35 @@ export function ListElement({
                 {renderActionButtons(isEditable, binaryChoice)}
             </div>
             {updateForm && (
-                <CenteredOverlay className="form-overlay" isVisible={updateForm} onClose={() => setUpdateForm(false)}>
+                <CenteredOverlay className="form-overlay" isVisible={updateForm} onClose={() => {setUpdateForm(false);setZahtjevDataForZaduzenje(null);}}>
                     <DynamicForm className="form"
-                                 schema={selectedSchema}
-                                 onClose={() => setUpdateForm(false)}
-                                 initialValues={listElementData}
+                                 schema={zahtjevDataForZaduzenje ? assignmentSchema : selectedSchema}
+                                 onClose={() => {
+                                     setUpdateForm(false);
+                                     setZahtjevDataForZaduzenje(null);
+                                 }}
+                                 initialValues={zahtjevDataForZaduzenje || listElementData}
                                  onSubmit={async (formData) => {
                                      try {
+                                         let response;
+                                         if(zahtjevDataForZaduzenje)
+                                         {
+                                             const finalPayload = {
+                                                 ...formData,
+                                                 magacionerJMB: getJmb(),
+                                                 idZahtjeva: zahtjevDataForZaduzenje.idZahtjeva
+                                             };
 
-                                         const response = await updateElement(tag, listElementData.id, formData);
-
-                                         notify.success("Uspješno ažuriranje", "Podaci su uspješno izmijenjeni.", response);
-
+                                             console.log("Konačni payload koji ide na server:", finalPayload);
+                                             response = await api.service(true).post('/zaduzenja', finalPayload);
+                                             notify.success("Zaduženje uspješno kreirano");
+                                         }
+                                         else {
+                                             response = await updateElement(tag, listElementData.id, formData);
+                                             notify.success("Uspješno ažuriranje", "Podaci su uspješno izmijenjeni.", response);
+                                         }
                                          setUpdateForm(false);
+                                         setZahtjevDataForZaduzenje(null);
                                          onSuccess && onSuccess();
                                      } catch (error) {
                                          console.error("Greška pri ažuriranju:", error);
