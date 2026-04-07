@@ -10,6 +10,7 @@ import org.etfbl.backend.repository.TehnicarRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -93,8 +94,16 @@ public class DnevniIzvjestajService {
         entity.setNocniSati(dto.getNocniSati());
         entity.setPrekovremeniSati(dto.getPrekovremeniSati());
         entity.setTerenskiSati(dto.getTerenskiSati());
-        entity.setUkupniSati(dto.getUkupniSati());
+        //entity.setUkupniSati(dto.getUkupniSati());
         entity.setOpisRadova(dto.getOpisRadova());
+        BigDecimal ukupno = BigDecimal.ZERO;
+
+        if (dto.getSatiRada() != null) ukupno = ukupno.add(dto.getSatiRada());
+        if (dto.getNocniSati() != null) ukupno = ukupno.add(dto.getNocniSati());
+        if (dto.getPrekovremeniSati() != null) ukupno = ukupno.add(dto.getPrekovremeniSati());
+        if (dto.getTerenskiSati() != null) ukupno = ukupno.add(dto.getTerenskiSati());
+
+        entity.setUkupniSati(ukupno);
     }
 
     private DnevniIzvjestaj mapToDto(DnevniIzvjestajEntity entity) {
