@@ -222,12 +222,12 @@ const CreateDnevniIzvjestajForm = ({ onClose, onSuccess, role }) => {
                         </Form.Item>
                     </Col>*/}
                     <Col span={8}>
-                        <Form.Item name="satiRada" label="Redovni" rules={[{ required: true }]}>
+                        <Form.Item name="satiRada" label="Redovni sati" rules={[{ required: true }]}>
                             <InputNumber size="large" min={0} style={{ width: "100%" }} placeholder="0" />
                         </Form.Item>
                     </Col>
                     <Col span={8}>
-                        <Form.Item name="prekovremeniSati" label="Prekovremeni">
+                        <Form.Item name="prekovremeniSati" label="Prekovremeni sati">
                             <InputNumber size="large" min={0} style={{ width: "100%" }} placeholder="0" />
                         </Form.Item>
                     </Col>
@@ -235,18 +235,18 @@ const CreateDnevniIzvjestajForm = ({ onClose, onSuccess, role }) => {
 
                 <Row gutter={16}>
                     <Col span={8}>
-                        <Form.Item name="nocniSati" label="Noćni Rad">
+                        <Form.Item name="nocniSati" label="Noćni sati">
                             <InputNumber size="large" min={0} style={{ width: "100%" }} placeholder="0" />
                         </Form.Item>
                     </Col>
                     <Col span={8}>
-                        <Form.Item name="terenskiSati" label="Terenski Dodatak">
+                        <Form.Item name="terenskiSati" label="Terenski sati">
                             <InputNumber size="large" min={0} style={{ width: "100%" }} placeholder="0" />
                         </Form.Item>
                     </Col>
                 </Row>
 
-                <Form.Item name="opisRadova" label="Opis Izvršenih Radova" rules={[{ required: true }]}>
+                <Form.Item name="opisRadova" label="Opis izvršenih radova" rules={[{ required: true }]}>
                     <TextArea rows={4} placeholder="Unesite detaljan opis radova na gradilištu..." style={{ borderRadius: 2 }} />
                 </Form.Item>
 
@@ -357,7 +357,7 @@ const CreateDnevniIzvjestajForm = ({ onClose, onSuccess, role }) => {
                         onClick={handleSubmit}
                         style={{ borderRadius: 4, paddingLeft: 40, paddingRight: 40 }}
                     >
-                        Snimi Izvještaj
+                        Kreiraj dnevni izvještaj
                     </Button>
                 </div>
             </Form>

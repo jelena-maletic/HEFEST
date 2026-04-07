@@ -81,7 +81,7 @@ const CreateSumarniIzvjestajForm = ({ onClose, onSuccess }) => {
     };
 
     return (
-        <Card title={<Space><FileDoneOutlined /> Kreiranje Sumarnog Izvještaja</Space>} bordered={false}>
+        <Card title={<Space><FileDoneOutlined /> Kreiranje sumarnog izvještaja</Space>} bordered={false}>
             <Form form={form} layout="vertical" onFinish={handleSubmit}>
                 <Row gutter={16}>
                     <Col span={12}>
@@ -124,7 +124,7 @@ const CreateSumarniIzvjestajForm = ({ onClose, onSuccess }) => {
 
                 <div style={{ textAlign: 'right', gap: 10, display: 'flex', justifyContent: 'flex-end' }}>
                     <Button onClick={onClose}>Odustani</Button>
-                    <Button type="primary" htmlType="submit" loading={loading}>Kreiraj Sumarni Izvještaj</Button>
+                    <Button type="primary" htmlType="submit" loading={loading}>Kreiraj sumarni izvještaj</Button>
                 </div>
             </Form>
         </Card>

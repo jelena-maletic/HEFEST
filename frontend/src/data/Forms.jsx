@@ -1,6 +1,6 @@
 export const projectSchema = {
     title:"Podaci o projektu",
-    submitLabel: "Potvrdi",
+    submitLabel: "Sačuvaj",
     layout: "vertical",
     fields: [
         {
@@ -128,7 +128,7 @@ export const projectSchema = {
 
 export const vehicleSchema = {
     title:"Podaci o vozilu",
-    submitLabel: "Sačuvaj vozilo",
+    submitLabel: "Sačuvaj",
     layout: "vertical",
     fields: [
         {
@@ -222,7 +222,7 @@ export const vehicleSchema = {
 
 export const equipmentSchema = {
     title:"Podaci o opremi",
-    submitLabel: "Sačuvaj opremu",
+    submitLabel: "Sačuvaj",
     layout: "vertical",
     fields: [
         {
@@ -279,7 +279,7 @@ export const equipmentSchema = {
 
 export const materialSchema = {
     title:"Podaci o materijalu",
-    submitLabel: "Sačuvaj materijal",
+    submitLabel: "Sačuvaj",
     layout: "vertical",
     fields: [
         {
@@ -356,7 +356,7 @@ export const materialSchema = {
 
 export const requestSchema = {
     title: "Zahtjev za zaduživanje resursa",
-    submitLabel: "Pošalji zahtjev",
+    submitLabel: "Sačuvaj",
     layout: "vertical",
     fields: [
         {
@@ -395,7 +395,7 @@ export const requestSchema = {
             props: { min: 0.1 }
         },
         {
-            name: 'magacionerJmb',
+            name: 'magacionerJMB',
             label: 'Magacioner',
             type: "select",
             required: true,
@@ -469,7 +469,7 @@ export const changePasswordSchema = {
 };
 export const assignmentSchema = {
     title: "Zaduživanje resursa",
-    submitLabel: "Sačuvaj zaduženje",
+    submitLabel: "Sačuvaj",
     fields: [
         {
             name: "poslovodjaJMB",
@@ -588,7 +588,7 @@ export const assignmentSchema = {
 
 export const dailyTaskSchema = {
     title:"Podaci o dnevnom zadatku",
-    submitLabel: "Kreiraj zadatak",
+    submitLabel: "Sačuvaj",
     layout: "vertical",
     fields: [
         {
@@ -620,7 +620,7 @@ export const dailyTaskSchema = {
 };
 export const myDailyTaskSchema = {
     title: "Podaci o dnevnom zadatku",
-    submitLabel: "Kreiraj moj zadatak",
+    submitLabel: "Sačuvaj",
     layout: "vertical",
     fields: [
         {
@@ -643,7 +643,7 @@ export const myDailyTaskSchema = {
 
 export const utroseniMaterijalSchema = {
     title: "Utroseni materijal",
-    submitLabel: "Kreiraj",
+    submitLabel: "Sačuvaj",
     layout: "vertical",
     fields: [
 
@@ -712,7 +712,7 @@ export const utroseniMaterijalSchema = {
 
 export const dnevniIzvjestajSchema = {
     title: "Dnevni izvještaj",
-    submitLabel: "Kreiraj",
+    submitLabel: "Sačuvaj",
     layout: "vertical",
     fields: [
         {
@@ -786,7 +786,7 @@ export const dnevniIzvjestajSchema = {
 
 export const sumarniIzvjestajSchema = {
     title: "Sumarni izvještaj",
-    submitLabel: "Kreiraj",
+    submitLabel: "Sačuvaj",
     layout: "vertical",
     fields: [
         {
