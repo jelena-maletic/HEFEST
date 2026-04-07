@@ -232,6 +232,10 @@ export function List({
                             const currentTag = activeTag;
                             const loggedInJmb = sessionStorage.getItem("jmb") || getJmb();
 
+                            if (currentTag === "projekti") {
+                                finalData.ulogovaniJmb = loggedInJmb;
+                            }
+
                             if (currentTag === "moji_dnevni_zadaci") {
                                 finalData.tehnicarJmb = loggedInJmb;
                                 finalData.ulogovaniJmb = loggedInJmb;
