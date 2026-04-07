@@ -347,7 +347,7 @@ export const materialSchema = {
             options: [
                 { value: 'kom', label: 'Komad (kom)' },
                 { value: 'm', label: 'Metar (m)' },
-                { value: 'm2', label: 'Kvadratni metar (m²)' },
+                { value: 'm²', label: 'Kvadratni metar (m²)' },
                 { value: 'kg', label: 'Kilogram (kg)' }
             ]
         },

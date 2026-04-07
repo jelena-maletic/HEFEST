@@ -339,6 +339,70 @@ const mapDailyReportDetails = (data) => {
                     <strong>{v || 0} radnih sati</strong>
                 </Tag>
             )
+        },
+        {
+            section: 'Utrošeni Materijal',
+            value: data.utroseniMaterijali,
+            key: 'materials_list',
+            span: 3,
+            render: (mats) => {
+                if (!mats || mats.length === 0) {
+                    return <div style={{ color: '#bfbfbf', padding: '8px' }}>Nema evidentiranog materijala za ovaj izvještaj.</div>;
+                }
+
+                return (
+                    <div style={{ marginTop: '10px', overflowX: 'auto', border: '1px solid #f0f0f0', borderRadius: '8px' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#fff', fontSize: '13px' }}>
+                            <thead>
+                            <tr style={{ backgroundColor: '#fafafa', borderBottom: '2px solid #f0f0f0' }}>
+                                <th style={{ padding: '12px 8px', textAlign: 'left', color: '#8c8c8c', fontWeight: 600 }}>Naziv</th>
+                                <th style={{ padding: '12px 8px', textAlign: 'center', color: '#8c8c8c', fontWeight: 600 }}>Kol.</th>
+                                <th style={{ padding: '12px 8px', textAlign: 'left', color: '#8c8c8c', fontWeight: 600 }}>Etaža</th>
+                                <th style={{ padding: '12px 8px', textAlign: 'left', color: '#8c8c8c', fontWeight: 600 }}>Pozicija</th>
+                                <th style={{ padding: '12px 8px', textAlign: 'left', color: '#8c8c8c', fontWeight: 600 }}>S. Krug</th>
+                                <th style={{ padding: '12px 8px', textAlign: 'left', color: '#8c8c8c', fontWeight: 600 }}>Namjena</th>
+                                <th style={{ padding: '12px 8px', textAlign: 'left', color: '#8c8c8c', fontWeight: 600 }}>Napomena</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {mats.map((m, index) => (
+                                <tr key={index} style={{ borderBottom: '1px solid #f0f0f0' }}>
+                                    <td style={{ padding: '10px 8px', fontWeight: 'bold', color: '#262626' }}>
+                                        {m.materijal?.naziv || "Nije definisano."}
+                                    </td>
+
+                                    <td style={{ padding: '10px 8px', textAlign: 'center' }}>
+                                        <Tag color="cyan" style={{ margin: 0 }}>
+                                            {m.kolicina} {m.materijal?.jedinicaMjere || ''}
+                                        </Tag>
+                                    </td>
+
+                                    <td style={{ padding: '10px 8px', color: '#595959' }}>
+                                        {m.etaza || '-'}
+                                    </td>
+
+                                    <td style={{ padding: '10px 8px', color: '#595959' }}>
+                                        {m.pozicija || '-'}
+                                    </td>
+
+                                    <td style={{ padding: '10px 8px', color: '#595959' }}>
+                                        {m.strujniKrug || '-'}
+                                    </td>
+
+                                    <td style={{ padding: '10px 8px', color: '#595959' }}>
+                                        {m.namjena || '-'}
+                                    </td>
+
+                                    <td style={{ padding: '10px 8px', fontStyle: 'italic', color: '#8c8c8c' }}>
+                                        {m.napomena || '-'}
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+                );
+            }
         }
     ]);
 };
