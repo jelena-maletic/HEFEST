@@ -147,7 +147,7 @@
       "tag": "tasks"
     },
     {
-      "label": "Kreiranje izvještaja",
+      "label": "Kreiranje dnevnog izvještaja",
       "icon": "add-report",
       "iconHover": "add-report-inverted",
       "tag": "add-report"
