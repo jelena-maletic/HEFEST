@@ -237,6 +237,10 @@ export function List({
                                 finalData.ulogovaniJmb = loggedInJmb;
                             }
 
+                            if (currentTag === "dnevni_zadaci") {
+                                finalData.ulogovaniJmb = loggedInJmb;
+                            }
+
                             if (currentTag === "zaduzenja") {
                                 finalData.magacionerJMB = loggedInJmb;
                                 if (finalData.resursId) {
