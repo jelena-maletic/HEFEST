@@ -9,6 +9,7 @@ import org.etfbl.backend.model.DnevniIzvjestajEntity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * DTO for {@link DnevniIzvjestajEntity}
@@ -30,4 +31,5 @@ public class DnevniIzvjestaj implements Serializable {
     private BigDecimal terenskiSati;
     private BigDecimal ukupniSati;
     private String opisRadova;
+    private List<UtroseniMaterijal> utroseniMaterijali;
 }

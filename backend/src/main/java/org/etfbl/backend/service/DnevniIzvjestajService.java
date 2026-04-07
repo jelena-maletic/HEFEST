@@ -3,10 +3,8 @@ package org.etfbl.backend.service;
 import jakarta.transaction.Transactional;
 import org.etfbl.backend.dto.*;
 import org.etfbl.backend.model.DnevniIzvjestajEntity;
-import org.etfbl.backend.repository.DnevniIzvjestajRepository;
-import org.etfbl.backend.repository.PoslovodjaUpravljaProjektomRepository;
-import org.etfbl.backend.repository.SumarniIzvjestajRepository;
-import org.etfbl.backend.repository.TehnicarRepository;
+import org.etfbl.backend.model.UtroseniMaterijalEntity;
+import org.etfbl.backend.repository.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -20,17 +18,22 @@ public class DnevniIzvjestajService {
         private final DnevniIzvjestajRepository dnevniIzvjestajRepository;
         private final PoslovodjaUpravljaProjektomRepository poslovodjaUpravljaProjektomRepository;
         private final TehnicarRepository tehnicarRepository;
+        private final UtroseniMaterijalRepository utroseniMaterijalRepository;
+    private final MaterijalRepository materijalRepository;
 
-        public DnevniIzvjestajService(ModelMapper modelMapper, DnevniIzvjestajRepository dnevniIzvjestajRepository, PoslovodjaUpravljaProjektomRepository poslovodjaUpravljaProjektomRepository, TehnicarRepository tehnicarRepository) {
+    public DnevniIzvjestajService(ModelMapper modelMapper, DnevniIzvjestajRepository dnevniIzvjestajRepository, PoslovodjaUpravljaProjektomRepository poslovodjaUpravljaProjektomRepository, TehnicarRepository tehnicarRepository, UtroseniMaterijalRepository utroseniMaterijalRepository, MaterijalRepository materijalRepository) {
             this.modelMapper = modelMapper;
             this.dnevniIzvjestajRepository = dnevniIzvjestajRepository;
             this.poslovodjaUpravljaProjektomRepository = poslovodjaUpravljaProjektomRepository;
             this.tehnicarRepository = tehnicarRepository;
-        }
+        this.utroseniMaterijalRepository = utroseniMaterijalRepository;
+        this.materijalRepository = materijalRepository;
+    }
 
     public List<DnevniIzvjestaj> getAll() {
         return dnevniIzvjestajRepository.findAll().stream()
                 .map(this::mapToDto)
+                .map(this::popuniMaterijale)
                 .toList();
     }
 
@@ -43,9 +46,10 @@ public class DnevniIzvjestajService {
     }
 
     public DnevniIzvjestaj getById(Integer id) {
-        DnevniIzvjestajEntity entity = dnevniIzvjestajRepository.findById(id)
+        return dnevniIzvjestajRepository.findById(id)
+                .map(this::mapToDto)
+                .map(this::popuniMaterijale) // Korištenje pomoćne metode za konzistentnost
                 .orElseThrow(() -> new RuntimeException("Dnevni izvještaj nije pronađen: " + id));
-        return mapToDto(entity);
     }
 
     public DnevniIzvjestaj create(DnevniIzvjestaj dto) {
@@ -146,6 +150,23 @@ public class DnevniIzvjestajService {
             dto.setTehnicar(tDto);
         }
 
+        return dto;
+    }
+    private DnevniIzvjestaj popuniMaterijale(DnevniIzvjestaj dto) {
+        if (dto != null && dto.getIdIzvjestaja() != null) {
+            List<UtroseniMaterijal> materijali = utroseniMaterijalRepository.nadjiSveZaIzvjestaj(dto.getIdIzvjestaja())
+                    .stream()
+                    .map(m -> {
+                        UtroseniMaterijal mDto = modelMapper.map(m, UtroseniMaterijal.class);
+                        // Eksplicitno mapiranje ugniježđenog materijala ako modelMapper zakaže
+                        if (m.getMaterijal() != null) {
+                            mDto.setMaterijal(modelMapper.map(m.getMaterijal(), Materijal.class));
+                        }
+                        return mDto;
+                    })
+                    .toList();
+            dto.setUtroseniMaterijali(materijali);
+        }
         return dto;
     }
 

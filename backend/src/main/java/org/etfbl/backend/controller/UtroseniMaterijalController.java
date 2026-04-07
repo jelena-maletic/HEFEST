@@ -18,11 +18,10 @@ public class UtroseniMaterijalController {
     public UtroseniMaterijalController(UtroseniMaterijalService utroseniMaterijalService) {
         this.utroseniMaterijalService = utroseniMaterijalService;
     }
-
     @GetMapping
-        public List<UtroseniMaterijal> getAll() {
-            return utroseniMaterijalService.getAllUtroseniMaterijal();
-        }
+    public List<UtroseniMaterijal> getAll() {
+        return utroseniMaterijalService.getAllUtroseniMaterijal();
+    }
 
     @GetMapping("/{id}")
     public UtroseniMaterijal getOne(@PathVariable Integer id) {
