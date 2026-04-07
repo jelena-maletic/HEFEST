@@ -205,7 +205,7 @@ export function Dashboard({sidebarContents, role}) {
 
                     {activeScreen === "report-overview" && <div className={"report-lists"}>
                         <List isEditable={false}
-                              listTitle={"Dnevni " + screenTitle}
+                              listTitle={"Dnevni " + screenTitle.toLowerCase()}
                               screenState="report-overview"
                               dividerWidth={"90%"}
                               tag="dnevni_izvjestaji"
@@ -213,7 +213,7 @@ export function Dashboard({sidebarContents, role}) {
                         />
 
                         <List isEditable={false}
-                              listTitle={"Sumarni " + screenTitle}
+                              listTitle={"Sumarni " + screenTitle.toLowerCase()}
                               screenState="report-overview"
                               dividerWidth={"90%"}
                               tag="sumarni_izvjestaji"
@@ -301,7 +301,7 @@ export function Dashboard({sidebarContents, role}) {
                         <div className={"report-lists"}>
                             <List
                                 isEditable={false}
-                                listTitle={"Dnevni " + screenTitle}
+                                listTitle={"Dnevni " + screenTitle.toLowerCase()}
                                 screenState="report-overview"
                                 dividerWidth={"90%"}
                                 tag="dnevni_izvjestaji"
@@ -310,7 +310,7 @@ export function Dashboard({sidebarContents, role}) {
                             />
 
                             <List isEditable={false}
-                                  listTitle={"Sumarni " + screenTitle}
+                                  listTitle={"Sumarni " + screenTitle.toLowerCase()}
                                   screenState="report-overview"
                                   dividerWidth={"90%"} tag="sumarni_izvjestaji"
                                   onClick={(data) => handleOpenDetails(data, "sumarni_izvjestaji")} // DODATO

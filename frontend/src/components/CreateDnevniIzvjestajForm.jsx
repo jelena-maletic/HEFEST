@@ -157,21 +157,21 @@ const CreateDnevniIzvjestajForm = ({ onClose, onSuccess, role }) => {
     return (
         <Card
             bordered={false}
-            title={<Space><FileTextOutlined /><span>Novi Dnevni Izvještaj</span></Space>}
+            title={<Space><FileTextOutlined /><span>Novi dnevni izvještaj</span></Space>}
             style={{ width: "100%", maxWidth: 900, margin: "0 auto", borderRadius: 4, boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
         >
             <Form form={form} layout="vertical">
 
                 <Row gutter={24}>
                     <Col xs={24} md={16}>
-                        <Form.Item name="idProjekta" label="Odabir Projekta" rules={[{ required: true }]}>
+                        <Form.Item name="idProjekta" label="Odabir projekta" rules={[{ required: true }]}>
                             <Select size="large" placeholder="Pretražite projekte..." showSearch optionFilterProp="children">
                                 {projekti.map(p => <Option key={p.id} value={p.id}>{p.naziv}</Option>)}
                             </Select>
                         </Form.Item>
                     </Col>
                     <Col xs={24} md={8}>
-                        <Form.Item name="datum" label="Datum Izvođenja" rules={[{ required: true }]}>
+                        <Form.Item name="datum" label="Datum izvođenja" rules={[{ required: true }]}>
                             <DatePicker size="large" style={{ width: "100%" }} />
                         </Form.Item>
                     </Col>
@@ -213,7 +213,7 @@ const CreateDnevniIzvjestajForm = ({ onClose, onSuccess, role }) => {
                     </div>
                 )}
 
-                <Divider orientation="left" style={{ borderColor: "#d9d9d9" }}>Radni Sati</Divider>
+                <Divider orientation="left" style={{ borderColor: "#d9d9d9" }}>Radni sati</Divider>
 
                 <Row gutter={16}>
                     {/*<Col span={8}>
@@ -251,7 +251,7 @@ const CreateDnevniIzvjestajForm = ({ onClose, onSuccess, role }) => {
                 </Form.Item>
 
                 <Divider orientation="left" style={{ borderColor: "#d9d9d9" }}>
-                    <Space><BuildOutlined /> Utrošeni Materijal</Space>
+                    <Space><BuildOutlined /> Utrošeni materijal</Space>
                 </Divider>
 
                 {stavke.map((stavka, index) => (

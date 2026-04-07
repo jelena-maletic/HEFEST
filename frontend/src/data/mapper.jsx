@@ -12,7 +12,7 @@ const detailIcon = new L.Icon({
     iconSize: [25, 41],
     iconAnchor: [12, 41],
 });
-const safeValue = (value, fallback = 'Nema informacija') => {
+const safeValue = (value, fallback = 'Nema informacija.') => {
     if (value === null || value === undefined || value === "") return fallback;
     return value;
 };
@@ -37,19 +37,18 @@ const groupItems = (items) => {
 
 const mapProjectDetails = (data,role) => {
     const allItems=[
-        { section: 'Osnovni Detalji', label: 'Naziv', value: data.naziv, key: 'naziv' },
-        { section: 'Osnovni Detalji', label: 'Opis', value: safeValue(data.opis), key: 'opis' },
-        { section: 'Osnovni Detalji', label: 'Prioritet', value: data.prioritet, key: 'prio',
+        { section: 'Osnovne informacije', label: 'Naziv', value: data.naziv, key: 'naziv' },
+        { section: 'Osnovne informacije', label: 'Opis', value: safeValue(data.opis), key: 'opis' },
+        { section: 'Osnovne informacije', label: 'Prioritet', value: data.prioritet, key: 'prio',
             render: (v) => <Tag color={getPriorityTagColor(v)}>{v}</Tag> },
-        { section: 'Osnovni Detalji', label: 'Klijent', value: data.klijent, key: 'klijent' },
+        { section: 'Osnovne informacije', label: 'Klijent', value: data.klijent, key: 'klijent' },
         {
-            section: 'Osnovni Detalji',
+            section: 'Osnovne informacije',
             label: 'Lokacija',
             value: data.lokacijaNaziv || data.lokacija,
             key: 'lokacija',
             span: 3,
             render: (textValue) => {
-                console.log("DEBUG LOKACIJA:", data.lokacija);
                 const rawLocation = data.lokacija;
                 let coords = null;
 
@@ -67,7 +66,7 @@ const mapProjectDetails = (data,role) => {
                 return (
                     <div style={{ width: '100%' }}>
                         <div style={{ marginBottom: '10px', fontWeight: '500', color: 'rgba(0, 0, 0, 0.85)' }}>
-                            {textValue || "Lokacija nije definisana"}
+                            {textValue || "Lokacija nije definisana."}
                         </div>
 
                         {coords ? (
@@ -105,22 +104,22 @@ const mapProjectDetails = (data,role) => {
                 );
             }
         },
-        { section: 'Vremenski Okvir', label: 'Status', value: data.status, key: 'status',
+        { section: 'Vremenski okvir', label: 'Status', value: data.status, key: 'status',
             render: (v) => <Tag color={getStatusTagColor(v)}>{v}</Tag> },
-        { section: 'Vremenski Okvir', label: 'Početak rada', value: formatDate(data.pocetakRada)|| "Nije počelo", key: 'start' },
-        { section: 'Vremenski Okvir', label: 'Rok', value: formatDate(data.rok), key: 'deadline' },
-        { section: 'Vremenski Okvir', label: 'Završeno', value: data.krajRada ? formatDate(data.krajRada) : 'U toku', key: 'end' },
+        { section: 'Vremenski okvir', label: 'Početak rada', value: formatDate(data.pocetakRada)|| "Nije počelo", key: 'start' },
+        { section: 'Vremenski okvir', label: 'Rok', value: formatDate(data.rok), key: 'deadline' },
+        { section: 'Vremenski okvir', label: 'Kraj rada', value: data.krajRada ? formatDate(data.krajRada) : 'Nije definisan.', key: 'end' },
         {
             section: 'Tim na projektu',
-            label: 'Odgovorni Poslovođa',
+            label: 'Odgovorni poslovođa',
             value: data.managerIme || data.manager,
             key: 'poslovodja_prikaz',
             roles: ['direktor'],
-            render: (v) => v ? <strong>{v}</strong> : 'Nije dodijeljen'
+            render: (v) => v ? <strong>{v}</strong> : 'Nije dodijeljen.'
         },
         {
             section: 'Tim na projektu',
-            label: 'Tim Tehničara',
+            label: 'Tim tehničara',
             value: data.projectTeamImena || data.projectTeam,
             key: 'tehnicari_prikaz',
             roles: ['direktor', 'poslovodja'],
@@ -128,7 +127,7 @@ const mapProjectDetails = (data,role) => {
                 <div style={{ fontWeight: 'normal', color: 'rgba(0, 0, 0, 0.85)' }}>
                     {imena && imena.length > 0
                         ? imena.join(', ')
-                        : 'Nema dodijeljenih tehničara'}
+                        : 'Nema dodijeljenih tehničara.'}
                 </div>
             )
         },
@@ -153,16 +152,16 @@ const mapProjectDetails = (data,role) => {
 
 const mapEmployeeDetails = (data) => {
     return groupItems([
-        { section: 'Lične Informacije', label: 'Ime i Prezime', value: `${data.ime} ${data.prezime}`, key: 'full_name' },
+        { section: 'Lične informacije', label: 'Ime i prezime', value: `${data.ime} ${data.prezime}`, key: 'full_name' },
 
         {
-            section: 'Lične Informacije',
+            section: 'Lične informacije',
             label: 'Godine',
             value: calculateAgeFromJMBG( data.jmb),
             key: 'age'
         },
-        { section: 'Lične Informacije', label: 'Email', value: data.email, key: 'email' },
-        { section: 'Lične Informacije', label: 'Telefon', value: data.brojTelefona, key: 'tel' },
+        { section: 'Lične informacije', label: 'Email', value: data.email, key: 'email' },
+        { section: 'Lične informacije', label: 'Telefon', value: data.brojTelefona, key: 'tel' },
 
 
     ]);
@@ -170,11 +169,11 @@ const mapEmployeeDetails = (data) => {
 
 const mapVehicleDetails = (data) => {
     return groupItems([
-        { section: 'Tehnički Podaci', label: 'Naziv', value: data.naziv, key: 'name' },
-        { section: 'Tehnički Podaci', label: 'Registracija', value: data.registarskiBroj, key: 'reg' },
-        { section: 'Tehnički Podaci', label: 'Tip Vozila', value: data.tipVozila, key: 'type' },
-        { section: 'Tehnički Podaci', label: 'Broj Putnika', value: data.brojPutnika, key: 'type' },
-        { section: 'Tehnički Podaci', label: 'Maksimalna Nosivost', value: data.maksimalnaNosivost? `${data.maksimalnaNosivost} kg` : 'Nije navedeno', key: 'type' },
+        { section: 'Tehnički podaci', label: 'Naziv', value: data.naziv, key: 'name' },
+        { section: 'Tehnički podaci', label: 'Registracija', value: data.registarskiBroj, key: 'reg' },
+        { section: 'Tehnički podaci', label: 'Tip vozila', value: data.tipVozila, key: 'type' },
+        { section: 'Tehnički podaci', label: 'Broj putnika', value: data.brojPutnika, key: 'type' },
+        { section: 'Tehnički podaci', label: 'Maksimalna nosivost', value: data.maksimalnaNosivost? `${data.maksimalnaNosivost} kg` : 'Nije navedeno', key: 'type' },
         { section: 'Dokumentacija', label: 'Registracija važi od', value: formatDate(data.datumRegistracije), key: 'reg_from' },
         { section: 'Dokumentacija', label: 'Registracija ističe', value: formatDate(data.datumIstekaRegistracije), key: 'reg_to' }
     ]);
@@ -182,39 +181,39 @@ const mapVehicleDetails = (data) => {
 
 const mapToolDetails = (data) => {
     return groupItems([
-        { section: 'Osnovne Informacije', label: 'Naziv', value: data.naziv, key: 'name' },
-        { section: 'Osnovne Informacije', label: 'Kategorija', value: data.kategorija, key: 'cat' },//enum
+        { section: 'Osnovne informacije', label: 'Naziv', value: data.naziv, key: 'name' },
+        { section: 'Osnovne informacije', label: 'Kategorija', value: data.kategorija, key: 'cat' },//enum
         { section: 'Skladište', label: 'Stanje u magacinu', value: data.stanjeMagacina, key: 'stock' },
-        { section: 'Skladište', label: 'Minimalna kolicina', value: data.stanjeMagacina, key: 'state' }
+        { section: 'Skladište', label: 'Minimalna količina', value: data.stanjeMagacina, key: 'state' }
     ]);
 };
 const mapMaterialDetails = (data) => {
     return groupItems([
-        { section: 'Osnovne Informacije', label: 'Naziv', value: data.naziv, key: 'name' },
-        { section: 'Osnovne Informacije', label: 'Kategorija', value: data.kategorija, key: 'type' },
-        { section: 'Skladište', label: 'Trenutna Količina', value: `${data.stanjeMagacina} ${data.jedinicaMjere || 'kom'}`, key: 'stock' },
-        { section: 'Skladište', label: 'Minimalna Količina', value: data.minimalnaKolicina, key: 'min_stock' }
+        { section: 'Osnovne informacije', label: 'Naziv', value: data.naziv, key: 'name' },
+        { section: 'Osnovne informacije', label: 'Kategorija', value: data.kategorija, key: 'type' },
+        { section: 'Skladište', label: 'Trenutna količina', value: `${data.stanjeMagacina} ${data.jedinicaMjere || 'kom'}`, key: 'stock' },
+        { section: 'Skladište', label: 'Minimalna količina', value: data.minimalnaKolicina, key: 'min_stock' }
     ]);
 };
 
 const mapRequestDetails = (data) => {
     return groupItems([
         {
-            section: 'Osnovne Informacije',
-            label: 'Naziv Resursa',
+            section: 'Osnovne informacije',
+            label: 'Naziv resursa',
             value: data.resursNaziv,
             key: 'req_res_name',
             render: (v) => <strong style={{ fontSize: '15px', color: '#1890ff' }}>{safeValue(v)}</strong>
         },
         {
-            section: 'Osnovne Informacije',
+            section: 'Osnovne informacije',
             label: 'Količina',
             value: data.kolicina,
             key: 'req_qty',
             render: (v) => <strong>{v || 0}</strong>
         },
         {
-            section: 'Osnovne Informacije',
+            section: 'Osnovne informacije',
             label: 'Stanje zahtjeva',
             value: data.stanjeZahtjeva,
             key: 'req_state',
@@ -266,21 +265,21 @@ const mapRequestDetails = (data) => {
 const mapDailyReportDetails = (data) => {
     return groupItems([
         {
-            section: 'Informacije o Radu',
+            section: 'Informacije o radu',
             label: 'Projekat',
             value: data.projekat?.naziv || `ID: ${data.idProjekta}`,
             key: 'proj',
             render: (v) => <span style={{ fontWeight: 600, color: '#1890ff' }}>{v}</span>
         },
         {
-            section: 'Informacije o Radu',
-            label: 'Datum Izvršenja',
+            section: 'Informacije o radu',
+            label: 'Datum izvršenja',
             value: formatDate(data.datum),
             key: 'work_date'
         },
         {
-            section: 'Informacije o Radu',
-            label: 'Opis Radova',
+            section: 'Informacije o radu',
+            label: 'Opis radova',
             value: safeValue(data.opisRadova),
             key: 'desc',
             span: 3,
@@ -288,42 +287,42 @@ const mapDailyReportDetails = (data) => {
         },
 
         {
-            section: 'Angažovano Osoblje',
+            section: 'Angažovano osoblje',
             label: 'Izvještaj podnio (Tehničar)',
             value: data.tehnicar ? `${data.tehnicar.ime} ${data.tehnicar.prezime}` : data.jmbTehnicar,
             key: 'tech'
         },
         {
-            section: 'Angažovano Osoblje',
-            label: 'Odgovorni Poslovođa',
+            section: 'Angažovano osoblje',
+            label: 'Odgovorni poslovođa',
             value: data.poslovodja ? `${data.poslovodja.ime} ${data.poslovodja.prezime}` : data.jmbPoslovodja,
             key: 'mgr'
         },
 
         {
-            section: 'Specifikacija Radnih Sati',
-            label: 'Redovni Sati',
+            section: 'Specifikacija radnih sati',
+            label: 'Redovni sati',
             value: data.satiRada,
             key: 'reg_h',
             render: (v) => <span><strong>{v || 0}</strong> h</span>
         },
         {
-            section: 'Specifikacija Radnih Sati',
+            section: 'Specifikacija radnih sati',
             label: 'Prekovremeni',
             value: data.prekovremeniSati,
             key: 'over_h',
             render: (v) => <span style={{ color: v > 0 ? '#faad14' : 'inherit' }}><strong>{v || 0}</strong> h</span>
         },
         {
-            section: 'Specifikacija Radnih Sati',
-            label: 'Noćni Rad',
+            section: 'Specifikacija radnih sati',
+            label: 'Noćni rad',
             value: data.nocniSati,
             key: 'night_h',
             render: (v) => <span style={{ color: v > 0 ? '#722ed1' : 'inherit' }}><strong>{v || 0}</strong> h</span>
         },
         {
-            section: 'Specifikacija Radnih Sati',
-            label: 'Terenski Rad',
+            section: 'Specifikacija radnih sati',
+            label: 'Terenski rad',
             value: data.terenskiSati,
             key: 'field_h',
             render: (v) => <span style={{ color: v > 0 ? '#13c2c2' : 'inherit' }}><strong>{v || 0}</strong> h</span>
@@ -341,7 +340,7 @@ const mapDailyReportDetails = (data) => {
             )
         },
         {
-            section: 'Utrošeni Materijal',
+            section: 'Utrošeni materijal',
             value: data.utroseniMaterijali,
             key: 'materials_list',
             span: 3,
@@ -411,7 +410,7 @@ const mapDailyReportDetails = (data) => {
 const mapTaskDetails = (data) => {
     return groupItems([
         {
-            section: 'Status i Vrijeme',
+            section: 'Status i vrijeme',
             label: 'Status zadatka',
             value: data.zavrsen ? 'Završen' : 'U toku',
             key: 'task_status',
@@ -422,14 +421,14 @@ const mapTaskDetails = (data) => {
             )
         },
         {
-            section: 'Status i Vrijeme',
+            section: 'Status i vrijeme',
             label: 'Datum',
             value: formatDate(data.datum),
             key: 'task_date'
         },
 
         {
-            section: 'Opis Zadatka',
+            section: 'Opis zadatka',
             label: 'Opis zadatka: ',
             value: safeValue(data.opis),
             key: 'task_desc',
@@ -438,14 +437,14 @@ const mapTaskDetails = (data) => {
 
         {
             section: 'Učesnici',
-            label: 'Zaduženi Tehničar',
+            label: 'Zaduženi tehničar',
             value: data.tehnicar ? `${data.tehnicar.ime} ${data.tehnicar.prezime}` : 'Nije dodijeljen',
             key: 'task_tech',
             render: (v) => <strong>{v}</strong>
         },
         {
             section: 'Učesnici',
-            label: 'Nadzorni Poslovođa',
+            label: 'Nadzorni poslovođa',
             value: data.poslovodja ? `${data.poslovodja.ime} ${data.poslovodja.prezime}` : 'Nema informacija',
             key: 'task_mgr'
         },
@@ -458,20 +457,20 @@ const mapSummaryReportDetails = (data) => {
     return groupItems([
 
         {
-            section: 'Osnovne Informacije',
+            section: 'Osnovne informacije',
             label: 'Projekat',
             value: data.projekat?.naziv,
             key: 'sum_proj',
             render: (v) => <span style={{ fontWeight: 600, color: '#1890ff', fontSize: '15px' }}>{v}</span>
         },
         {
-            section: 'Osnovne Informacije',
+            section: 'Osnovne informacije',
             label: 'Datum Kreiranja',
             value: formatDate(data.datumKreiranja),
             key: 'sum_created'
         },
         {
-            section: 'Obuhvaćeni Period',
+            section: 'Obuhvaćeni period',
             label: 'Vremenski raspon',
             value: `${formatDate(data.pocetniDatum)} - ${formatDate(data.krajnjiDatum)}`,
             key: 'sum_period',
@@ -483,7 +482,7 @@ const mapSummaryReportDetails = (data) => {
             )
         },
         {
-            section: 'Statistika i Učinak',
+            section: 'Statistika i učinak',
             label: 'Ukupno radnih sati',
             value: data.ukupniSatiRada,
             key: 'sum_total_hours',
@@ -494,8 +493,8 @@ const mapSummaryReportDetails = (data) => {
             )
         },
         {
-            section: 'Statistika i Učinak',
-            label: 'Odgovorni Poslovođa',
+            section: 'Statistika i učinak',
+            label: 'Odgovorni poslovođa',
             value: data.poslovodja ? `${data.poslovodja.ime} ${data.poslovodja.prezime}` : data.jmbPoslovodja,
             key: 'sum_mgr',
             render: (v) => <strong>{v}</strong>
@@ -537,22 +536,22 @@ const mapSummaryReportDetails = (data) => {
 const mapAssignmentDetails = (data) => {
     return groupItems([
         {
-            section: 'Osnovne Informacije',
-            label: 'Naziv Resursa',
+            section: 'Osnovne informacije',
+            label: 'Naziv resursa',
             value: data.resursNaziv,
             key: 'resurs_ime',
             render: (v) => <strong style={{ fontSize: '15px' }}>{safeValue(v)}</strong>
         },
         {
-            section: 'Osnovne Informacije',
-            label: 'Zadužena Količina',
+            section: 'Osnovne informacije',
+            label: 'Zadužena količina',
             value: data.zaduzenaKolicina,
             key: 'qty_assigned',
             render: (v) => <Tag color="blue">{v || 0}</Tag>
         },
         {
-            section: 'Osnovne Informacije',
-            label: 'Razdužena Količina',
+            section: 'Osnovne informacije',
+            label: 'Razdužena količina',
             value: data.razduzenaKolicina,
             key: 'qty_returned',
             render: (v) => (
@@ -564,27 +563,27 @@ const mapAssignmentDetails = (data) => {
 
         {
             section: 'Osobe',
-            label: 'Odgovorni Poslovođa',
+            label: 'Odgovorni poslovođa',
             value: data.poslovodjaImePrezime,
             key: 'assign_mgr',
             render: (v) => <strong>{safeValue(v)}</strong>
         },
         {
             section: 'Osobe',
-            label: 'Izdao Magacioner',
+            label: 'Izdao magacioner',
             value: data.magacionerImePrezime,
             key: 'assign_wh'
         },
 
         {
-            section: 'Vremenski Okvir',
-            label: 'Datum Zaduženja',
+            section: 'Vremenski okvir',
+            label: 'Datum zaduženja',
             value: formatDate(data.datumZaduzenja),
             key: 'date_assign'
         },
         {
-            section: 'Vremenski Okvir',
-            label: 'Datum Razduženja',
+            section: 'Vremenski okvir',
+            label: 'Datum razduženja',
             value: data.datumRazduzenja ? formatDate(data.datumRazduzenja) : 'Još uvijek zaduženo',
             key: 'date_return',
             render: (v) => (
@@ -599,16 +598,16 @@ const mapAssignmentDetails = (data) => {
 
 
 export const mappers = {
-    PROJECT: { title: 'Detalji Projekta', mapper: mapProjectDetails },
-    EMPLOYEE: { title: 'Detalji Zaposlenog', mapper: mapEmployeeDetails },
-    VEHICLE: { title: 'Detalji Vozila', mapper: mapVehicleDetails },
-    TOOL: { title: 'Detalji Opreme', mapper: mapToolDetails },
-    MATERIAL: {title: 'Detalji Materijala', mapper: mapMaterialDetails },
-    REQUEST: {title:'Detalji Zahtjeva za Resursima', mapper: mapRequestDetails},
-    REPORT: { title: 'Detalji Dnevnog Izvještaja', mapper: mapDailyReportDetails },
-    TASK: {title:'Detalji Dnevnog Zadatka', mapper: mapTaskDetails },
-    SUMMARY_REPORT: {title:'Detalji Sumarnog Izvještaja', mapper: mapSummaryReportDetails},
-    ASSIGNMENT: { title: 'Detalji Zaduženja', mapper: mapAssignmentDetails }
+    PROJECT: { title: 'Detalji projekta', mapper: mapProjectDetails },
+    EMPLOYEE: { title: 'Detalji zaposlenog', mapper: mapEmployeeDetails },
+    VEHICLE: { title: 'Detalji vozila', mapper: mapVehicleDetails },
+    TOOL: { title: 'Detalji opreme', mapper: mapToolDetails },
+    MATERIAL: {title: 'Detalji materijala', mapper: mapMaterialDetails },
+    REQUEST: {title:'Detalji zahtjeva za resursima', mapper: mapRequestDetails},
+    REPORT: { title: 'Detalji dnevnog izvještaja', mapper: mapDailyReportDetails },
+    TASK: {title:'Detalji dnevnog zadatka', mapper: mapTaskDetails },
+    SUMMARY_REPORT: {title:'Detalji sumarnog izvještaja', mapper: mapSummaryReportDetails},
+    ASSIGNMENT: { title: 'Detalji zaduženja', mapper: mapAssignmentDetails }
 
 
 

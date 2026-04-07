@@ -7,7 +7,8 @@
         { "value": "zaposleni",      "label": "Svi zaposleni" },
         { "value": "knjigovodje",    "label": "Knjigovođe" },
         { "value": "poslovodje",     "label": "Poslovođe" },
-        { "value": "tehnicari/only", "label": "Tehničari" }
+        { "value": "tehnicari/only", "label": "Tehničari" },
+        {"value": "magacioneri",     "label": "Magacioneri"}
       ]
     }
   ],
@@ -39,7 +40,7 @@
       "labelKeys": ["ime", "prezime"],
       "labelSeparator": " ",
       "valueKey": "jmb",
-      "allLabel": "Svi poslovođe"
+      "allLabel": "Sve poslovođe"
     }
   ],
   "sumarni_izvjestaji": [
@@ -73,7 +74,7 @@
         "prezime"
       ],
       "valueKey": "jmb",
-      "allLabel": "Svi poslovođe"
+      "allLabel": "Sve poslovođe"
     },
     {
       "property": "idProjekta",
