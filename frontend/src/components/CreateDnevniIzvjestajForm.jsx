@@ -216,11 +216,11 @@ const CreateDnevniIzvjestajForm = ({ onClose, onSuccess, role }) => {
                 <Divider orientation="left" style={{ borderColor: "#d9d9d9" }}>Radni Sati</Divider>
 
                 <Row gutter={16}>
-                    <Col span={8}>
+                    {/*<Col span={8}>
                         <Form.Item name="ukupniSati" label="Ukupno" rules={[{ required: true }]}>
                             <InputNumber size="large" min={0} style={{ width: "100%" }} placeholder="0" />
                         </Form.Item>
-                    </Col>
+                    </Col>*/}
                     <Col span={8}>
                         <Form.Item name="satiRada" label="Redovni" rules={[{ required: true }]}>
                             <InputNumber size="large" min={0} style={{ width: "100%" }} placeholder="0" />
