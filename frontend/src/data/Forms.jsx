@@ -406,7 +406,7 @@ export const requestSchema = {
             props: { min: 0.1 }
         },
         {
-            name: 'magacionerJmb',
+            name: 'magacionerJMB',
             label: 'Magacioner',
             type: "select",
             required: true,
