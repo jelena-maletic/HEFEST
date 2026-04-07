@@ -360,17 +360,6 @@ export const requestSchema = {
     layout: "vertical",
     fields: [
         {
-            name: 'opis',
-            label: 'Opis zahtjeva',
-            type: "textarea",
-            required: true,
-            span: 24,
-            props: {
-                rows: 4,
-                placeholder: "Unesite detaljan opis stavki i razloga zahtjeva..."
-            }
-        },
-        {
             name: 'resourceType',
             label: 'Tip resursa',
             type: "select",
@@ -416,6 +405,17 @@ export const requestSchema = {
                 placeholder: "Izaberite magacionera",
                 showSearch: true,
                 optionFilterProp: "label"
+            }
+        },
+        {
+            name: 'opis',
+            label: 'Opis zahtjeva',
+            type: "textarea",
+            required: false,
+            span: 24,
+            props: {
+                rows: 4,
+                placeholder: "Unesite dodatni opis ..."
             }
         }
     ],

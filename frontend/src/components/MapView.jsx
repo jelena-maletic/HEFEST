@@ -7,8 +7,9 @@ import greenPinIcon from "../assets/green-pin.svg";
 import grayPinIcon from "../assets/gray-pin.svg";
 
 import {fetchData} from "../services/apiHelpers.js";
+import {Button} from "antd";
 
-export default function MapView({role}) {
+export default function MapView({role,onProjectClick}) {
     const [projects, setProjects] = useState([]);
 
     useEffect(() => {
@@ -65,18 +66,44 @@ export default function MapView({role}) {
                     if(isNaN(x) || isNaN(y)) return null;
 
                     return (
-                        <Marker key={`marker-${index}-${p.naziv}`} position={[x, y]} icon={marker}>
+                        <Marker key={`marker-${index}-${p.naziv}`} position={[x, y]} icon={marker} eventHandlers={{
+                            mouseover: (e) => {
+                                e.target.openPopup();
+                            },
+
+                        }}>
                             <Popup>
                                 <strong>{p.naziv}</strong>
                                 <br />
-                                Početak: {new Date(p.pocetakRada).toLocaleDateString()}
+                                Početak: {p.pocetakRada
+                                ? new Date(p.pocetakRada).toLocaleDateString("sr-RS")
+                                : "Nije definisan"}
+
                                 <br />
-                                Rok: {new Date(p.rok).toLocaleDateString()}
+                                Rok: {p.rok
+                                ? new Date(p.rok).toLocaleDateString("sr-RS")
+                                : "Nije definisan"}
                                 <br />
                                 Status:{" "}
                                 <span style={{ color: active ? "green" : "gray", fontWeight: "bold" }}>
                                     {active ? "Aktivno" : "Neaktivno"}
                                 </span>
+                                <Button
+                                    type="primary"
+                                    size="small"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onProjectClick(p);
+                                    }}
+                                    style={{
+                                        width: '100%',
+                                        borderRadius: '4px',
+                                        fontSize: '12px',
+                                        height: '30px'
+                                    }}
+                                >
+                                    Prikaži detalje
+                                </Button>
                             </Popup>
                         </Marker>
                     );

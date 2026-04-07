@@ -199,7 +199,12 @@ export function Dashboard({sidebarContents, role}) {
                       }}
                 >
 
-                    {activeScreen === "map" && <MapView role={role}/>}
+                    {activeScreen === "map" && (
+                        <MapView
+                            role={role}
+                            onProjectClick={(data) => handleOpenDetails(data, "projekti")}
+                        />
+                    )}
 
                     {activeScreen === "calendar" && <Calendar/>}
 

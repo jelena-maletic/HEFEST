@@ -142,18 +142,18 @@ function Calendar() {
                         <p>
                             <strong>Početak:</strong> {
                             selectedProject.pocetakRada
-                                ? new Date(selectedProject.pocetakRada).toLocaleDateString("hr-HR")
+                                ? new Date(selectedProject.pocetakRada).toLocaleDateString("sr-RS")
                                 : "Nije definisan"
                         }
                         </p>
                         <p>
                             <strong>Rok:</strong> {
                             selectedProject.rok
-                                ? new Date(selectedProject.rok).toLocaleDateString("hr-HR")
+                                ? new Date(selectedProject.rok).toLocaleDateString("sr-RS")
                                 : "Nema roka"
                         }
                         </p>
-                        <p><strong>Završetak:</strong> {selectedProject.krajRada ? new Date(selectedProject.krajRada).toLocaleDateString("hr-HR") : "Nije definisan"}</p>
+                        <p><strong>Završetak:</strong> {selectedProject.krajRada ? new Date(selectedProject.krajRada).toLocaleDateString("sr-SR") : "Nije definisan"}</p>
 
                         <button className="close-btn" onClick={() => setSelectedProject(null)}>
                             Zatvori

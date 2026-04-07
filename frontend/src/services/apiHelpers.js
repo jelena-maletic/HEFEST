@@ -8,7 +8,7 @@ const API_BASE = "http://localhost:8080/api";
 
 const formatValue = (value, unit = "") => (value !== null && value !== undefined && value !== "")
     ? `${value}${unit}`
-    : "Nije dostupno";
+    : "Nije dostupno.";
 
 export const fetchProjects = async () => {
     try {
@@ -321,20 +321,6 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
             })
         }
 
-        case "tehnicari/only": {
-            return dataArray.flatMap((t) => {
-                const tehnicari = [];
-                let temp = {
-                    title: t.ime + " " + t.prezime,
-                    detail: t.brojTelefona,
-                    subline: t.email
-                };
-                Object.assign(temp, t);
-
-                tehnicari.push(temp)
-                return tehnicari;
-            });
-        }
 
         case "zahtjevi": {
 
@@ -358,8 +344,8 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
                     ...t,
                     id: t.id,
                     title: dynamicTitle,
-                    detail: t.opis,
-                    subline: "Stanje: " + (t.stanjeZahtjeva?.toLowerCase() === "neobradjen" ? "neobrađen" : t.stanjeZahtjeva),
+                    detail: "Resurs: "+ t.resursNaziv+ " Kolicina: "+t.kolicina,
+                    subline: "Datum slanja: " + formatDateOnly(t.datumSlanja),
                     statusColor: getStatusTagColor(t.stanjeZahtjeva)
                 };
             });
