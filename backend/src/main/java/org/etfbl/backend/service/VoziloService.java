@@ -4,11 +4,13 @@ import jakarta.transaction.Transactional;
 import org.etfbl.backend.dto.Vozilo;
 import org.etfbl.backend.model.ResursEntity;
 import org.etfbl.backend.model.VoziloEntity;
+import org.etfbl.backend.repository.ResursRepository;
 import org.etfbl.backend.repository.VoziloRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,16 +20,13 @@ public class VoziloService {
 
     private final ModelMapper modelMapper;
     private final VoziloRepository voziloRepository;
-    //private final ResursRepository resursRepository; // Moraš dodati ovaj repozitorijum
 
     public VoziloService(VoziloRepository voziloRepository, ModelMapper modelMapper) {
         this.voziloRepository = voziloRepository;
         this.modelMapper = modelMapper;
-        //this.resursRepository = resursRepository;
     }
 
     public List<Vozilo> getAllVozilo() {
-        // Filtriranje kao kod projekata (npr. ako imaš polje Obrisan u Resurs-u)
         return voziloRepository.findAll().stream()
                 .filter(v -> !v.getObrisan())
                 .map(v -> modelMapper.map(v, Vozilo.class))
@@ -35,13 +34,11 @@ public class VoziloService {
     }
 
     public Vozilo sacuvajVozilo(Vozilo dto) {
-        VoziloEntity entity = modelMapper.map(dto, VoziloEntity.class);
-        ResursEntity noviResurs = modelMapper.map(dto, ResursEntity.class);
-
-        entity.setId(noviResurs.getId());
-
-        VoziloEntity sacuvano = voziloRepository.save(entity);
-
+        VoziloEntity vozilo = modelMapper.map(dto, VoziloEntity.class);
+        vozilo.setId(null);
+        vozilo.setStanjeMagacina(BigDecimal.ONE);
+        vozilo.setObrisan(false);
+        VoziloEntity sacuvano = voziloRepository.save(vozilo);
         return modelMapper.map(sacuvano, Vozilo.class);
     }
 
