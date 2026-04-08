@@ -14,6 +14,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 @Transactional
 @Service
 public class VoziloService {
@@ -26,11 +29,9 @@ public class VoziloService {
         this.modelMapper = modelMapper;
     }
 
-    public List<Vozilo> getAllVozilo() {
-        return voziloRepository.findAll().stream()
-                .filter(v -> !v.getObrisan())
-                .map(v -> modelMapper.map(v, Vozilo.class))
-                .toList();
+    public Page<Vozilo> getAllVozilo(Pageable pageable) {
+        Page<VoziloEntity> entities = voziloRepository.findAllByObrisanFalse(pageable);
+        return entities.map(v -> modelMapper.map(v, Vozilo.class));
     }
 
     public Vozilo sacuvajVozilo(Vozilo dto) {
