@@ -145,3 +145,12 @@
 .ant-pagination-item-active a {
     color: #475569 !important;
 }
+
+.no-results-message {
+    width: 100%;
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+    font-size: 1.1rem;
+    grid-column: 1 / -1; /* Ensures it spans across all columns if in grid view */
+}

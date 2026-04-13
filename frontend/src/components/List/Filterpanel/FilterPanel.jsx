@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import "./FilterPanel.css";
+import {getJmb, getRole} from "../../../auth/auth.js";
+import {getOptionFilterContext, optionFilter} from "../../../utils/dataHelpers.js";
 
 export function FilterPanel({ filters, activeFilters, activeTag, onFilterChange, onClear, onOptionsLoaded, fetchOptions }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -47,9 +49,15 @@ export function FilterPanel({ filters, activeFilters, activeTag, onFilterChange,
                 const response = await fetch(filter.endpoint);
                 data = await response.json();
             }
+
+            const context = await getOptionFilterContext(activeTag, filter.property);
+
             const separator = filter.labelSeparator ?? " ";
             const seen = new Set();
             const options = (Array.isArray(data) ? data : [])
+                .filter( (item) => {
+                    return optionFilter(item, activeTag, filter.property, context);
+                })
                 .map((item) => ({
                     value: String(item[filter.valueKey]),
                     label: Array.isArray(filter.labelKeys)
@@ -148,9 +156,11 @@ export function FilterPanel({ filters, activeFilters, activeTag, onFilterChange,
                                 ? "Nema aktivnih filtera"
                                 : `${activeCount} aktiv${activeCount > 1 ? "na" : "an"} filter${activeCount > 1 ? "a" : ""}`}
                         </span>
+                        {activeCount > 0 &&
                         <button className="filter-clear-btn" onClick={handleClear}>
                             Obriši sve
                         </button>
+                        }
                     </div>
                 </div>
             )}

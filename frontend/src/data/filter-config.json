@@ -13,6 +13,28 @@
     }
   ],
 
+  "dodijeljeni-projekti": [
+    {
+      "property": "status",
+      "label": "Status",
+      "options": [
+        { "value": "",          "label": "Svi statusi" },
+        { "value": "DOGOVOREN", "label": "Dogovoren" },
+        { "value": "AKTIVAN", "label": "Aktivan" },
+        { "value": "NEAKTIVAN", "label": "Neaktivan" },
+        { "value": "ZAVRŠEN", "label": "Završen" }
+      ]
+    },
+    {
+      "property": "klijent",
+      "label": "Klijent",
+      "endpoint": "http://localhost:8080/api/projekti",
+      "labelKey": "klijent",
+      "valueKey": "klijent",
+      "allLabel": "Svi klijenti"
+    }
+  ],
+  
   "projekti": [
     {
       "property": "status",
@@ -76,6 +98,47 @@
       "valueKey": "jmb",
       "allLabel": "Sve poslovođe"
     },
+    {
+      "property": "idProjekta",
+      "label": "Projekat",
+      "endpoint": "http://localhost:8080/api/projekti",
+      "labelKey": "naziv",
+      "valueKey": "id",
+      "allLabel": "Svi projekti"
+    }
+  ],
+  "sumarni_izvjestaji_poslovodja": [
+    {
+      "property": "idProjekta",
+      "label": "Projekat",
+      "endpoint": "http://localhost:8080/api/projekti",
+      "labelKey": "naziv",
+      "valueKey": "id",
+      "allLabel": "Svi projekti"
+    }
+  ],
+  "dnevni_izvjestaji_poslovodja": [
+    {
+      "property": "jmbTehnicar",
+      "label": "Tehničar",
+      "endpoint": "http://localhost:8080/api/tehnicari",
+      "labelKeys": [
+        "ime",
+        "prezime"
+      ],
+      "valueKey": "jmb",
+      "allLabel": "Svi tehnicari"
+    },
+    {
+      "property": "idProjekta",
+      "label": "Projekat",
+      "endpoint": "http://localhost:8080/api/projekti",
+      "labelKey": "naziv",
+      "valueKey": "id",
+      "allLabel": "Svi projekti"
+    }
+  ],
+  "dnevni_izvjestaji_tehnicar": [
     {
       "property": "idProjekta",
       "label": "Projekat",

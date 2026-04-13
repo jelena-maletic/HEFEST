@@ -10,8 +10,9 @@ import DynamicForm from "../DynamicForm.jsx";
 import CenteredOverlay from "../CenteredOverlay/CenteredOverlay.jsx";
 import { useNotification } from "../NotificationContext.jsx";
 import filterConfig from "../../data/filter-config.json";
-import {getJmb} from "../../auth/auth.js";
+import {getJmb, getRole} from "../../auth/auth.js";
 import { Pagination } from 'antd';
+import {adjustFilterTag} from "../../utils/dataHelpers.js";
 
 const noop = () => {};
 
@@ -36,12 +37,13 @@ export function List({
     const [viewState, setViewState] = useState("list");
     const [listData, setListData] = useState([]);
     const [activeTag, setActiveTag] = useState(initialTag);
+    const [filterTag, setFilterTag] = useState({activeTag});
     const [currentPage, setCurrentPage] = useState(1);
     const pageSize = 4; // Broj elemenata po stranici
 
     const [endpointOptionsCache, setEndpointOptionsCache] = useState({});
 
-    const currentFilters = filterConfig[activeTag] || filterConfig[initialTag] || [];
+    const currentFilters = filterConfig[filterTag] || filterConfig[initialTag] || [];
     const selectedSchema = schemaMap[activeTag];
 
     const fetchFilterOptions = useCallback(async (endpoint) => {
@@ -55,8 +57,8 @@ export function List({
     }, [activeTag, filterByPoslovodja, filterByTehnicar, filterByMagacioner]);
 
     useEffect(() => {
-        setActiveTag(initialTag);
-    }, [initialTag]);
+        setFilterTag(adjustFilterTag(initialTag, activeTag));
+    }, [activeTag, initialTag]);
 
     useEffect(() => {
         reloadData();
@@ -65,7 +67,7 @@ export function List({
         setCurrentPage(1);
         setEndpointOptionsCache({});
         if (onSuccess) onSuccess(reloadData);
-    }, [activeTag, reloadData]);
+    }, [activeTag, onSuccess, reloadData]);
 
     useEffect(() => {
         setCurrentPage(1);
@@ -188,20 +190,32 @@ export function List({
             <hr className="divider" style={{ width: dividerWidth }} />
 
             <div className={`list-content ${viewState}`}>
-                {currentItems.map((data) => (
-                    <ListElement
-                        key={data.id}
-                        screenState={screenState}
-                        listElementData={data}
-                        onClickFunc={(clickedData) => onClick(clickedData)}
-                        isEditable={isEditable}
-                        binaryChoice={binaryChoice}
-                        className={viewState === "grid" ? "grid-element" : "list-element"}
-                        tag={activeTag}
-                        selectedSchema={selectedSchema}
-                        onSuccess={reloadData}
-                    />
-                ))}
+                {filteredData.length === 0 ? (
+                    searchQuery.length > 0 ?(
+                    <div className="no-results-message">
+                        Nema rezultata!
+                    </div>) :(
+                        <div className="no-results-message">
+                            Prazna lista!
+                        </div>
+                    )
+
+                ) : (
+                    currentItems.map((data) => (
+                        <ListElement
+                            key={data.id}
+                            screenState={screenState}
+                            listElementData={data}
+                            onClickFunc={(clickedData) => onClick(clickedData)}
+                            isEditable={isEditable}
+                            binaryChoice={binaryChoice}
+                            className={viewState === "grid" ? "grid-element" : "list-element"}
+                            tag={activeTag}
+                            selectedSchema={selectedSchema}
+                            onSuccess={reloadData}
+                        />
+                    ))
+                )}
             </div>
 
             {filteredData.length > pageSize && (

@@ -129,7 +129,6 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
 
     if (tag === "projekti" && filterPoslovodja) {
         const ulogovaniJmb = getJmb();
-        console.log(ulogovaniJmb);
         dataArray = dataArray.filter(t =>
             t.manager === ulogovaniJmb
         );
@@ -381,8 +380,6 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
                     detail: "Datum zaduženja: " + formatirajDatum(t.datumZaduzenja),
                     subline: "Zadužio: " + (t.poslovodjaImePrezime || t.manager)
                 };
-
-                console.log("Podaci za formu:", t);
                 return [{...t, ...formValues}];
             });
         }

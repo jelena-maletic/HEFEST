@@ -139,7 +139,6 @@ export function Dashboard({sidebarContents, role}) {
     const handleScreen = (activeScreen, screenTitle) => {
         setActiveScreen(activeScreen);
         setScreenTitle(screenTitle);
-        console.log(activeScreen, screenTitle);
     };
 
     const [selectedEmployeeTag, setSelectedEmployeeTag] = useState("zaposleni");
@@ -160,7 +159,6 @@ export function Dashboard({sidebarContents, role}) {
                 try {
                     const data = await getKorisnikPodaci(jmb);
                     if (data) {
-                        console.log(data);
                         setUserName(`${data}`);
                     }
                 } catch (err) {
