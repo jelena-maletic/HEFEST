@@ -65,14 +65,16 @@ public class ProjekatService {
         if (dto.getPoslovodja() != null) {
             PoslovodjaUpravljaProjektomEntity veza = new PoslovodjaUpravljaProjektomEntity();
 
-            veza.setIdProjekta(sacuvan.getIdProjekta());
-            veza.setPoslovodjaJMB(dto.getPoslovodja());
+           // veza.setIdProjekta(sacuvan.getIdProjekta());
+           // veza.setPoslovodjaJMB(dto.getPoslovodja());
 
             veza.setProjekat(sacuvan);
             veza.setPoslovodja(poslovodjaRepository.getReferenceById(dto.getPoslovodja()));
 
             poslovodjaUpravljaProjektomRepository.save(veza);
         }
+
+
 
         if (dto.getTimTehnicara() != null && !dto.getTimTehnicara().isEmpty()) {
             for (String tehJmb : dto.getTimTehnicara()) {
@@ -152,6 +154,8 @@ public class ProjekatService {
     public Projekat updateProjekat(Integer id, Projekat dto) throws NotFoundException {
         ProjekatEntity postojeci = projekatRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Projekat sa ID-om " + id + " ne postoji."));
+
+        // 1. Ažuriranje osnovnih polja (ostaje isto)
         postojeci.setNaziv(dto.getNaziv());
         postojeci.setOpis(dto.getOpis());
         postojeci.setLokacija(dto.getLokacija());
@@ -162,34 +166,40 @@ public class ProjekatService {
         postojeci.setPrioritet(dto.getPrioritet());
         postojeci.setKlijent(dto.getKlijent());
         postojeci.setPosljednjaIzmjena(Instant.now());
-        poslovodjaUpravljaProjektomRepository.deleteByProjekatId(id);
-        tehnicarNaProjektuRepository.deleteByProjekatId(id);
 
-        ProjekatEntity sacuvan = projekatRepository.save(postojeci);
+        // 2. Logika za poslovođu (BEZ BRISANJA)
+        String noviPoslovodjaJmb = dto.getPoslovodja();
+        // Preuzimamo JMB trenutno aktivnog poslovođe (ovo zavisi od tvog upita u repozitorijumu)
+        String stariPoslovodjaJmb = poslovodjaUpravljaProjektomRepository.findPoslovodjaJmbByIdProjekta(id);
 
-        if (dto.getPoslovodja() != null && !dto.getPoslovodja().trim().isEmpty()) {
-            PoslovodjaUpravljaProjektomEntity vezaPoslovodja = new PoslovodjaUpravljaProjektomEntity();
-            vezaPoslovodja.setIdProjekta(sacuvan.getIdProjekta());
-            vezaPoslovodja.setPoslovodjaJMB(dto.getPoslovodja());
-            vezaPoslovodja.setProjekat(sacuvan);
-            vezaPoslovodja.setPoslovodja(poslovodjaRepository.getReferenceById(dto.getPoslovodja()));
-            poslovodjaUpravljaProjektomRepository.save(vezaPoslovodja);
+        if (noviPoslovodjaJmb != null && !noviPoslovodjaJmb.equals(stariPoslovodjaJmb)) {
+            PoslovodjaUpravljaProjektomEntity novaVeza = new PoslovodjaUpravljaProjektomEntity();
+            // Postavljamo objekte, Hibernate će sam izvući ID-eve za kolone
+            novaVeza.setProjekat(postojeci);
+            novaVeza.setPoslovodja(poslovodjaRepository.getReferenceById(noviPoslovodjaJmb));
+
+            poslovodjaUpravljaProjektomRepository.save(novaVeza);
         }
 
-
+        // 3. Logika za tehničare (ovdje možeš zadržati brisanje ako oni nemaju svoje izvještaje)
+        tehnicarNaProjektuRepository.deleteByProjekatId(id);
         if (dto.getTimTehnicara() != null && !dto.getTimTehnicara().isEmpty()) {
             for (String tehJmb : dto.getTimTehnicara()) {
                 TehnicarNaProjektuEntity vezaTehnicar = new TehnicarNaProjektuEntity();
-                vezaTehnicar.setIdProjekta(sacuvan.getIdProjekta());
-                vezaTehnicar.setTehnicarJMB(tehJmb);
-                vezaTehnicar.setProjekat(sacuvan);
+
+                vezaTehnicar.setIdProjekta(postojeci.getIdProjekta()); // Ovo je ključno!
+                vezaTehnicar.setTehnicarJMB(tehJmb);                  // I ovo!
+
+                vezaTehnicar.setProjekat(postojeci);
                 vezaTehnicar.setTehnicar(tehnicarRepository.getReferenceById(tehJmb));
+
                 tehnicarNaProjektuRepository.save(vezaTehnicar);
             }
         }
 
-            return modelMapper.map(sacuvan, Projekat.class);
-        }
+        ProjekatEntity sacuvan = projekatRepository.save(postojeci);
+        return mapToDto(sacuvan); // Bolje koristiti tvoju mapToDto jer ona puni dodatna polja
+    }
 
 
 

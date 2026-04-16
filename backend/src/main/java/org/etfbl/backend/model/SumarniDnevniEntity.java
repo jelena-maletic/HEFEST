@@ -2,7 +2,6 @@ package org.etfbl.backend.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.etfbl.backend.model.manytomanyid.PoslovodjaUpravljaProjektomId;
 import org.etfbl.backend.model.manytomanyid.SumarniDnevniId;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;

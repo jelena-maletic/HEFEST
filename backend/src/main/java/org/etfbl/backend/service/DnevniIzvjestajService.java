@@ -64,9 +64,8 @@ public class DnevniIzvjestajService {
                 .orElseThrow(() -> new RuntimeException("Tehničar nije pronađen!"));
         entity.setTehnicar(tehnicar);
 
-        var pup = poslovodjaUpravljaProjektomRepository.findByProjekat_IdProjekta(dto.getIdProjekta())
-                .stream().findFirst()
-                .orElseThrow(() -> new RuntimeException("Nije pronađen poslovođa za projekat ID: " + dto.getIdProjekta()));
+        var pup = poslovodjaUpravljaProjektomRepository.findFirstByProjekat_IdProjektaOrderByIdDesc(dto.getIdProjekta())
+                .orElseThrow(() -> new RuntimeException("Nije pronađen aktivna veza poslovođa-projekat za ID: " + dto.getIdProjekta()));
 
         entity.setPoslovodjaUpravljaProjektom(pup);
 

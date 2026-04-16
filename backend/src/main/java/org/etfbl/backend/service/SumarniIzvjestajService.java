@@ -50,7 +50,7 @@ public class SumarniIzvjestajService {
         updateEntityFromDto(entity, dto);
         entity.setDatumKreiranja(LocalDate.now());
 
-        var pup = pupRepository.findByProjekat_IdProjektaAndPoslovodja_Jmb(
+        var pup = pupRepository.findFirstByProjekat_IdProjektaAndPoslovodja_JmbOrderByIdDesc(
                         dto.getIdProjekta(), dto.getJmbPoslovodja())
                 .orElseThrow(() -> new RuntimeException("Veza poslovođa-projekat ne postoji!"));
 
@@ -71,7 +71,7 @@ public class SumarniIzvjestajService {
         updateEntityFromDto(entity, dto);
 
         if (dto.getIdProjekta() != null && dto.getJmbPoslovodja() != null) {
-            var pup = pupRepository.findByProjekat_IdProjektaAndPoslovodja_Jmb(
+            var pup = pupRepository.findFirstByProjekat_IdProjektaAndPoslovodja_JmbOrderByIdDesc(
                             dto.getIdProjekta(), dto.getJmbPoslovodja())
                     .orElseThrow(() -> new RuntimeException("Veza poslovođa-projekat ne postoji!"));
             entity.setPoslovodjaUpravljaProjektom(pup);

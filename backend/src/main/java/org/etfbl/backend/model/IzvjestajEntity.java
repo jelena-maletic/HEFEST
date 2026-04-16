@@ -19,9 +19,6 @@ public class IzvjestajEntity {
     private LocalDate datumKreiranja;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumns({
-            @JoinColumn(name = "IdProjekta", referencedColumnName = "IdProjekta", nullable = false),
-            @JoinColumn(name = "JMB_Poslovodja", referencedColumnName = "Poslovodja_JMB", nullable = false)
-    })
+    @JoinColumn(name = "Id_pup", referencedColumnName = "Id", nullable = false)
     private PoslovodjaUpravljaProjektomEntity poslovodjaUpravljaProjektom;
 }
