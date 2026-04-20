@@ -32,7 +32,7 @@ export const createElement = async (tag, data) => {
 
 export const deleteElement = async (tag, id) => {
     const apiTag = tag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : tag;
-    const response = await axios.delete(`${API_BASE}/${apiTag}/${id}`);
+    const response = await api.service(true).delete(`${API_BASE}/${apiTag}/${id}`);
     return response.status;
 };
 

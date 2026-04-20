@@ -460,6 +460,14 @@ export function Dashboard({sidebarContents, role}) {
                                     }
                                 } catch (error) {
                                     console.error("Greška pri brisanju:", error);
+                                    console.error("Greška objekat:", error.response);
+
+                                    // Izvlačenje poruke koju si napisala u Javi (npr. "Projekat se ne može obrisati...")
+                                    const porukaSaServera = error.response?.data?.message
+                                        || error.response?.data
+                                        || "Došlo je do greške pri brisanju.";
+
+                                    notify.error("Brisanje nije uspjelo", porukaSaServera);
                                     notify.error("Greška", "Neuspješno brisanje elementa.");
                                 }
                             }}

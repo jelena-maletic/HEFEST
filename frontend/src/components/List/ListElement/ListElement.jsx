@@ -308,7 +308,13 @@ export function ListElement({
 
                     } catch (error) {
                         console.error("Greška pri brisanju:", error);
-                        notify.error("Greška", "Neuspješno brisanje elementa.");
+                        console.error("Greška objekat:", error.response);
+
+                        const porukaSaServera = error.response?.data?.message
+                            || error.response?.data
+                            || "Došlo je do greške pri brisanju.";
+
+                        notify.error("Brisanje nije uspjelo", porukaSaServera);
                     } finally {
                         setShowConfirm(false);
                     }
