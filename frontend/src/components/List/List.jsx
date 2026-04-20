@@ -272,7 +272,7 @@ export function List({
                                     opis: data.opis,
                                     kolicina: Number(data.kolicina),
                                     resursId: Number(data.resursId),
-                                    magacionerJMB: data.magacionerJmb,
+                                    magacionerJMB: data.magacionerJMB,
                                     poslovodjaJMB: loggedInJmb,
                                     stanjeZahtjeva: "neobradjen",
                                     datumSlanja: new Date().toISOString()
