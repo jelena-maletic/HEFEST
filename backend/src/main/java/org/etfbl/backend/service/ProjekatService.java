@@ -21,8 +21,9 @@ public class ProjekatService {
     private final PoslovodjaUpravljaProjektomRepository poslovodjaUpravljaProjektomRepository;
     private final TehnicarRepository tehnicarRepository;
     private final TehnicarNaProjektuRepository tehnicarNaProjektuRepository;
+    private final IzvjestajRepository izvjestajRepository;
 
-    public ProjekatService(ProjekatRepository projekatRepository, ModelMapper modelMapper, DirektorRepository direktorRepository, PoslovodjaRepository poslovodjaRepository, PoslovodjaUpravljaProjektomRepository poslovodjaUpravljaProjektomRepository, TehnicarRepository tehnicarRepository, TehnicarNaProjektuRepository tehnicarNaProjektuRepository) {
+    public ProjekatService(ProjekatRepository projekatRepository, ModelMapper modelMapper, DirektorRepository direktorRepository, PoslovodjaRepository poslovodjaRepository, PoslovodjaUpravljaProjektomRepository poslovodjaUpravljaProjektomRepository, TehnicarRepository tehnicarRepository, TehnicarNaProjektuRepository tehnicarNaProjektuRepository, IzvjestajRepository izvjestajRepository) {
         this.projekatRepository = projekatRepository;
         this.modelMapper = modelMapper;
         this.direktorRepository = direktorRepository;
@@ -30,12 +31,13 @@ public class ProjekatService {
         this.poslovodjaUpravljaProjektomRepository = poslovodjaUpravljaProjektomRepository;
         this.tehnicarRepository = tehnicarRepository;
         this.tehnicarNaProjektuRepository = tehnicarNaProjektuRepository;
+        this.izvjestajRepository = izvjestajRepository;
     }
 
     public List<Projekat> getAllProjekti() {
         return projekatRepository.findAll().stream()
                 .filter(p -> !p.getObrisan())
-                .map(this::mapToDto) // Koristimo pomoćnu metodu
+                .map(this::mapToDto)
                 .toList();
     }
 
@@ -120,6 +122,9 @@ public class ProjekatService {
     public void obrisiProjekat(Integer id) {
         if (!projekatRepository.existsById(id)) {
             throw new RuntimeException("Projekat sa ID-om " + id + " ne postoji.");
+        }
+        if (izvjestajRepository.existsByPoslovodjaUpravljaProjektom_Projekat_IdProjekta(id)) {
+            throw new RuntimeException("Projekat se ne može obrisati jer već postoje generisani izvještaji za njega!");
         }
         projekatRepository.deleteById(id);
     }

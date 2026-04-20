@@ -27,7 +27,7 @@ public class ZahtjevZaResursimaEntity {
     @Column(name = "Kolicina", nullable = false, precision = 5, scale = 2)
     private BigDecimal kolicina;
 
-    @Column(name = "Opis", nullable = false)
+    @Column(name = "Opis")
     private String opis;
 
     @Enumerated(EnumType.STRING)
