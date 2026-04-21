@@ -18,16 +18,16 @@ public class VoziloService {
 
     private final ModelMapper modelMapper;
     private final VoziloRepository voziloRepository;
-    //private final ResursRepository resursRepository; // Moraš dodati ovaj repozitorijum
+    private final ResursService resursService;
 
-    public VoziloService(VoziloRepository voziloRepository, ModelMapper modelMapper) {
+    public VoziloService(VoziloRepository voziloRepository, ModelMapper modelMapper, ResursService resursService) {
         this.voziloRepository = voziloRepository;
         this.modelMapper = modelMapper;
         //this.resursRepository = resursRepository;
+        this.resursService = resursService;
     }
 
     public List<Vozilo> getAllVozilo() {
-        // Filtriranje kao kod projekata (npr. ako imaš polje Obrisan u Resurs-u)
         return voziloRepository.findAll().stream()
                 .filter(v -> !v.getObrisan())
                 .map(v -> modelMapper.map(v, Vozilo.class))
@@ -71,6 +71,7 @@ public class VoziloService {
         if (!voziloRepository.existsById(id)) {
             throw new RuntimeException("Vozilo ne postoji.");
         }
+        resursService.validirajBrisanje(id);
         voziloRepository.deleteById(id);
     }
 }

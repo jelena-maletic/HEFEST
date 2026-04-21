@@ -7,6 +7,7 @@ import org.etfbl.backend.model.RadnaOpremaEntity;
 import org.etfbl.backend.model.ResursEntity;
 import org.etfbl.backend.model.VoziloEntity;
 import org.etfbl.backend.repository.RadnaOpremaRepository;
+import org.etfbl.backend.repository.ResursRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -19,10 +20,12 @@ import java.util.Optional;
 public class RadnaOpremaService {
     private final ModelMapper modelMapper;
     private final RadnaOpremaRepository radnaOpremaRepository;
+    private final ResursService resursService;
 
-    public RadnaOpremaService(ModelMapper modelMapper, RadnaOpremaRepository radnaOpremaRepository) {
+    public RadnaOpremaService(ModelMapper modelMapper, RadnaOpremaRepository radnaOpremaRepository, ResursService resursService) {
         this.modelMapper = modelMapper;
         this.radnaOpremaRepository = radnaOpremaRepository;
+        this.resursService = resursService;
     }
 
     public List<RadnaOprema> getAllRadnaOprema() {
@@ -63,6 +66,7 @@ public class RadnaOpremaService {
         if (!radnaOpremaRepository.existsById(id)) {
             throw new RuntimeException("Radna oprema ne postoji.");
         }
+        resursService.validirajBrisanje(id);
         radnaOpremaRepository.deleteById(id);
     }
 }

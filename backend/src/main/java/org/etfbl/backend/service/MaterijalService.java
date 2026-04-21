@@ -21,10 +21,12 @@ import java.util.Optional;
 public class MaterijalService {
     private final ModelMapper modelMapper;
     private final MaterijalRepository materijal;
+    private final ResursService resursService;
 
-    public MaterijalService(ModelMapper modelMapper, MaterijalRepository materijal) {
+    public MaterijalService(ModelMapper modelMapper, MaterijalRepository materijal, ResursService resursService) {
         this.modelMapper = modelMapper;
         this.materijal = materijal;
+        this.resursService = resursService;
     }
 
     public List<Materijal> getAll() {
@@ -70,6 +72,7 @@ public class MaterijalService {
         if (!materijal.existsById(id)) {
             throw new RuntimeException("Materijal ne postoji.");
         }
+        resursService.validirajBrisanje(id);
         materijal.deleteById(id);
     }
 }

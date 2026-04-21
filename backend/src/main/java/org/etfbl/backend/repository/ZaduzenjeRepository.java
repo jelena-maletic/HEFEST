@@ -12,5 +12,7 @@ public interface ZaduzenjeRepository extends JpaRepository<ZaduzenjeEntity, Inte
 
     List<ZaduzenjeEntity> findAllByMagacionerJmb(String jmb);
 
+    boolean existsByResurs_Id(Integer resursId);
+
     //List<ZaduzenjeEntity> findAllByZahtjev_IdZahtjeva(String idZahtjeva);
 }

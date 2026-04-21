@@ -20,4 +20,6 @@ public interface ZahtjevZaResursimaRepository extends JpaRepository<ZahtjevZaRes
     // Pronalaženje svih neobrađenih zahtjeva
     List<ZahtjevZaResursimaEntity> findAllByStanjeZahtjeva(StanjeZahtjeva stanje);
     List<ZahtjevZaResursimaEntity> findAllByPoslovodja_jmb(String jmb);
+
+    boolean existsByResurs_Id(Integer resursId);
 }

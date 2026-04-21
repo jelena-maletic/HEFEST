@@ -10,4 +10,6 @@ import java.util.List;
 public interface UtroseniMaterijalRepository extends JpaRepository<UtroseniMaterijalEntity, Integer> {
     @Query("SELECT u FROM UtroseniMaterijalEntity u WHERE u.dnevniIzvjestaj.id = :id")
     List<UtroseniMaterijalEntity> nadjiSveZaIzvjestaj(@Param("id") Integer id);
+
+    boolean existsByMaterijal_Id(Integer idResursa);
 }
