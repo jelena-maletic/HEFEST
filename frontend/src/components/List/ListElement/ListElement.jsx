@@ -30,6 +30,10 @@ export function ListElement({
     const [updateForm, setUpdateForm] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
     const [zahtjevDataForZaduzenje, setZahtjevDataForZaduzenje] = useState(null);
+    console.log("=== RENDER LIST ELEMENT ===");
+    console.log("updateForm stanje:", updateForm);
+    console.log("Šema koja će se koristiti:", zahtjevDataForZaduzenje ? "assignmentSchema" : "selectedSchema");
+    console.log("Podaci za formu:", zahtjevDataForZaduzenje || listElementData);
     const statusClass = listElementData.statusColor ? `status-${listElementData.statusColor}` : '';
     const truncateText = (text, maxLength) => {
         if (!text) return "";
@@ -98,9 +102,11 @@ export function ListElement({
                     type="confirm"
                     onClickHandler={ async (e) => {
                         e.stopPropagation();
+                        console.log("Kliknuto na potvrdu zahtjeva...");
                         try {
                             const ulogovaniMagacionerJmb = getJmb();
                             await updateZahtjevStatus(listElementData.id, "odobren");
+                            console.log("Status ažuriran na serveru");
                             notify.success("Status ažuriran");
                             //if (onSuccess) await onSuccess();
                             const preparedData = {
@@ -113,9 +119,10 @@ export function ListElement({
                                 datumZaduzenja: dayjs(),
                                 opisZahtjeva: listElementData.opis
                             };
-
+                            console.log("Pripremljeni podaci za formu:", preparedData);
                             setZahtjevDataForZaduzenje(preparedData);
                             setUpdateForm(true);
+                            console.log("updateForm postavljeno na true");
                         } catch (error) {
                             notify.error("Greška pri ažuriranju ", error);
                         }
