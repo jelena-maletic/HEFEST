@@ -10,6 +10,11 @@ import java.util.List;
 
 public interface DnevniZadatakRepository extends JpaRepository<DnevniZadatakEntity, Integer> {
 
+    List<DnevniZadatakEntity> findAllByOrderByDatumDesc();
+
+    @Query("SELECT d FROM DnevniZadatakEntity d WHERE d.zavrsen = false OR (d.zavrsen = true AND d.datum >= :granica) ORDER BY d.datum DESC")
+    List<DnevniZadatakEntity> findAktivniINedavniZadaci(@Param("granica") LocalDate granica);
+
     List<DnevniZadatakEntity> findAllByPoslovodja_Jmb(String jmb);
 
     List<DnevniZadatakEntity> findAllByTehnicar_JmbAndDatumAndZavrsenTrue(String jmb, LocalDate datum);

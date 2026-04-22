@@ -14,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +37,10 @@ public class DnevniZadatakService {
     }
 
     public List<DnevniZadatak> getAll() {
-        return dnevniZadatakRepository.findAll().stream().map(entity -> {
+        LocalDate prijeSedamDana = LocalDate.now().minusDays(7);
+        return dnevniZadatakRepository.findAktivniINedavniZadaci(prijeSedamDana)
+                .stream()
+                .map(entity -> {
             DnevniZadatak dto = modelMapper.map(entity, DnevniZadatak.class);
 
             dto.setIdDnevnogZadatka(entity.getId());

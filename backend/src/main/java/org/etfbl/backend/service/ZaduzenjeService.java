@@ -46,7 +46,7 @@ public class ZaduzenjeService {
     }
 
     public List<Zaduzenje> getAllZaduzenje() {
-        return zaduzenjeRepository.findAll().stream()
+        return zaduzenjeRepository.findAllByOrderByDatumZaduzenjaDesc().stream()
                 .map(this::convertToDto)
                 .toList();
     }

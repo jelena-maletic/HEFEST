@@ -32,7 +32,7 @@ public class DnevniIzvjestajService {
     }
 
     public List<DnevniIzvjestaj> getAll() {
-        return dnevniIzvjestajRepository.findAll().stream()
+        return dnevniIzvjestajRepository.findAllByOrderByDatumDesc().stream()
                 .map(this::mapToDto)
                 .map(this::popuniMaterijale)
                 .toList();
@@ -49,7 +49,7 @@ public class DnevniIzvjestajService {
     public DnevniIzvjestaj getById(Integer id) {
         return dnevniIzvjestajRepository.findById(id)
                 .map(this::mapToDto)
-                .map(this::popuniMaterijale) // Korištenje pomoćne metode za konzistentnost
+                .map(this::popuniMaterijale)
                 .orElseThrow(() -> new RuntimeException("Dnevni izvještaj nije pronađen: " + id));
     }
 

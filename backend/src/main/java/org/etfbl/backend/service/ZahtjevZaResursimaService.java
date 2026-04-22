@@ -36,7 +36,7 @@ public class ZahtjevZaResursimaService {
     }
 
     public List<ZahtjevZaResursima> getAllZahtjevi() {
-        return zahtjevZaResursimaRepository.findAll().stream()
+        return zahtjevZaResursimaRepository.findAllByOrderByDatumSlanjaDesc().stream()
                 .map(this::convertToDto)
                 .toList();
     }

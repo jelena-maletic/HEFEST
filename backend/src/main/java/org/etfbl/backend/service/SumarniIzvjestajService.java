@@ -31,7 +31,7 @@ public class SumarniIzvjestajService {
         this.dnevniIzvjestajRepository = dnevniIzvjestajRepository;
     }
     public List<SumarniIzvjestaj> getAll() {
-        return sumarniIzvjestajRepository.findAll().stream()
+        return sumarniIzvjestajRepository.findAllByOrderByDatumKreiranjaDesc().stream()
                 .map(this::mapToDto)
                 .toList();
     }

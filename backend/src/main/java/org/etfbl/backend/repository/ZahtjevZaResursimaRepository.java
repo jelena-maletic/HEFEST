@@ -1,5 +1,6 @@
 package org.etfbl.backend.repository;
 
+import org.etfbl.backend.model.DnevniZadatakEntity;
 import org.etfbl.backend.model.StanjeZahtjeva;
 import org.etfbl.backend.model.ZaduzenjeEntity;
 import org.etfbl.backend.model.ZahtjevZaResursimaEntity;
@@ -17,7 +18,7 @@ public interface ZahtjevZaResursimaRepository extends JpaRepository<ZahtjevZaRes
    // @Query("SELECT z FROM ZahtjevZaResursimaEntity z LEFT JOIN FETCH z.resursUZahtjevu WHERE z.id = :id")
     //Optional<ZahtjevZaResursimaEntity> findByIdWithResources(Integer id);
 
-    // Pronalaženje svih neobrađenih zahtjeva
+    List<ZahtjevZaResursimaEntity> findAllByOrderByDatumSlanjaDesc();
     List<ZahtjevZaResursimaEntity> findAllByStanjeZahtjeva(StanjeZahtjeva stanje);
     List<ZahtjevZaResursimaEntity> findAllByPoslovodja_jmb(String jmb);
 
