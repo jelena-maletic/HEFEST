@@ -149,7 +149,7 @@ export function Dashboard({sidebarContents, role}) {
             return refreshFn;
         });
     };
-    // Unutar Dashboard komponente, dodaj novi state:
+
     const [userName, setUserName] = useState("");
 
     useEffect(() => {
@@ -462,7 +462,6 @@ export function Dashboard({sidebarContents, role}) {
                                     console.error("Greška pri brisanju:", error);
                                     console.error("Greška objekat:", error.response);
 
-                                    // Izvlačenje poruke koju si napisala u Javi (npr. "Projekat se ne može obrisati...")
                                     const porukaSaServera = error.response?.data?.message
                                         || error.response?.data
                                         || "Došlo je do greške pri brisanju.";

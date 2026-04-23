@@ -30,10 +30,7 @@ export function ListElement({
     const [updateForm, setUpdateForm] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
     const [zahtjevDataForZaduzenje, setZahtjevDataForZaduzenje] = useState(null);
-    console.log("=== RENDER LIST ELEMENT ===");
-    console.log("updateForm stanje:", updateForm);
-    console.log("Šema koja će se koristiti:", zahtjevDataForZaduzenje ? "assignmentSchema" : "selectedSchema");
-    console.log("Podaci za formu:", zahtjevDataForZaduzenje || listElementData);
+
     const statusClass = listElementData.statusColor ? `status-${listElementData.statusColor}` : '';
     const truncateText = (text, maxLength) => {
         if (!text) return "";
