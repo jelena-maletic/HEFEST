@@ -35,7 +35,7 @@ public class ProjekatService {
     }
 
     public List<Projekat> getAllProjekti() {
-        return projekatRepository.findAll().stream()
+        return projekatRepository.findAllByOrderByDatumKreiranjaDesc().stream()
                 .filter(p -> !p.getObrisan())
                 .map(this::mapToDto)
                 .toList();
