@@ -89,4 +89,8 @@ public class KorisnikService {
         return korisnikRepo.findByImeOrPrezimeOrUsernameContainingIgnoreCase(keyword, keyword, keyword);
     }
 
+    public Korisnik getKorisnikByUsername(String username) {
+        return korisnikRepo.findByUsername(username).orElse(null);
+    }
+
 }

@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
@@ -37,6 +39,7 @@ public class KorisnikDialog extends JDialog {
     private JTextField tfPrezime;
     private JTextField tfBrojTelefona;
     private JComboBox<String> cbTipKorisnika;
+    private JLabel lblJmbError, lblEmailError, lblTelefonError;
 
     public KorisnikDialog() {
         ovaj = this;
@@ -58,6 +61,10 @@ public class KorisnikDialog extends JDialog {
         tfPrezime.setText(korisnik.getPrezime());
         tfBrojTelefona.setText(korisnik.getBrojTelefona());
         cbTipKorisnika.setSelectedItem(korisnik.getClass().getSimpleName());
+
+        validateJmb();
+        validateEmail();
+        validateTelefon();
     }
 
     public String getDialogResult() {
@@ -89,25 +96,38 @@ public class KorisnikDialog extends JDialog {
         setResizable(false);
         setModalityType(ModalityType.APPLICATION_MODAL);
         setTitle("Korisnik");
-        setBounds(100, 100, 400, 400);
+        setBounds(100, 100, 450, 550);
         setLocationRelativeTo(null);
         getContentPane().setLayout(new BorderLayout());
 
         JPanel contentPanel = new JPanel();
         contentPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        contentPanel.setLayout(new GridLayout(0, 1, 5, 5));
+        contentPanel.setLayout(new GridLayout(0, 1, 2, 2));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
+
+        tfJMB = new JTextField();
+        lblJmbError = new JLabel(" ");
+
+        tfEmail = new JTextField();
+        lblEmailError = new JLabel(" ");
+
+        tfBrojTelefona = new JTextField();
+        lblTelefonError = new JLabel(" ");
+
+        addValidationListener(tfJMB, this::validateJmb);
+        addValidationListener(tfEmail, this::validateEmail);
+        addValidationListener(tfBrojTelefona, this::validateTelefon);
 
         contentPanel.add(formRow("Tip korisnika:", cbTipKorisnika = new JComboBox<>(
                 new String[]{"Tehnicar", "Poslovodja", "Magacioner", "Knjigovodja", "Direktor"}
         )));
-        contentPanel.add(formRow("JMB:", tfJMB = new JTextField()));
+        contentPanel.add(formRowWithValidation("JMB:", tfJMB, lblJmbError));
         contentPanel.add(formRow("Ime:", tfIme = new JTextField()));
         contentPanel.add(formRow("Prezime:", tfPrezime = new JTextField()));
-        contentPanel.add(formRow("Username:", tfUsername = new JTextField()));
-        contentPanel.add(formRow("Email:", tfEmail = new JTextField()));
-        contentPanel.add(formRow("Password:", pfPassword = new JPasswordField()));
-        contentPanel.add(formRow("Broj telefona:", tfBrojTelefona = new JTextField()));
+        contentPanel.add(formRow("Korisničko ime:", tfUsername = new JTextField()));
+        contentPanel.add(formRowWithValidation("Email:", tfEmail, lblEmailError));
+        contentPanel.add(formRow("Lozinka:", pfPassword = new JPasswordField()));
+        contentPanel.add(formRowWithValidation("Broj telefona:", tfBrojTelefona, lblTelefonError));
 
         JPanel buttonPane = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         buttonPane.setBorder(new EmptyBorder(0, 0, 5, 5));
@@ -143,7 +163,35 @@ public class KorisnikDialog extends JDialog {
         return panel;
     }
 
+    private JPanel formRowWithValidation(String labelText, JComponent field, JLabel errorLabel) {
+        JPanel container = new JPanel(new BorderLayout());
+        JPanel inputRow = new JPanel(new BorderLayout(5, 0));
+        JLabel label = new JLabel(labelText);
+        label.setPreferredSize(new Dimension(100, 25));
+        label.setFont(new Font("SansSerif", Font.BOLD, 13));
+        errorLabel.setBorder(new EmptyBorder(0, 105, 0, 0));
+
+        inputRow.add(label, BorderLayout.WEST);
+        inputRow.add(field, BorderLayout.CENTER);
+
+        errorLabel.setForeground(Color.RED);
+        errorLabel.setFont(new Font("SansSerif", Font.PLAIN, 10));
+
+        container.add(inputRow, BorderLayout.CENTER);
+        container.add(errorLabel, BorderLayout.SOUTH);
+        return container;
+    }
+
     private void handleSave(ActionEvent e) {
+        validateJmb();
+        validateEmail();
+        validateTelefon();
+
+        if (!lblJmbError.getText().equals(" ") || !lblEmailError.getText().equals(" ") || !lblTelefonError.getText().equals(" ")) {
+            JOptionPane.showMessageDialog(this, "Molimo Vas ispravite greške u poljima.", "Greška", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         try {
             String jmb = tfJMB.getText().trim();
             String username = tfUsername.getText().trim();
@@ -155,6 +203,20 @@ public class KorisnikDialog extends JDialog {
 
             if (jmb.isEmpty() || username.isEmpty() || (!izmjena && password.isEmpty()) || ime.isEmpty() || prezime.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Nisu popunjena sva neophodna polja!", "Greška", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Korisnik postojeci = korisnikService.getKorisnikByUsername(username);
+
+            if (postojeci != null) {
+                if (!izmjena || !postojeci.getJmb().equals(korisnik.getJmb())) {
+                    JOptionPane.showMessageDialog(this, "Korisničko ime '" + username + "' je već zauzeto!", "Greška", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+
+            if ((!izmjena && password.length() < 8) || (izmjena && !password.isEmpty() && password.length() < 8)) {
+                JOptionPane.showMessageDialog(this, "Lozinka mora imati najmanje 8 karaktera!", "Greška", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
@@ -190,4 +252,47 @@ public class KorisnikDialog extends JDialog {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Greška", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    private void addValidationListener(JTextField field, Runnable validationMethod) {
+        field.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) { validationMethod.run(); }
+            public void removeUpdate(DocumentEvent e) { validationMethod.run(); }
+            public void changedUpdate(DocumentEvent e) { validationMethod.run(); }
+        });
+    }
+
+    private void validateJmb() {
+        String jmb = tfJMB.getText().trim();
+        if (jmb.matches("\\d{13}")) {
+            lblJmbError.setText(" ");
+            tfJMB.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
+        } else {
+            lblJmbError.setText("JMB mora imati tačno 13 cifara!");
+            tfJMB.setBorder(BorderFactory.createLineBorder(Color.RED));
+        }
+    }
+
+    private void validateEmail() {
+        String email = tfEmail.getText().trim();
+        String regex = "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b";
+        if (email.matches(regex)) {
+            lblEmailError.setText(" ");
+            tfEmail.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
+        } else {
+            lblEmailError.setText("Email format nije ispravan!");
+            tfEmail.setBorder(BorderFactory.createLineBorder(Color.RED));
+        }
+    }
+
+    private void validateTelefon() {
+        String tel = tfBrojTelefona.getText().trim();
+        if (tel.matches("\\d{9,20}")) {
+            lblTelefonError.setText(" ");
+            tfBrojTelefona.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
+        } else {
+            lblTelefonError.setText("Dozvoljene su samo cifre (min 9, max 20)!");
+            tfBrojTelefona.setBorder(BorderFactory.createLineBorder(Color.RED));
+        }
+    }
+
 }
