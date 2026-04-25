@@ -23,7 +23,6 @@ public class VoziloService {
     public VoziloService(VoziloRepository voziloRepository, ModelMapper modelMapper, ResursService resursService) {
         this.voziloRepository = voziloRepository;
         this.modelMapper = modelMapper;
-        //this.resursRepository = resursRepository;
         this.resursService = resursService;
     }
 
@@ -42,6 +41,9 @@ public class VoziloService {
 
         VoziloEntity sacuvano = voziloRepository.save(entity);
 
+        if (dto.getUlogovaniJmb() != null) {
+            resursService.kreirajVezuMagacionerResurs(sacuvano.getId(), dto.getUlogovaniJmb());
+        }
         return modelMapper.map(sacuvano, Vozilo.class);
     }
 

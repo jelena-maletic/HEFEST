@@ -1,4 +1,4 @@
-package org.etfbl.backend.model;
+package org.etfbl.backend.dto;
 
 import lombok.Data;
 

@@ -16,13 +16,11 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class MagacionerUpravljaResursomController {
 
-
     private final MagacionerUpravljaResursomService service;
 
     public MagacionerUpravljaResursomController(MagacionerUpravljaResursomService s) {
         this.service = s;
     }
-
 
     @GetMapping
     public List<MagacionerUpravljaResursom> getAll() {

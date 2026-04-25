@@ -39,11 +39,12 @@ public class MaterijalService {
     public Materijal sacuvajMaterijal(Materijal dto) {
         MaterijalEntity entity = modelMapper.map(dto, MaterijalEntity.class);
         ResursEntity noviResurs = modelMapper.map(dto, ResursEntity.class);
-
         entity.setId(noviResurs.getId());
-
         MaterijalEntity sacuvano = materijal.save(entity);
 
+        if (dto.getUlogovaniJmb() != null) {
+            resursService.kreirajVezuMagacionerResurs(sacuvano.getId(), dto.getUlogovaniJmb());
+        }
         return modelMapper.map(sacuvano, Materijal.class);
     }
 

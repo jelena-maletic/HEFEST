@@ -15,7 +15,6 @@ public interface TehnicarNaProjektuRepository extends JpaRepository<TehnicarNaPr
     @Query("SELECT t.tehnicarJMB FROM TehnicarNaProjektuEntity t WHERE t.idProjekta = :idProjekta")
     List<String> findTehnicarJMBByIdProjekta(@Param("idProjekta") Integer idProjekta);
 
-
     @Modifying
     @Transactional
     @Query("DELETE FROM TehnicarNaProjektuEntity t WHERE t.idProjekta = :idProjekta")

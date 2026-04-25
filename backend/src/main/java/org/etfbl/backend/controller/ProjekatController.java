@@ -30,7 +30,6 @@ public class ProjekatController {
         return new ResponseEntity<>(noviProjekatEntity, HttpStatus.CREATED);
     }
 
-
     @GetMapping("/{id}")
     public ResponseEntity<Projekat> getById(@PathVariable Integer id) throws NotFoundException {
         System.out.println("Primljen ID: " + id);
@@ -43,7 +42,6 @@ public class ProjekatController {
         System.out.println("Kontroler: Primljen zahtjev za ID: " + id);
         projekatService.obrisiProjekat(id);
         return ResponseEntity.noContent().build();
-        // Vraćamo 204 No Content jer je operacija uspješno izvršena, ali nema tijela u odgovoru
     }
 
     @GetMapping("/lokacija/{lokacija}")

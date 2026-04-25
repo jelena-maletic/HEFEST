@@ -8,7 +8,6 @@ import java.util.Optional;
 
 public interface MagacionerRepository extends JpaRepository<MagacionerEntity, String> {
 
-    // Ovaj upit cilja direktno MagacionerEntity i preskače problematične JOIN-ove
     @Query("SELECT m FROM MagacionerEntity m WHERE m.jmb = :jmb")
     Optional<MagacionerEntity> findByJmb(@Param("jmb") String jmb);
 }

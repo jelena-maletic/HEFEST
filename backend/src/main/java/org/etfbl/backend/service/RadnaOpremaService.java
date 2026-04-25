@@ -39,6 +39,9 @@ public class RadnaOpremaService {
         RadnaOpremaEntity entity = modelMapper.map(dto, RadnaOpremaEntity.class);
 
         RadnaOpremaEntity sacuvano = radnaOpremaRepository.save(entity);
+        if (dto.getUlogovaniJmb() != null) {
+            resursService.kreirajVezuMagacionerResurs(sacuvano.getId(), dto.getUlogovaniJmb());
+        }
         return modelMapper.map(sacuvano, RadnaOprema.class);
     }
 

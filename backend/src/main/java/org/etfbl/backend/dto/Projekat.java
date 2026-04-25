@@ -30,6 +30,5 @@ public class Projekat implements Serializable {
     List<String> timTehnicara;
     @JsonProperty("manager")
     String poslovodja;
-
     String poslovodjaImePrezime;
 }

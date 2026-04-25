@@ -22,4 +22,5 @@ public class Vozilo implements Serializable {
     LocalDate datumRegistracije;
     LocalDate datumIstekaRegistracije;
     String id;
+    String ulogovaniJmb;
 }

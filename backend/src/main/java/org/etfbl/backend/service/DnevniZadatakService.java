@@ -6,7 +6,7 @@ import org.etfbl.backend.dto.DnevniZadatak;
 import org.etfbl.backend.dto.Poslovodja;
 import org.etfbl.backend.dto.Tehnicar;
 import org.etfbl.backend.model.DnevniZadatakEntity;
-import org.etfbl.backend.model.DnevniZadatakRequest;
+import org.etfbl.backend.dto.DnevniZadatakRequest;
 import org.etfbl.backend.repository.DnevniZadatakRepository;
 import org.etfbl.backend.repository.PoslovodjaRepository;
 import org.etfbl.backend.repository.TehnicarRepository;
@@ -14,7 +14,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -89,7 +88,7 @@ public class DnevniZadatakService {
         DnevniZadatakEntity saved = dnevniZadatakRepository.save(entity);
 
         DnevniZadatak dto = modelMapper.map(saved, DnevniZadatak.class);
-        dto.setIdDnevnogZadatka(saved.getId()); // Mapiranje ID-a nakon snimanja
+        dto.setIdDnevnogZadatka(saved.getId());
         return dto;
     }
 
@@ -137,13 +136,11 @@ public class DnevniZadatakService {
                 .orElseThrow(() -> new RuntimeException("Zadatak sa ID " + id + " nije pronađen"));
 
         DnevniZadatak dto = modelMapper.map(entity, DnevniZadatak.class);
-        dto.setIdDnevnogZadatka(entity.getId()); // Ručno setujemo ID da ga frontend vidi
+        dto.setIdDnevnogZadatka(entity.getId());
 
-        // Ako treba mapirati i ostale objekte (izvještaj, tehničar...) kao u getAll():
         if (entity.getTehnicar() != null) {
             dto.setTehnicar(modelMapper.map(entity.getTehnicar(), org.etfbl.backend.dto.Tehnicar.class));
         }
-
         return dto;
     }
 }

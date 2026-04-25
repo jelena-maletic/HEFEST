@@ -1,14 +1,13 @@
 package org.etfbl.backend.service;
 
 import org.etfbl.backend.dto.Resurs;
+import org.etfbl.backend.model.MagacionerUpravljaResursomEntity;
 import org.etfbl.backend.model.ProjekatEntity;
 import org.etfbl.backend.model.ResursEntity;
-import org.etfbl.backend.repository.ResursRepository;
-import org.etfbl.backend.repository.UtroseniMaterijalRepository;
-import org.etfbl.backend.repository.ZaduzenjeRepository;
-import org.etfbl.backend.repository.ZahtjevZaResursimaRepository;
+import org.etfbl.backend.repository.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,12 +19,14 @@ public class ResursService {
     private final ZahtjevZaResursimaRepository zahtjevRepository;
     private final ZaduzenjeRepository zaduzenjeRepository;
     private final UtroseniMaterijalRepository utroseniMaterijalRepository;
+    private final MagacionerUpravljaResursomRepository upravljaResursomRepository;
 
-    public ResursService(ResursRepository resursRepository, ZahtjevZaResursimaRepository zahtjevRepository, ZaduzenjeRepository zaduzenjeRepository, UtroseniMaterijalRepository utroseniMaterijalRepository) {
+    public ResursService(ResursRepository resursRepository, ZahtjevZaResursimaRepository zahtjevRepository, ZaduzenjeRepository zaduzenjeRepository, UtroseniMaterijalRepository utroseniMaterijalRepository, MagacionerUpravljaResursomRepository upravljaResursomRepository) {
         this.resursRepository = resursRepository;
         this.zahtjevRepository = zahtjevRepository;
         this.zaduzenjeRepository = zaduzenjeRepository;
         this.utroseniMaterijalRepository = utroseniMaterijalRepository;
+        this.upravljaResursomRepository = upravljaResursomRepository;
         this.modelMapper = new ModelMapper();
     }
 
@@ -37,6 +38,17 @@ public class ResursService {
         ResursEntity entity = modelMapper.map(dto, ResursEntity.class);
         ResursEntity sacuvan = resursRepository.save(entity);
         return modelMapper.map(sacuvan, Resurs.class);
+    }
+
+    public void kreirajVezuMagacionerResurs(Integer idResursa, String magacionerJmb) {
+        MagacionerUpravljaResursomEntity veza = new MagacionerUpravljaResursomEntity();
+        veza.setIdResursa(idResursa);
+        veza.setMagacionerJMB(magacionerJmb);
+        ResursEntity resurs = resursRepository.findById(idResursa).orElse(null);
+        if(resurs != null) {
+            veza.setResurs(resurs);
+            upravljaResursomRepository.save(veza);
+        }
     }
 
     public void validirajBrisanje(Integer id) {

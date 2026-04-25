@@ -15,4 +15,5 @@ public class Resurs implements Serializable {
     String naziv;
     BigDecimal stanjeMagacina;
     BigDecimal minimalnaKolicina;
+    String ulogovaniJmb;
 }

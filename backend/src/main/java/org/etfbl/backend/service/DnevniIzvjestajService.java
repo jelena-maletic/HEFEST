@@ -166,7 +166,6 @@ public class DnevniIzvjestajService {
                     .stream()
                     .map(m -> {
                         UtroseniMaterijal mDto = modelMapper.map(m, UtroseniMaterijal.class);
-                        // Eksplicitno mapiranje ugniježđenog materijala ako modelMapper zakaže
                         if (m.getMaterijal() != null) {
                             mDto.setMaterijal(modelMapper.map(m.getMaterijal(), Materijal.class));
                         }

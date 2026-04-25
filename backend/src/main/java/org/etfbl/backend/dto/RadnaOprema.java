@@ -16,4 +16,5 @@ public class RadnaOprema implements Serializable {
     private BigDecimal stanjeMagacina;
     private BigDecimal minimalnaKolicina;
     private Kategorija kategorija;
+    String ulogovaniJmb;
 }

@@ -160,7 +160,6 @@ public class ProjekatService {
         ProjekatEntity postojeci = projekatRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Projekat sa ID-om " + id + " ne postoji."));
 
-        // 1. Ažuriranje osnovnih polja (ostaje isto)
         postojeci.setNaziv(dto.getNaziv());
         postojeci.setOpis(dto.getOpis());
         postojeci.setLokacija(dto.getLokacija());
@@ -172,28 +171,24 @@ public class ProjekatService {
         postojeci.setKlijent(dto.getKlijent());
         postojeci.setPosljednjaIzmjena(Instant.now());
 
-        // 2. Logika za poslovođu (BEZ BRISANJA)
         String noviPoslovodjaJmb = dto.getPoslovodja();
-        // Preuzimamo JMB trenutno aktivnog poslovođe (ovo zavisi od tvog upita u repozitorijumu)
         String stariPoslovodjaJmb = poslovodjaUpravljaProjektomRepository.findPoslovodjaJmbByIdProjekta(id);
 
         if (noviPoslovodjaJmb != null && !noviPoslovodjaJmb.equals(stariPoslovodjaJmb)) {
             PoslovodjaUpravljaProjektomEntity novaVeza = new PoslovodjaUpravljaProjektomEntity();
-            // Postavljamo objekte, Hibernate će sam izvući ID-eve za kolone
             novaVeza.setProjekat(postojeci);
             novaVeza.setPoslovodja(poslovodjaRepository.getReferenceById(noviPoslovodjaJmb));
 
             poslovodjaUpravljaProjektomRepository.save(novaVeza);
         }
 
-        // 3. Logika za tehničare (ovdje možeš zadržati brisanje ako oni nemaju svoje izvještaje)
         tehnicarNaProjektuRepository.deleteByProjekatId(id);
         if (dto.getTimTehnicara() != null && !dto.getTimTehnicara().isEmpty()) {
             for (String tehJmb : dto.getTimTehnicara()) {
                 TehnicarNaProjektuEntity vezaTehnicar = new TehnicarNaProjektuEntity();
 
-                vezaTehnicar.setIdProjekta(postojeci.getIdProjekta()); // Ovo je ključno!
-                vezaTehnicar.setTehnicarJMB(tehJmb);                  // I ovo!
+                vezaTehnicar.setIdProjekta(postojeci.getIdProjekta());
+                vezaTehnicar.setTehnicarJMB(tehJmb);
 
                 vezaTehnicar.setProjekat(postojeci);
                 vezaTehnicar.setTehnicar(tehnicarRepository.getReferenceById(tehJmb));
@@ -201,12 +196,8 @@ public class ProjekatService {
                 tehnicarNaProjektuRepository.save(vezaTehnicar);
             }
         }
-
         ProjekatEntity sacuvan = projekatRepository.save(postojeci);
-        return mapToDto(sacuvan); // Bolje koristiti tvoju mapToDto jer ona puni dodatna polja
+        return mapToDto(sacuvan);
     }
-
-
-
 }
 

@@ -17,4 +17,5 @@ public class Materijal implements Serializable {
     String jedinicaMjere;
     String kategorija;
     String id;
+    String ulogovaniJmb;
 }

@@ -21,7 +21,7 @@ public class MagacionerService {
     }
 
     public Magacioner getByJmb(String jmb) {
-        return magacionerRepository.findById(jmb) // Pošto je JMB vjerovatno @Id u ZaposleniEntity
+        return magacionerRepository.findById(jmb)
                 .map(m -> modelMapper.map(m, Magacioner.class))
                 .orElseThrow(() -> new RuntimeException("Magacioner sa JMB " + jmb + " nije pronađen"));
     }
