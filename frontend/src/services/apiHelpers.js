@@ -258,9 +258,9 @@ export const fetchData = async (tag, filterPoslovodja = false, filterTehnicar = 
                 const punoIme = `${m.ime || ""} ${m.prezime || ""}`.trim() || "Nepoznat magacioner";
                 return {
                     ...m,
-                    title: punoIme,      // Za stare komponente
-                    label: punoIme,      // Za Ant Design Select (prikaz)
-                    value: m.jmb,        // Za Ant Design Select (vrijednost)
+                    title: punoIme,
+                    label: punoIme,
+                    value: m.jmb,
                     detail: m.brojTelefona || "Nema kontakta",
                     subline: m.email || "Nema emaila"
                 };
@@ -437,7 +437,7 @@ export const getTehnicarData = async (jmb) => {
     const response = await axios.get(`${API_BASE}/tehnicari/${jmb}`, {
         headers: {Authorization: `Bearer ${sessionStorage.getItem("token")}`}
     });
-    return response.data; // Vraća cijeli objekat tehničara iz baze
+    return response.data;
 };
 
 export const updateTehnicarAktivnost = async (jmb, noviStatus) => {

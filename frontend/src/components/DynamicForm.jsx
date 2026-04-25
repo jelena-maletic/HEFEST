@@ -40,7 +40,6 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
             const formattedValues = { ...initialValues };
 
             schema.fields.forEach(field => {
-                // Fix za objekte tipa magacioner: { jmb: "..." } -> magacionerJmb
                 if (field.name.endsWith('Jmb')) {
                     const objectName = field.name.replace('Jmb', '');
                     if (formattedValues[objectName]?.jmb) {
@@ -122,16 +121,12 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
             }
 
             form.setFieldsValue({ status: noviStatus });
-
-            // Spremamo informaciju o tome da li polje treba biti zaključano
-            // (Ovo ćemo proslijediti renderField funkciji)
             setIsStatusDisabled(shouldDisable);
         }
     }, [pocetakRada, krajRada, form, schema.title]);
 
     const [isStatusDisabled, setIsStatusDisabled] = useState(false);
 
-    // 3. Efekat za zavisna polja (resourceType)
     useEffect(() => {
         const dependentField = schema?.fields?.find(f => f.dependsOn === 'resourceType');
         if (dependentField && resourceType && dependentField.endpoints) {

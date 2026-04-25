@@ -9,7 +9,6 @@ body, html {
     );
 }
 
-
 .login-container {
     position: absolute;
     top: 50%;
@@ -18,13 +17,11 @@ body, html {
     text-align: center;
 }
 
-
 .logo-icon {
     width: 180px;
     margin-bottom: 10px;
     margin-top: -60px;
 }
-
 
 .title {
     font-size: 55px;
@@ -33,14 +30,12 @@ body, html {
     color: #2E2F2E;
 }
 
-
 .login-icon {
     width: 100px;
     height: 100px;
     margin: 5px 0 50px 0;
     border-radius: 50%;
 }
-
 
 .input-group {
     position: relative;
@@ -66,7 +61,6 @@ body, html {
     outline: none;
     font-size: 14px;
 }
-
 
 .toggle-password {
     position: absolute;
@@ -97,7 +91,6 @@ body, html {
     100% { transform: translateX(0); }
 }
 
-
 .login-button {
     margin-top: 15px;
     width: 100px;
@@ -115,8 +108,6 @@ body, html {
     color: #424242;
     border-color: #424242;
 }
-
-/* Uklanja automatske "show password" i "clear" ikonice iz input polja na svim browserima */
 
 input::-ms-reveal,
 input::-ms-clear {

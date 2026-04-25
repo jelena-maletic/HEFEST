@@ -35,8 +35,6 @@
     margin: 0;
 }
 
-/* ================= LIST VIEW ================= */
-
 .list-content.list {
     display: flex;
     flex-direction: column;
@@ -44,13 +42,11 @@
     gap: 0;
     width: 100%;
     margin-top: 1.0em;
-    flex: 1; /* Take up all remaining space under the header */
-    min-height: 0; /* Crucial flexbox fix to allow scrolling */
-    overflow-y: auto; /* Scroll ONLY the list items */
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
     padding-bottom: 2em;
 }
-
-/* ================= GRID VIEW ================= */
 
 .list-content.grid {
     display: grid;
@@ -61,7 +57,7 @@
     margin-top: 1.5em;
     flex: 1;
     min-height: 0;
-    overflow-y: auto; /* Makes the grid scrollable too */
+    overflow-y: auto;
     padding-bottom: 2em;
 }
 
@@ -152,5 +148,5 @@
     padding: 2rem;
     color: #666;
     font-size: 1.1rem;
-    grid-column: 1 / -1; /* Ensures it spans across all columns if in grid view */
+    grid-column: 1 / -1;
 }

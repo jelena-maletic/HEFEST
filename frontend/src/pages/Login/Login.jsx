@@ -29,13 +29,10 @@ function Login({roleHandle}) {
 
         try {
             const res = await login(username, password);
-            // Bekend vraća LoginResponse sa poljima: token, username, role
             const { token, role, username: returnedUsername, jmb } = res.data;
 
-            // Čuvamo u sessionStorage
             saveAuth(token, returnedUsername, role, jmb);
 
-            // Preusmjeravanje na osnovu uloge iz bekenda
             switch (role) {
                 case "ROLE_DIREKTOR":
                     roleHandle("direktor");
@@ -63,7 +60,7 @@ function Login({roleHandle}) {
                     break;
             }
         } catch (err) {
-            console.error("Login error object:", err); // Log this to see the real structure
+            console.error("Login error object:", err);
             const errorMessage = err.response?.data?.message
                 || err.response?.data?.error
                 || "Neispravno korisničko ime ili lozinka";

@@ -140,18 +140,17 @@
     vertical-align: middle;
 }
 
-/* ================= GRID ELEMENT – potpuno odvojen ================= */
 .grid-element {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
 
-    min-width: 220px; /* manja širina */
+    min-width: 220px;
     min-height: 150px;
     max-height: 200px;
     padding: 16px;
-    margin: 0;             /* margin ne nasljeđuje iz list-element */
+    margin: 0;
     /*background: #e6e6e6;*/
     border-radius: 16px;
     box-shadow: inset 0 0 0 1px #ccc;

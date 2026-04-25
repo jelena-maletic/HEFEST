@@ -132,7 +132,7 @@ export function ListElement({
                     onClickHandler={ async (e) => {
                         e.stopPropagation();
                         try {
-                            await updateZahtjevStatus(listElementData.id, "neodobren"); // Dodaj await
+                            await updateZahtjevStatus(listElementData.id, "neodobren");
                             notify.success("Status ažuriran");
                             if (onSuccess) await onSuccess();
                         } catch (error) {

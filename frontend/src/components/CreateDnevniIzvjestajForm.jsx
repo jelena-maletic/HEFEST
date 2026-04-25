@@ -47,23 +47,20 @@ const CreateDnevniIzvjestajForm = ({ onClose, onSuccess, role }) => {
         const jmb = sessionStorage.getItem('jmb');
         let projektiUrl = "http://localhost:8080/api/projekti";
 
-        // Dinamički biramo URL na osnovu uloge
         if (role === "tehnicar") {
             projektiUrl = `http://localhost:8080/api/projekti/tehnicar/${jmb}`;
         } else if (role === "poslovodja") {
             projektiUrl = `http://localhost:8080/api/projekti/poslovodja/${jmb}`;
         }
 
-        // Učitavanje filtriranih projekata
         api.service(true).get(projektiUrl)
             .then(res => setProjekti(Array.isArray(res.data) ? res.data : []))
             .catch(() => notify.error("Greška", "Učitavanje projekata nije uspjelo."));
 
-        // Učitavanje materijala ostaje isto
         api.service(true).get("http://localhost:8080/api/materijal")
             .then(res => setMaterijali(Array.isArray(res.data) ? res.data : []))
             .catch(() => notify.error("Greška", "Učitavanje materijala nije uspjelo."));
-    }, [role]); // Dodali smo role u dependency niz
+    }, [role]);
 
     useEffect(() => {
         if (odabraniDatum) {

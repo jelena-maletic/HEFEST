@@ -162,7 +162,6 @@ export function Dashboard({sidebarContents, role}) {
                         setUserName(`${data}`);
                     }
                 } catch (err) {
-                    // Ako API ne nađe JMB u 'zaposleni', možda je u drugoj tabeli ili je fallback uloga
                     console.log(err);
                     setUserName(role);
                 }
@@ -170,8 +169,6 @@ export function Dashboard({sidebarContents, role}) {
         };
         fetchUser();
     }, [role]);
-
-
 
     return (
         <div className="app-container">
@@ -520,10 +517,7 @@ export function Dashboard({sidebarContents, role}) {
                     />
                 </CenteredOverlay>
             )}
-
         </div>
-
-
     );
 }
 

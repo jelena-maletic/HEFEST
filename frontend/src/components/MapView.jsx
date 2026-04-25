@@ -14,10 +14,7 @@ export default function MapView({role,onProjectClick}) {
 
     useEffect(() => {
         const getProjects = async () => {
-            // Ako je korisnik POSLOVODJA, šaljemo true za filterPoslovodja
             const isPoslovodja = role === "poslovodja";
-
-            // fetchData(tag, filterPoslovodja, filterTehnicar)
             const data = await fetchData("projekti", isPoslovodja);
             setProjects(data || []);
         };

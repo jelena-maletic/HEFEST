@@ -42,7 +42,6 @@
     margin-right: 10px;
 }
 
-/* Dno sidebar-a */
 .bottom-section {
     display: flex;
     flex-direction: column;
@@ -61,7 +60,6 @@
     vertical-align: middle;
 }
 
-/* Status toggle */
 .status-toggle label {
     color: #2E2F2E;
     font-weight: 500;
@@ -125,7 +123,6 @@
     color: #2E2F2E;
 }
 
-/* Ikonice ispod toggle-a */
 .bottom-buttons {
     display: flex;
     flex-direction: column;

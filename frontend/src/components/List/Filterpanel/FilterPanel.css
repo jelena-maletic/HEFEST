@@ -2,8 +2,6 @@
     position: relative;
 }
 
-/* ── Toggle button ── */
-
 .filter-toggle-btn {
     display: flex;
     align-items: center;
@@ -45,8 +43,6 @@
     justify-content: center;
 }
 
-/* ── Dropdown panel ── */
-
 .filter-dropdown {
     position: absolute;
     top: calc(100% + 8px);
@@ -59,8 +55,6 @@
     min-width: 340px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 }
-
-/* ── Filter rows ── */
 
 .filter-row {
     display: flex;
@@ -163,8 +157,6 @@
     background-color: #DDDDDD;
     color: #2E2F2E;
 }
-
-/* ── Active filter chips (rendered in List.jsx) ── */
 
 .filter-chips-bar {
     display: flex;

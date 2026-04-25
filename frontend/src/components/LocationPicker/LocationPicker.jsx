@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from "react-lea
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import greenPinIcon from "../../assets/green-pin.svg";
-import { Input, Button, Space, message } from 'antd'; // Koristim AntD pošto ga već imaš u projektu
+import { Input, Button, Space, message } from 'antd';
 
 const pickerIcon = new L.Icon({
     iconUrl: greenPinIcon,
@@ -11,12 +11,11 @@ const pickerIcon = new L.Icon({
     iconAnchor: [17, 50],
 });
 
-// Pomoćna komponenta za pomjeranje fokusa mape
 function MapRefresher({ center }) {
     const map = useMap();
     useEffect(() => {
         if (center) {
-            map.flyTo(center, 16); // Fokusira mapu na novu lokaciju sa zumom 16
+            map.flyTo(center, 16);
         }
     }, [center, map]);
     return null;
@@ -54,7 +53,6 @@ export default function LocationPicker({ onLocationSelected, initialValue }) {
         if (!searchQuery) return;
 
         try {
-            // Nominatim Search API
             const response = await fetch(
                 `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=1&accept-language=sr-Latn`
             );
@@ -79,7 +77,6 @@ export default function LocationPicker({ onLocationSelected, initialValue }) {
 
     return (
         <div style={{ marginBottom: "15px" }}>
-            {/* POLJE ZA PRETRAGU */}
             <Space.Compact style={{ width: '100%', marginBottom: '10px' }}>
                 <Input
                     placeholder="Unesite adresu (npr. Vojvode Stepe 5) ili koordinate..."

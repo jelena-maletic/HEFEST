@@ -7,20 +7,17 @@
     background-color: #f3f3f3;
 }
 
-/* Ne prikazuje se border dugmeta nakon što pritisnemo na dugme */
 button:focus {
     outline: none;
     box-shadow: none;
 }
 
-/* content area = sidebar + home ekran */
 .content-area {
     display: flex;
     flex: 1;
     height: calc(100vh - 100px);
 }
 
-/* Glavni dio ekrana */
 .home-screen {
     flex: 1;
     position: relative;

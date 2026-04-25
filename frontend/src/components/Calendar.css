@@ -41,12 +41,11 @@
     cursor: pointer;
 }
 
-
 .fc .fc-prev-button,
 .fc .fc-next-button,
 .fc .fc-today-button {
-    background-color: #000 !important; /* crna pozadina */
-    color: #fff !important;            /* bijeli tekst */
+    background-color: #000 !important;
+    color: #fff !important;
     border: none !important;
     border-radius: 6px !important;
     padding: 6px 12px !important;

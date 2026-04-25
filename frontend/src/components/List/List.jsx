@@ -259,6 +259,11 @@ export function List({
                                 finalData.ulogovaniJmb = loggedInJmb;
                             }
 
+                            if (currentTag === "vozila" || currentTag === "radna-oprema" || currentTag === "materijal") {
+                                finalData.ulogovaniJmb = loggedInJmb;
+                                console.log("PROVJERA PAYLOADA:", finalData);
+                            }
+
                             if (currentTag === "zaduzenja") {
                                 finalData.magacionerJMB = loggedInJmb;
                                 if (finalData.resursId) {

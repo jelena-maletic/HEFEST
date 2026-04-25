@@ -11,8 +11,6 @@ function Calendar() {
     const [events, setEvents] = useState([]);
     const [selectedProject, setSelectedProject] = useState(null);
 
-    // TODO srediti lokaciju (trenutno su koordinate)
-
     useEffect(() => {
         const getEvents = async () => {
             try {
@@ -70,8 +68,6 @@ function Calendar() {
         };
         getEvents();
     }, []);
-
-
 
     const handleEventClick = async (info) => {
         info.jsEvent.preventDefault();
