@@ -7,6 +7,7 @@ import { PlusOutlined, DeleteOutlined, FileTextOutlined,
     BuildOutlined, SolutionOutlined, ImportOutlined } from "@ant-design/icons";
 import api from "../auth/axiosInstance.js";
 import { useNotification } from "./NotificationContext.jsx";
+import { useDarkMode } from "./DarkModeContext.jsx";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -31,6 +32,7 @@ const CreateDnevniIzvjestajForm = ({ onClose, onSuccess, role }) => {
     const [pronadjeniZadaci, setPronadjeniZadaci] = useState([]);
     const [odabraniZadaci, setOdabraniZadaci] = useState([]);
     const notify = useNotification();
+    const { isDark } = useDarkMode();
 
     const odabraniDatum = Form.useWatch('datum', form);
 
@@ -210,7 +212,7 @@ const CreateDnevniIzvjestajForm = ({ onClose, onSuccess, role }) => {
                     </div>
                 )}
 
-                <Divider orientation="left" style={{ borderColor: "#d9d9d9" }}>Radni sati</Divider>
+                <Divider orientation="left" style={{ borderColor: isDark ? "#5a5b5a" : "#d9d9d9" }}>Radni sati</Divider>
 
                 <Row gutter={16}>
                     {/*<Col span={8}>
@@ -247,7 +249,7 @@ const CreateDnevniIzvjestajForm = ({ onClose, onSuccess, role }) => {
                     <TextArea rows={4} placeholder="Unesite detaljan opis radova na gradilištu..." style={{ borderRadius: 2 }} />
                 </Form.Item>
 
-                <Divider orientation="left" style={{ borderColor: "#d9d9d9" }}>
+                <Divider orientation="left" style={{ borderColor: isDark ? "#5a5b5a" : "#d9d9d9" }}>
                     <Space><BuildOutlined /> Utrošeni materijal</Space>
                 </Divider>
 
@@ -255,10 +257,10 @@ const CreateDnevniIzvjestajForm = ({ onClose, onSuccess, role }) => {
                     <div
                         key={stavka._localId}
                         style={{
-                            background: "#fafafa",
+                            background: isDark ? "#3a3b3a" : "#fafafa",
                             padding: "20px",
                             borderRadius: 4,
-                            border: "1px solid #e8e8e8",
+                            border: `1px solid ${isDark ? "#5a5b5a" : "#e8e8e8"}`,
                             marginBottom: 20,
                             position: "relative"
                         }}
@@ -343,7 +345,7 @@ const CreateDnevniIzvjestajForm = ({ onClose, onSuccess, role }) => {
                     Dodaj materijal na listu
                 </Button>
 
-                <div style={{ display: "flex", justifyContent: "flex-end", gap: 12, borderTop: "1px solid #f0f0f0", paddingTop: 20 }}>
+                <div style={{ display: "flex", justifyContent: "flex-end", gap: 12, borderTop: `1px solid ${isDark ? "#5a5b5a" : "#f0f0f0"}`, paddingTop: 20 }}>
                     <Button size="large" onClick={onClose} style={{ borderRadius: 4 }}>
                         Odustani
                     </Button>

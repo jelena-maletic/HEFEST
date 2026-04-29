@@ -13,6 +13,7 @@ import filterConfig from "../../data/filter-config.json";
 import {getJmb, getRole} from "../../auth/auth.js";
 import { Pagination } from 'antd';
 import {adjustFilterTag} from "../../utils/dataHelpers.js";
+import {useDarkMode} from "../DarkModeContext.jsx";
 
 const noop = () => {};
 
@@ -40,6 +41,7 @@ export function List({
     const [filterTag, setFilterTag] = useState({activeTag});
     const [currentPage, setCurrentPage] = useState(1);
     const pageSize = 4; // Broj elemenata po stranici
+
 
     const [endpointOptionsCache, setEndpointOptionsCache] = useState({});
 
@@ -110,7 +112,7 @@ export function List({
 
     const filteredData = useMemo(() => {
         return listData.filter((item) => {
-            if (!item.title?.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+            if (!(item.title ?? '').toLowerCase().includes(searchQuery.toLowerCase())) return false;
 
             for (const filter of currentFilters) {
                 if (filter.property === "tag_override") continue;

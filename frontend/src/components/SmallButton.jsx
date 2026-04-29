@@ -17,6 +17,7 @@ import React from "react";
 import pdf from "../assets/pdf.svg";
 import pdfInverted from "../assets/pdf-inverted.svg";
 import './SmallButton.css'
+import {useDarkMode} from "./DarkModeContext.jsx";
 
 
 
@@ -24,6 +25,9 @@ import './SmallButton.css'
 export function SmallButton({type, onClickHandler}){
 
     const [isHovered, setIsHovered] = React.useState(false);
+    const { isDark } = useDarkMode();
+
+    const useInverted = isHovered !== isDark;
 
     const CONFIG_MAP = {
         [BUTTON_TYPES.ADD]: { icon: plus, invertedIcon: plusInverted },
@@ -42,7 +46,7 @@ export function SmallButton({type, onClickHandler}){
         <button type="button" className="small-button" onClick={onClickHandler}
             onMouseOver={() => setIsHovered(true)}
             onMouseOut={() => setIsHovered(false)}>
-            <img className="icon" src={isHovered ? config.invertedIcon : config.icon} alt="x"/>
+            <img className="icon" src={useInverted ? config.invertedIcon : config.icon} alt="x"/>
         </button>
     )
 }

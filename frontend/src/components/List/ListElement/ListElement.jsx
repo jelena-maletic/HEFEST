@@ -14,6 +14,7 @@ import { Tooltip } from 'antd';
 import dayjs from "dayjs";
 import {assignmentSchema} from "../../../data/Forms.jsx";
 import {getJmb} from "../../../auth/auth.js";
+import {useDarkMode} from "../../DarkModeContext.jsx";
 
 export function ListElement({
                                 screenState,
@@ -30,6 +31,7 @@ export function ListElement({
     const [updateForm, setUpdateForm] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
     const [zahtjevDataForZaduzenje, setZahtjevDataForZaduzenje] = useState(null);
+    const { isDark } = useDarkMode();
 
     const statusClass = listElementData.statusColor ? `status-${listElementData.statusColor}` : '';
     const truncateText = (text, maxLength) => {
@@ -105,7 +107,6 @@ export function ListElement({
                             await updateZahtjevStatus(listElementData.id, "odobren");
                             console.log("Status ažuriran na serveru");
                             notify.success("Status ažuriran");
-                            //if (onSuccess) await onSuccess();
                             const preparedData = {
                                 idZahtjeva: listElementData.id,
                                 resursId: listElementData.resursId,
@@ -204,7 +205,7 @@ export function ListElement({
         }
     };
 
-    var image = isHovered ? images[`${screenState}-inverted`] : images[`${screenState}`];
+    var image = (isDark !== isHovered) ? images[`${screenState}-inverted`] : images[`${screenState}`];
 
     const apiTag = tag === "moji_dnevni_zadaci" ? "dnevni_zadaci" : tag;
     const isCompleted = apiTag === "dnevni_zadaci" && listElementData.zavrsen;

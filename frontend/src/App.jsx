@@ -5,26 +5,22 @@ import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import {Dashboard} from "./pages/Dashboard/Dashboard.jsx";
 import {useState} from "react";
 import {NotificationProvider} from "./components/NotificationContext.jsx";
-import {ConfigProvider} from 'antd';
+import {DarkModeProvider, useDarkMode} from "./components/DarkModeContext.jsx";
+import {ConfigProvider, theme as antTheme} from 'antd';
 import srRS from 'antd/locale/sr_RS';
 
-function App() {
-    const [role, setRole] = useState(sessionStorage.getItem("role") || "def");
-
-    const handleRole = (data) => {
-        setRole(data);
-        sessionStorage.setItem("role", data);
-    };
-
+function AntThemeWrapper({ children }) {
+    const { isDark } = useDarkMode();
     return (
         <ConfigProvider
             locale={srRS}
             theme={{
+                algorithm: isDark ? antTheme.darkAlgorithm : antTheme.defaultAlgorithm,
                 token: {
                     colorPrimary: '#475569',
-                    colorTextBase: '#1e293b',
-                    colorBgLayout: '#f8fafc',
-                    colorBorder: '#e2e8f0',
+                    colorTextBase: isDark ? '#DDDDDD' : '#1e293b',
+                    colorBgLayout: isDark ? '#232423' : '#f8fafc',
+                    colorBorder: isDark ? '#5a5b5a' : '#e2e8f0',
                     borderRadius: 6,
                     fontFamily: 'Inter, sans-serif',
                 },
@@ -38,9 +34,7 @@ function App() {
                         controlOutline: 'transparent',
                     },
                     Card: {
-                        boxShadowTertiary: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
-                        colorBorderSecondary: '#f1f5f9',
-                        borderRadiusLG: 10,
+                        colorBgContainer: isDark ? '#2E2F2E' : '#ffffff',
                     },
                     Input: {
                         activeBorderColor: '#64748b',
@@ -50,25 +44,41 @@ function App() {
                 },
             }}
         >
-            <NotificationProvider>
-                <BrowserRouter>
-                    <Routes>
-                        <Route path="/" element={<Login roleHandle={handleRole}/>}/>
-
-                        <Route path="/dashboard" element={
-                            role !== "def" ? (
-                                <Dashboard sidebarContents={sidebarContents} role={role}/>
-                            ) : (
-                                <Navigate to="/" replace />
-                            )
-                        }/>
-
-                        <Route path="*" element={<Navigate to="/" replace/>}/>
-                    </Routes>
-                </BrowserRouter>
-            </NotificationProvider>
+            {children}
         </ConfigProvider>
     );
 }
+
+function App() {
+    const [role, setRole] = useState(sessionStorage.getItem("role") || "def");
+
+    const handleRole = (data) => {
+        setRole(data);
+        sessionStorage.setItem("role", data);
+    };
+
+    return (
+        <DarkModeProvider>
+            <AntThemeWrapper>
+                <NotificationProvider>
+                    <BrowserRouter>
+                        <Routes>
+                            <Route path="/" element={<Login roleHandle={handleRole}/>}/>
+                            <Route path="/dashboard" element={
+                                role !== "def" ? (
+                                    <Dashboard sidebarContents={sidebarContents} role={role}/>
+                                ) : (
+                                    <Navigate to="/" replace />
+                                )
+                            }/>
+                            <Route path="*" element={<Navigate to="/" replace/>}/>
+                        </Routes>
+                    </BrowserRouter>
+                </NotificationProvider>
+            </AntThemeWrapper>
+        </DarkModeProvider>
+    );
+}
+
 
 export default App

@@ -4,6 +4,7 @@ import './Dashboard.css';
 import MapView from "../../components/MapView.jsx";
 import Calendar from "../../components/Calendar.jsx";
 import hefestLogo from '../../assets/hefest-logo.svg';
+import hefestLogoInverted from '../../assets/hefest-logo-inverted.svg';
 import {TopBar} from "../../components/TopBar.jsx"
 import {Sidebar} from "../../components/Sidebar.jsx";
 import {List} from "../../components/List/List.jsx";
@@ -25,6 +26,7 @@ import {reverseGeocode} from "../../utils/reverseGeocode.js";
 import {getJmb} from "../../auth/auth.js";
 import CreateDnevniIzvjestajForm from "../../components/CreateDnevniIzvjestajForm.jsx";
 import CreateSumarniIzvjestajForm from "../../components/CreateSumarniIzvjestajForm.jsx";
+import {useDarkMode} from "../../components/DarkModeContext.jsx";
 
 
 export function Dashboard({sidebarContents, role}) {
@@ -36,6 +38,10 @@ export function Dashboard({sidebarContents, role}) {
     const [detailData, setDetailData] = useState(null);
     const [rawEntityData, setRawEntityData] = useState(null);
     const [entityType, setEntityType] = useState("");
+    const { isDark } = useDarkMode();
+
+    let logo = isDark ? hefestLogoInverted : hefestLogo;
+
 
     const [currentTag, setCurrentTag] = useState("");
     const notify = useNotification();
@@ -183,6 +189,7 @@ export function Dashboard({sidebarContents, role}) {
                         activeHandle={toggleStatus}
                         active={isActive}
                         userRole={role}
+                        currentScreen={activeScreen}
                     />
                 ) : (
                     <div className="sidebar-placeholder">Učitavanje menija...</div>
@@ -190,7 +197,7 @@ export function Dashboard({sidebarContents, role}) {
 
                 <main className={`home-screen ${activeScreen !== "home" ? "content-active" : ""}`}
                       style={{
-                          backgroundImage: activeScreen === "home" ? `url(${hefestLogo})` : "none"
+                          backgroundImage: activeScreen === "home" ? `url(${logo})` : "none"
                       }}
                 >
 
@@ -217,7 +224,7 @@ export function Dashboard({sidebarContents, role}) {
                               screenState="report-overview"
                               dividerWidth={"90%"}
                               tag="sumarni_izvjestaji"
-                              onClick={(data) => handleOpenDetails(data, "sumarni_izvjestaji")} // DODATO
+                              onClick={(data) => handleOpenDetails(data, "sumarni_izvjestaji")}
                         />
                     </div>
                     }
@@ -305,7 +312,7 @@ export function Dashboard({sidebarContents, role}) {
                                 screenState="report-overview"
                                 dividerWidth={"90%"}
                                 tag="dnevni_izvjestaji"
-                                onClick={(data) => handleOpenDetails(data, "dnevni_izvjestaji")} // DODATO
+                                onClick={(data) => handleOpenDetails(data, "dnevni_izvjestaji")}
                                 filterByPoslovodja={true}
                             />
 
@@ -313,7 +320,7 @@ export function Dashboard({sidebarContents, role}) {
                                   listTitle={"Sumarni " + screenTitle.toLowerCase()}
                                   screenState="report-overview"
                                   dividerWidth={"90%"} tag="sumarni_izvjestaji"
-                                  onClick={(data) => handleOpenDetails(data, "sumarni_izvjestaji")} // DODATO
+                                  onClick={(data) => handleOpenDetails(data, "sumarni_izvjestaji")}
                                   filterByPoslovodja={true}/>
                         </div>
                     }
@@ -378,7 +385,7 @@ export function Dashboard({sidebarContents, role}) {
                             listTitle={screenTitle}
                             screenState="report-overview"
                             tag="dnevni_izvjestaji"
-                            onClick={(data) => handleOpenDetails(data, "dnevni_izvjestaji")} // DODATO
+                            onClick={(data) => handleOpenDetails(data, "dnevni_izvjestaji")}
                             filterByTehnicar={true}
                         />
                     )}

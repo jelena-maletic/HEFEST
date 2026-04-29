@@ -190,7 +190,9 @@ const DynamicForm = ({ schema, onSubmit, onClose, initialValues }) => {
                             label = option.label || `Opcija ${index}`;
                         }
 
-                        const rawValue = option.value || option.jmb || option.id || index;
+                        const rawValue = field.optionValue
+                            ? (option[field.optionValue] ?? option.id ?? index)
+                            : (option.value ?? option.jmb ?? option.id ?? index);
 
                         return (
                             <Option key={String(rawValue)} value={String(rawValue)}>

@@ -60,6 +60,18 @@
     vertical-align: middle;
 }
 
+.dark-mode-icon {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
+    text-align: center;
+    font-size: 13px;
+    margin-right: 8px;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
 .status-toggle label {
     color: #2E2F2E;
     font-weight: 500;
@@ -103,9 +115,27 @@
     transform: translateX(44px);
 }
 
+.toggle-mode-icon {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+    z-index: 2;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.toggle-switch:not(.active) .toggle-mode-icon {
+    right: 5px;
+}
+
+.toggle-switch.active .toggle-mode-icon {
+    left: 5px;
+}
+
 .status-text {
     position: absolute;
-    font-size: 7px;
+    font-size: 7.3px;
     font-weight: 600;
     z-index: 2;
     user-select: none;

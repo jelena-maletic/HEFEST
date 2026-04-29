@@ -1,19 +1,20 @@
 import hefestLogo from "../assets/hefest-logo.svg";
 import hefestLogoInverted from '../assets/hefest-logo-inverted.svg';
-import profileIcon from "../assets/login-icon.png";
+import profileIcon from "../assets/login-icon.svg";
 import "./TopBar.css"
 import {useState} from "react";
+import {useDarkMode} from "./DarkModeContext.jsx";
 
 
 export function TopBar({ activeScreen, screenTitle, screenHandle, userName}) {
 
-    const [logoSrc, setLogoSrc] = useState(hefestLogo);
+    const { isDark } = useDarkMode();
+
+    const [logoSrc, setLogoSrc] = useState( isDark ? hefestLogoInverted : hefestLogo);
     return (
         <header className="top-bar">
             <button
                 className="home-button"
-                onMouseEnter={() => setLogoSrc(hefestLogoInverted)}
-                onMouseLeave={() => setLogoSrc(hefestLogo)}
                 onClick={() => screenHandle("home", "")}
             >
                 <img src={logoSrc} alt="HEFEST Logo" className="logo" />

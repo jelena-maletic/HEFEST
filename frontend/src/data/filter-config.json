@@ -193,5 +193,53 @@
       "valueKey": "jedinicaMjere",
       "allLabel": "Sve jedinice"
     }
+  ],
+  "zahtjevi": [
+    {
+      "property": "poslovodjaJMB",
+      "label": "Poslovođa",
+      "endpoint": "http://localhost:8080/api/poslovodje",
+      "labelKeys": ["ime", "prezime"],
+      "labelSeparator": " ",
+      "valueKey": "jmb",
+      "allLabel": "Sve poslovođe"
+    },
+    {
+      "property": "resursNaziv",
+      "label": "Resurs",
+      "endpoint": "http://localhost:8080/api/resursi",
+      "labelKey": "naziv",
+      "valueKey": "naziv",
+      "allLabel": "Svi resursi"
+    }
+  ],
+  "zaduzenja": [
+    {
+      "property": "poslovodjaJMB",
+      "label": "Poslovođa",
+      "endpoint": "http://localhost:8080/api/poslovodje",
+      "labelKeys": ["ime", "prezime"],
+      "labelSeparator": " ",
+      "valueKey": "jmb",
+      "allLabel": "Sve poslovođe"
+    },
+    {
+      "property": "resursNaziv",
+      "label": "Resurs",
+      "endpoint": "http://localhost:8080/api/resursi",
+      "labelKey": "naziv",
+      "valueKey": "naziv",
+      "allLabel": "Svi resursi"
+    },
+    {
+      "property": "resourceType",
+      "label": "Tip resursa",
+      "options": [
+        { "value": "",          "label": "Svi tipovi" },
+        { "value": "MATERIJAL", "label": "Materijali" },
+        { "value": "OPREMA", "label": "Radna oprema" },
+        { "value": "VOZILO", "label": "Vozila" }
+      ]
+    }
   ]
 }
