@@ -40,7 +40,7 @@ export function List({
     const [activeTag, setActiveTag] = useState(initialTag);
     const [filterTag, setFilterTag] = useState({activeTag});
     const [currentPage, setCurrentPage] = useState(1);
-    const pageSize = 4; // Broj elemenata po stranici
+    const [pageSize, setPageSize] = useState(4); // Broj elemenata po stranici
 
 
     const [endpointOptionsCache, setEndpointOptionsCache] = useState({});
@@ -136,7 +136,11 @@ export function List({
 
     const viewButton = (state) => {
         const next = state === "list" ? "grid" : "list";
-        return <SmallButton type={state} onClickHandler={() => setViewState(next)} />;
+        return <SmallButton type={state} onClickHandler={() => {
+            setViewState(next);
+            setPageSize(next === "grid" ? 8 : 4);
+            }
+        } />;
     };
 
     const indexOfLastItem = currentPage * pageSize;
