@@ -10,6 +10,14 @@
     color: rgba(0, 0, 0, 0.85);
 }
 
+[data-theme="dark"] .project-timeline-container {
+    border-top-color: #4a4b4a;
+}
+
+[data-theme="dark"] .project-timeline-container h4 {
+    color: #DDDDDD;
+}
+
 .timeline-info {
     font-size: 0.9em;
     margin-top: 8px;

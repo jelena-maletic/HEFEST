@@ -65,7 +65,7 @@ const mapProjectDetails = (data,role) => {
 
                 return (
                     <div style={{ width: '100%' }}>
-                        <div style={{ marginBottom: '10px', fontWeight: '500', color: 'rgba(0, 0, 0, 0.85)' }}>
+                        <div style={{ marginBottom: '10px', fontWeight: '500' }}>
                             {textValue || "Lokacija nije definisana."}
                         </div>
 
@@ -124,7 +124,7 @@ const mapProjectDetails = (data,role) => {
             key: 'tehnicari_prikaz',
             roles: ['direktor', 'poslovodja'],
             render: (imena) => (
-                <div style={{ fontWeight: 'normal', color: 'rgba(0, 0, 0, 0.85)' }}>
+                <div style={{ fontWeight: 'normal' }}>
                     {imena && imena.length > 0
                         ? imena.join(', ')
                         : 'Nema dodijeljenih tehničara.'}
