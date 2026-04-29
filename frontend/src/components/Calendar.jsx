@@ -6,10 +6,12 @@ import "./Calendar.css";
 import {fetchProjects} from "../services/apiHelpers.js";
 import CenteredOverlay from "./CenteredOverlay/CenteredOverlay.jsx";
 import { reverseGeocode } from "../utils/reverseGeocode.js";
+import { useDarkMode } from "./DarkModeContext.jsx";
 
 function Calendar() {
     const [events, setEvents] = useState([]);
     const [selectedProject, setSelectedProject] = useState(null);
+    const { isDark } = useDarkMode();
 
     useEffect(() => {
         const getEvents = async () => {
@@ -128,35 +130,38 @@ function Calendar() {
                 isVisible={!!selectedProject}
                 onClose={() => setSelectedProject(null)}
             >
-            {selectedProject && (
-                <div className="modal-overlay">
-                    <div className="modal fade-in">
-                        <h3>Projekat: {selectedProject.naziv}</h3>
-                        <p>
-                            <strong>Lokacija:</strong> {selectedProject.lokacijaNaziv || selectedProject.lokacija || "Nije definisana"}
-                        </p>
-                        <p>
-                            <strong>Početak:</strong> {
-                            selectedProject.pocetakRada
-                                ? new Date(selectedProject.pocetakRada).toLocaleDateString("sr-RS")
-                                : "Nije definisan"
-                        }
-                        </p>
-                        <p>
-                            <strong>Rok:</strong> {
-                            selectedProject.rok
-                                ? new Date(selectedProject.rok).toLocaleDateString("sr-RS")
-                                : "Nema roka"
-                        }
-                        </p>
-                        <p><strong>Završetak:</strong> {selectedProject.krajRada ? new Date(selectedProject.krajRada).toLocaleDateString("sr-SR") : "Nije definisan"}</p>
+                {selectedProject && (
+                    <div className="modal-overlay">
+                        <div className="modal fade-in" style={{
+                            backgroundColor: isDark ? "#2E2F2E" : "white",
+                            color: isDark ? "#DDDDDD" : "black",
+                        }}>
+                            <h3>Projekat: {selectedProject.naziv}</h3>
+                            <p>
+                                <strong>Lokacija:</strong> {selectedProject.lokacijaNaziv || selectedProject.lokacija || "Nije definisana"}
+                            </p>
+                            <p>
+                                <strong>Početak:</strong> {
+                                selectedProject.pocetakRada
+                                    ? new Date(selectedProject.pocetakRada).toLocaleDateString("sr-RS")
+                                    : "Nije definisan"
+                            }
+                            </p>
+                            <p>
+                                <strong>Rok:</strong> {
+                                selectedProject.rok
+                                    ? new Date(selectedProject.rok).toLocaleDateString("sr-RS")
+                                    : "Nema roka"
+                            }
+                            </p>
+                            <p><strong>Završetak:</strong> {selectedProject.krajRada ? new Date(selectedProject.krajRada).toLocaleDateString("sr-SR") : "Nije definisan"}</p>
 
-                        <button className="close-btn" onClick={() => setSelectedProject(null)}>
-                            Zatvori
-                        </button>
+                            <button className="close-btn" onClick={() => setSelectedProject(null)}>
+                                Zatvori
+                            </button>
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
             </CenteredOverlay>
         </div>
     );

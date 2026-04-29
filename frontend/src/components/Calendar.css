@@ -114,3 +114,100 @@
     from { opacity: 0; transform: scale(0.9); }
     to { opacity: 1; transform: scale(1); }
 }
+
+[data-theme="dark"] .calendar-container {
+    background: #232423;
+}
+
+[data-theme="dark"] .fc {
+    color: #DDDDDD !important;
+}
+
+[data-theme="dark"] .fc a {
+    color: #DDDDDD !important;
+}
+
+[data-theme="dark"] .fc .fc-toolbar-title {
+    color: #DDDDDD;
+}
+
+[data-theme="dark"] .fc .fc-prev-button,
+[data-theme="dark"] .fc .fc-next-button,
+[data-theme="dark"] .fc .fc-today-button {
+    background-color: #4a4b4a !important;
+    color: #DDDDDD !important;
+    border-color: #5a5b5a !important;
+}
+
+[data-theme="dark"] .fc .fc-prev-button:hover,
+[data-theme="dark"] .fc .fc-next-button:hover,
+[data-theme="dark"] .fc .fc-today-button:hover {
+    background-color: #DDDDDD !important;
+    color: #2E2F2E !important;
+}
+
+[data-theme="dark"] .fc .fc-prev-button:disabled,
+[data-theme="dark"] .fc .fc-today-button:disabled {
+    background-color: #3a3b3a !important;
+    color: #6a6b6a !important;
+}
+
+[data-theme="dark"] .fc .fc-scrollgrid,
+[data-theme="dark"] .fc .fc-scrollgrid-section > td,
+[data-theme="dark"] .fc td,
+[data-theme="dark"] .fc th {
+    border-color: #4a4b4a !important;
+}
+
+[data-theme="dark"] .fc .fc-col-header-cell {
+    background-color: #2E2F2E;
+}
+
+[data-theme="dark"] .fc .fc-col-header-cell-cushion {
+    color: #DDDDDD !important;
+}
+
+[data-theme="dark"] .fc .fc-daygrid-day {
+    background-color: #232423;
+}
+
+[data-theme="dark"] .fc .fc-daygrid-day:hover {
+    background-color: #2E2F2E;
+}
+
+[data-theme="dark"] .fc .fc-daygrid-day-number {
+    color: #DDDDDD !important;
+}
+
+[data-theme="dark"] .fc .fc-day-other .fc-daygrid-day-number {
+    color: #5a5b5a !important;
+}
+
+[data-theme="dark"] .fc .fc-day-today {
+    background-color: #3a3b3a !important;
+}
+
+[data-theme="dark"] .fc .fc-day-today .fc-daygrid-day-number {
+    color: #DDDDDD !important;
+    font-weight: 700;
+}
+
+[data-theme="dark"] .fc .fc-daygrid-more-link {
+    color: #9a9b9a !important;
+}
+
+[data-theme="dark"] .modal {
+    background-color: #2E2F2E;
+    color: #DDDDDD;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="dark"] .close-btn {
+    background-color: #4a4b4a;
+    color: #DDDDDD;
+}
+
+[data-theme="dark"] .close-btn:hover {
+    background-color: #DDDDDD;
+    color: #2E2F2E;
+}
