@@ -41,13 +41,13 @@ export default function ProjectTimeline({ pocetakRada, rok }) {
 
     return (
         <div className="project-timeline-container">
-            <h4>Vremenska Traka Projekta</h4>
+            <h4>Vremenska traka projekta</h4>
             <Tooltip title={title}>
                 <Progress
                     percent={Math.round(percentage)}
                     status={daysRemaining < 0 ? 'exception' : 'active'}
                     strokeColor={statusColor}
-                    format={(percent) => `${Math.round(percent)}% Vremena Prošlo`}
+                    format={(percent) => `${Math.round(percent)}% Vremena prošlo`}
                 />
             </Tooltip>
             <div className="timeline-info" style={{ color: statusColor }}>

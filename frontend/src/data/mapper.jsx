@@ -106,7 +106,7 @@ const mapProjectDetails = (data,role) => {
         },
         { section: 'Vremenski okvir', label: 'Status', value: data.status, key: 'status',
             render: (v) => <Tag color={getStatusTagColor(v)}>{v}</Tag> },
-        { section: 'Vremenski okvir', label: 'Početak rada', value: formatDate(data.pocetakRada)|| "Nije počelo", key: 'start' },
+        { section: 'Vremenski okvir', label: 'Početak rada', value: data.pocetakRada ? formatDate(data.pocetakRada): 'Nije definisan.', key: 'start' },
         { section: 'Vremenski okvir', label: 'Rok', value: formatDate(data.rok), key: 'deadline' },
         { section: 'Vremenski okvir', label: 'Kraj rada', value: data.krajRada ? formatDate(data.krajRada) : 'Nije definisan.', key: 'end' },
         {
@@ -328,7 +328,7 @@ const mapDailyReportDetails = (data) => {
             render: (v) => <span style={{ color: v > 0 ? '#13c2c2' : 'inherit' }}><strong>{v || 0}</strong> h</span>
         },
         {
-            section: 'Specifikacija Radnih Sati',
+            section: 'Specifikacija radnih sati',
             label: 'Ukupno angažovano',
             value: data.ukupniSati,
             key: 'total_h',
